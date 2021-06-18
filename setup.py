@@ -14,7 +14,7 @@ setup(
     keywords=['syngular', 'singular', 'algebraic geometry'],
     packages=find_packages(),
     install_requires=['numpy',
-                      'mpmath',
+                      'sympy',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

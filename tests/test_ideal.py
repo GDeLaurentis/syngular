@@ -9,7 +9,7 @@ def test_ideal_instantiation():
     assert I is not None
 
 
-def test_invalid_ideal_isntantiation():
+def test_invalid_ideal_instantiation():
     with pytest.raises(SingularException):
         Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x*y'])
 
