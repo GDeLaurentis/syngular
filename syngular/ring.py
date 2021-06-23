@@ -1,4 +1,6 @@
 import sympy
+import mutableint
+import syngular
 
 
 class Ring(object):
@@ -20,7 +22,7 @@ class Ring(object):
         if not isinstance(variables, tuple):
             raise Exception("Ring variables must be tuple")
         if len(variables) == 0:
-            variables = ['0']
+            raise Exception("Ring must be defined over at least one variable")
         if isinstance(variables[0], str):
             variables = sympy.symbols(variables)
         self._variables = variables
@@ -36,7 +38,10 @@ class Ring(object):
         self._ordering = value
 
     def __str__(self):
-        return ", ".join(map(str, [self.field, self.variables, self.ordering])).replace(",)", ")")
+        string = ", ".join(map(str, [self.field, self.variables, self.ordering])).replace(",)", ")")
+        if syngular.DEGBOUND != mutableint.MutableInt(0):
+            string += f";\ndegBound = {syngular.DEGBOUND};\noption()"
+        return string
 
     def __repr__(self):
         return str(self)
