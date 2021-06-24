@@ -1,3 +1,6 @@
+import syngular
+import mutableint
+
 from .ring import Ring
 
 
@@ -11,7 +14,10 @@ class QuotientRing(Ring):
         return hash(str(self))
 
     def __str__(self):
-        return f"{super().__str__()};\nideal i_ = {self.ideal};\nqring q = std(i_)"
+        string = f"{super().__str__()};\nideal i_ = {self.ideal};\nqring q = std(i_)"
+        if syngular.DEGBOUND != mutableint.MutableInt(0):
+            string += f";\ndegBound = {syngular.DEGBOUND};\noption()"
+        return string
 
     def __repr__(self):
         return str(self)
