@@ -176,6 +176,17 @@ class Ideal(object):
         cls, ring = self.__class__, self.ring
         return cls(ring, output)
 
+    def __pow__(self, n):
+        assert(type(n) is int and n >= 0)
+        cls, ring = self.__class__, self.ring
+        if n == 0:
+            return cls(ring, ['1'])
+        elif n % 2 == 0:
+            root_2_res = self ** (n // 2)
+            return root_2_res * root_2_res
+        else:
+            return self * (self ** (n - 1))
+
     def __and__(self, other):
         """Intersection of Ideals = Union of Varieties - This uses Python's set intersection operator '&'."""
         singular_commands = [f"ring r = {self.ring};",

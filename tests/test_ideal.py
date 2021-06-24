@@ -24,6 +24,14 @@ def test_ideal_quotient():
     assert J / I == K
 
 
+def test_ideal_mul_and_power():
+    I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1', 'x2'])
+    J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2', 'x1*x2', 'x2^2'])
+    R = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['1'])
+    assert I ** 2 == I * I == J
+    assert I ** 0 == J ** 0 == R
+
+
 def test_primary_decomposition():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2*x2'])
     J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x2'])
