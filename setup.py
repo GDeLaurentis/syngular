@@ -15,6 +15,7 @@ setup(
     packages=find_packages(),
     install_requires=['numpy',
                       'sympy',
+                      'mutableint',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
