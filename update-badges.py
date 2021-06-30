@@ -2,7 +2,7 @@
 import re
 
 repo_owner = "GDeLaurentis"
-repo_name = "syngular-dev"
+repo_name = "syngular"
 
 
 def update_coverage_badge():
