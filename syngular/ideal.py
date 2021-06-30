@@ -4,7 +4,6 @@ import sympy
 
 from .tools import execute_singular_command
 from .ring import Ring
-from .qring import QuotientRing
 
 
 class Ideal(object):
