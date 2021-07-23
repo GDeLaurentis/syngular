@@ -96,3 +96,11 @@ def test_ideal_over_qring():
     qring = QuotientRing(ring, J)
     I.ring = qring
     assert I.groebner_basis == I.minbase == ['x2']
+
+
+def test_ideal_reduce():
+    ring = Ring('0', ('x1', 'x2'), 'dp')
+    I = Ideal(ring, ['x1'])
+    poly = 'x1+x2'
+    remainder = I.reduce(poly)
+    assert remainder == 'x2'
