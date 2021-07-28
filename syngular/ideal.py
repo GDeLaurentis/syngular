@@ -56,7 +56,9 @@ class Ideal(object):
     @functools.cached_property
     def indepSets(self):
         singular_commands = [f"ring r = {self.ring};",
-                             f"ideal gb = {','.join(self.groebner_basis)};",
+                             # f"ideal gb = {','.join(self.groebner_basis)};",   # this breaks singular variety construction, especially with mpcs
+                             f"ideal i = {self};",
+                             "ideal gb = groebner(i);",
                              "print(indepSet(gb, 0));",
                              "$"]
         output = execute_singular_command(singular_commands)
