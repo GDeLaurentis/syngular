@@ -77,6 +77,11 @@ def test_ideal_contains():
     assert L not in K
 
 
+def test_indepSet():
+    I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2*x2'])
+    assert I.indepSet in [(1, 0), (0, 1)]
+
+
 def test_indepSets():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2*x2'])
     assert I.indepSets == [(1, 0), (0, 1)]
@@ -89,13 +94,15 @@ def test_hash_and_set():
     assert {I, I, J} == {I, J, J} == {I, J}
 
 
-def test_ideal_over_qring():
+def test_ideal_to_qring_and_back():
     ring = Ring('0', ('x1', 'x2'), 'dp')
     I = Ideal(ring, ['x1', 'x2'])
     J = Ideal(ring, ['x1'])
-    qring = QuotientRing(ring, J)
-    I.ring = qring
+    I.to_qring(J)
     assert I.groebner_basis == I.minbase == ['x2']
+    I.to_full_ring()
+    del I.groebner_basis, I.minbase
+    assert set(I.groebner_basis) == set(I.minbase) == set(['x1', 'x2'])
 
 
 def test_ideal_reduce():
