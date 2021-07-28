@@ -47,8 +47,7 @@ class Ideal(object):
     @functools.cached_property
     def indepSet(self):
         singular_commands = [f"ring r = {self.ring};",
-                             f"ideal i = {self};",
-                             "ideal gb = groebner(i);",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
                              "print(indepSet(gb));",
                              "$"]
         output = execute_singular_command(singular_commands)
@@ -57,8 +56,7 @@ class Ideal(object):
     @functools.cached_property
     def indepSets(self):
         singular_commands = [f"ring r = {self.ring};",
-                             f"ideal i = {self};",
-                             "ideal gb = groebner(i);",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
                              "print(indepSet(gb, 0));",
                              "$"]
         output = execute_singular_command(singular_commands)
@@ -94,8 +92,7 @@ class Ideal(object):
     def primary_decomposition(self):
         singular_commands = ["LIB \"primdec.lib\";",
                              f"ring r = {self.ring};",
-                             f"ideal i = {self};",
-                             "ideal gb = groebner(i);",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
                              "def pr = primdecGTZ(gb);",
                              "print(pr);"]
         output = execute_singular_command(singular_commands)
@@ -148,8 +145,7 @@ class Ideal(object):
             other = str(other)
         assert isinstance(other, str)
         singular_commands = [f"ring r = {self.ring};",
-                             f"ideal i = {self};",
-                             "ideal gb = groebner(i);",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
                              "poly f = " + other + ";",
                              "print(reduce(f, gb));"
                              "$"]
@@ -226,9 +222,9 @@ class Ideal(object):
     def reduce(self, other):
         """Remainder of division, i.e. reduction."""
         singular_commands = [f"ring r = {self.ring};",
-                             f"ideal i = {self};",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
                              f"poly f = {other};",
-                             "poly g = reduce(f, i);",
+                             "poly g = reduce(f, gb);",
                              "print(g);",
                              "$"]
         output = execute_singular_command(singular_commands)
