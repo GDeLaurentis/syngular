@@ -111,3 +111,9 @@ def test_ideal_reduce():
     poly = 'x1+x2'
     remainder = I.reduce(poly)
     assert remainder == 'x2'
+
+def test_ideal_dim():
+    I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), [])
+    assert I.dim == 2
+    I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
+    assert I.dim == 1

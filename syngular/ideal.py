@@ -45,6 +45,15 @@ class Ideal(object):
         self.generators = self.minbase
 
     @functools.cached_property
+    def dim(self):
+        singular_commands = [f"ring r = {self.ring};",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
+                             "print(dim(gb));",
+                             "$"]
+        output = execute_singular_command(singular_commands)
+        return int(output)
+
+    @functools.cached_property
     def indepSet(self):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal gb = {','.join(self.groebner_basis)};",
