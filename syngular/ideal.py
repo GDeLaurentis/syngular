@@ -68,7 +68,7 @@ class Ideal(object):
                              # f"ideal gb = {','.join(self.groebner_basis)};",   # this breaks singular variety construction, especially with mpcs
                              f"ideal i = {self};",
                              "ideal gb = groebner(i);",
-                             "print(indepSet(gb, 0));",
+                             "print(indepSet(gb, 1));",
                              "$"]
         output = execute_singular_command(singular_commands)
         if output == 'empty list':
@@ -103,9 +103,11 @@ class Ideal(object):
     def primary_decomposition(self):
         singular_commands = ["LIB \"primdec.lib\";",
                              f"ring r = {self.ring};",
-                             f"ideal gb = {','.join(self.groebner_basis)};",
-                             "def pr = primdecGTZ(gb);",
-                             "print(pr);"]
+                             f"ideal i = {self};",
+                             # f"ideal gb = {','.join(self.groebner_basis)};",
+                             "def pr = primdecGTZ(i);",   # options: GTZ / SY
+                             "print(pr);",
+                             "$"]
         output = execute_singular_command(singular_commands)
         output = [line.replace(",", "") for line in output.split("\n")]
 

@@ -21,6 +21,8 @@ def execute_singular_command(singular_command, timeout=syngular.TIMEOUT, verbose
         raise TimeoutError(f"{timeout} s")
     if 'error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output:
         raise SingularException(output)
+    output = output.replace('// ** minbase applies only to the local or homogeneous case over coefficient fields\n', '')
+    output = output.replace('//options: redSB degBound redTail redThrough intStrategy redefine usage prompt\n', '')
     output = output.replace('//options: degBound redTail redThrough intStrategy redefine usage prompt\n', '')
     output = re.sub(r'// \*\* .* is no standard basis\n', '', output)
     if 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' in output:
