@@ -1,7 +1,7 @@
 import pytest
 import sympy
 
-from syngular import Ideal, Ring, QuotientRing, SingularException
+from syngular import Ideal, Ring, SingularException
 
 
 def test_ideal_instantiation():
@@ -111,6 +111,7 @@ def test_ideal_reduce():
     poly = 'x1+x2'
     remainder = I.reduce(poly)
     assert remainder == 'x2'
+
 
 def test_ideal_dim():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), [])

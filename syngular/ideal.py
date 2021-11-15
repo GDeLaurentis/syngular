@@ -5,9 +5,10 @@ import sympy
 from .tools import execute_singular_command
 from .ring import Ring
 from .qring import QuotientRing
+from .ideal_algorithms import Ideal_Algorithms
 
 
-class Ideal(object):
+class Ideal(Ideal_Algorithms, object):
 
     def __init__(self, ring, generators):
         if not isinstance(ring, Ring) or not isinstance(generators, list):

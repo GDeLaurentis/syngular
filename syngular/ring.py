@@ -14,6 +14,16 @@ class Ring(object):
         return hash(str(self))
 
     @property
+    def field(self):
+        return self._field
+
+    @field.setter
+    def field(self, field):
+        if isinstance(field, tuple) and isinstance(field[0], str):
+            field = sympy.symbols(field)
+        self._field = field
+
+    @property
     def variables(self):
         return self._variables
 
@@ -33,9 +43,12 @@ class Ring(object):
         return self._ordering
 
     @ordering.setter
-    def ordering(self, value):
-        assert value in ['lp', 'rp', 'dp', 'Dp']
-        self._ordering = value
+    def ordering(self, ordering):
+        if isinstance(ordering, str):
+            assert ordering in ['lp', 'rp', 'dp', 'Dp']
+        else:
+            ordering = str(ordering).replace("'", "")
+        self._ordering = ordering
 
     def __str__(self):
         string = ", ".join(map(str, [self.field, self.variables, self.ordering])).replace(",)", ")")
