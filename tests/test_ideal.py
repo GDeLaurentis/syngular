@@ -101,7 +101,6 @@ def test_ideal_to_qring_and_back():
     I.to_qring(J)
     assert I.groebner_basis == I.minbase == ['x2']
     I.to_full_ring()
-    del I.groebner_basis, I.minbase
     assert set(I.groebner_basis) == set(I.minbase) == set(['x1', 'x2'])
 
 

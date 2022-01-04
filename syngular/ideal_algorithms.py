@@ -138,8 +138,7 @@ class Ideal_Algorithms:
             zeroDimSelf = deepcopy(self)
             zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=2 ** 31 - 19).as_expr()) for entry in sympy.sympify(zeroDimSelf.generators)]
             zeroDimSelf.ring = Ring(str(2 ** 31 - 19), XqU, 'lp')
-            if hasattr(zeroDimSelf, "groebner_basis"):
-                del zeroDimSelf.groebner_basis
+            zeroDimSelf.delete_cached_properties()
             degrees = list(map(int, re.findall(r"\^(\d)", "".join(zeroDimSelf.groebner_basis))))
             if degrees == []:
                 max_degree = 1
@@ -182,11 +181,8 @@ class Ideal_Algorithms:
         for factor in smallest_fpoly_factors:
             X = deepcopy(self)
             X.generators += [factor]
+            X.delete_cached_properties()
             # print(X)
-            if hasattr(X, "groebner_basis"):
-                del X.groebner_basis
-            if hasattr(X, "indepSet"):
-                del X.indepSet
             # print(self.indepSet.count(0), X.indepSet.count(0))
             if self.indepSet.count(0) >= X.indepSet.count(0):
                 return False
