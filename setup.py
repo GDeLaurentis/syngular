@@ -3,14 +3,16 @@ from setuptools import setup, find_packages
 
 setup(
     name='syngular',
-    version='v0.0.2',
+    version='v0.1.0',
     license='GNU General Public License v3.0',
     description='An Object-Oriented Python Interface to Singular',
-    long_description='Documentation not yet available.',
+    long_description="""Documentation not yet available.
+    For now please refer to examples at github.com/GDeLaurentis/syngular/blob/main/examples/Examples.ipynb
+    """,
     author='Giuseppe De Laurentis',
     author_email='g.dl@hotmail.it',
     url='https://github.com/GDeLaurentis/syngular',
-    download_url='https://github.com/GDeLaurentis/syngular/archive/v0.0.2.tar.gz',
+    download_url='https://github.com/GDeLaurentis/syngular/archive/v0.1.0.tar.gz',
     keywords=['syngular', 'singular', 'algebraic geometry'],
     packages=find_packages(),
     install_requires=['numpy',
