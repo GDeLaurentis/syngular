@@ -55,6 +55,19 @@ class Ideal(Ideal_Algorithms, object):
         output = execute_singular_command(singular_commands)
         return int(output)
 
+    @property
+    def dims(self):
+        return {entry.count(1) for entry in self.indepSets}
+
+    @property
+    def codim(self):
+        return Ideal(self.ring, ['0']).dim - self.dim
+
+    @property
+    def codims(self):
+        zeroIdeal_dim = Ideal(self.ring, ['0']).dim
+        return {zeroIdeal_dim - dim for dim in self.dims}
+
     @functools.cached_property
     def indepSet(self):
         singular_commands = [f"ring r = {self.ring};",

@@ -117,3 +117,10 @@ def test_ideal_dim():
     assert I.dim == 2
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
     assert I.dim == 1
+
+def test_ideal_dims_and_codims():
+    I = Ideal(Ring('0', ('x1', 'x2', 'x3'), 'dp'), ['(x3+1)*x1', '(x2+1)*x1'])
+    assert I.dim == 2
+    assert I.dims == {1, 2}
+    assert I.codim == 1
+    assert I.codims == {1, 2}
