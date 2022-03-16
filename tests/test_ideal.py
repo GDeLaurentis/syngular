@@ -104,7 +104,7 @@ def test_ideal_to_qring_and_back():
     assert set(I.groebner_basis) == set(I.minbase) == set(['x1', 'x2'])
 
 
-def test_ideal_reduce():
+def test_ideal_reduce_poly():
     ring = Ring('0', ('x1', 'x2'), 'dp')
     I = Ideal(ring, ['x1'])
     poly = 'x1+x2'
@@ -112,11 +112,22 @@ def test_ideal_reduce():
     assert remainder == 'x2'
 
 
+def test_ideal_reduce_ideal():
+    ring = Ring('0', ('x1', 'x2'), 'dp')
+    I = Ideal(ring, ['x1', 'x2'])
+    J = Ideal(ring, ['x1'])
+    K = J.reduce(I)
+    assert K == Ideal(ring, ['x2'])
+    L = I.reduce(J)
+    assert L == Ideal(ring, ['0'])
+
+
 def test_ideal_dim():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), [])
     assert I.dim == 2
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
     assert I.dim == 1
+
 
 def test_ideal_dims_and_codims():
     I = Ideal(Ring('0', ('x1', 'x2', 'x3'), 'dp'), ['(x3+1)*x1', '(x2+1)*x1'])

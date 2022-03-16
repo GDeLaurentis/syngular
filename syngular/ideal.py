@@ -249,14 +249,26 @@ class Ideal(Ideal_Algorithms, object):
 
     def reduce(self, other):
         """Remainder of division, i.e. reduction."""
-        singular_commands = [f"ring r = {self.ring};",
-                             f"ideal gb = {','.join(self.groebner_basis)};",
-                             f"poly f = {other};",
-                             "poly g = reduce(f, gb);",
-                             "print(g);",
-                             "$"]
-        output = execute_singular_command(singular_commands)
-        return output
+        if isinstance(other, Ideal):
+            singular_commands = [f"ring r = {self.ring};",
+                                 f"ideal gb = {','.join(self.groebner_basis)};",
+                                 f"ideal i = {other};",
+                                 "ideal j = reduce(i, gb);",
+                                 "print(j);",
+                                 "$"]
+            output = execute_singular_command(singular_commands)
+            output = output.replace("\n", "").split(",")
+            cls, ring = self.__class__, self.ring
+            return cls(ring, output)
+        else:
+            singular_commands = [f"ring r = {self.ring};",
+                                 f"ideal gb = {','.join(self.groebner_basis)};",
+                                 f"poly f = {other};",
+                                 "poly g = reduce(f, gb);",
+                                 "print(g);",
+                                 "$"]
+            output = execute_singular_command(singular_commands)
+            return output
 
     def __str__(self):
         return ",".join(map(str, self.generators))
