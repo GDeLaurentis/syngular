@@ -234,6 +234,16 @@ class Ideal(Ideal_Algorithms, object):
         cls, ring = self.__class__, self.ring
         return cls(ring, output)
 
+    @staticmethod
+    def intersection(*args):
+        """Intersection of Ideals - wrapper around & operator for chained intersection."""
+        if len(args) == 1:
+            return args[0]
+        res = args[0] & args[1]
+        for arg in args[2:]:
+            res = res & arg
+        return res
+
     def __truediv__(self, other):
         """Quotient of ideals."""
         singular_commands = [f"ring r = {self.ring};",

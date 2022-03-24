@@ -178,7 +178,9 @@ class Ideal_Algorithms:
             print(f"\r smallest f poly factors: {smallest_fpoly_factors}", end="                    \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
         syngular.TIMEOUT.set(timeout_dim)
-        for factor in smallest_fpoly_factors:
+        for i, factor in enumerate(smallest_fpoly_factors):
+            if verbose:
+                print(f"\r at factor {i}: {factor}.", end="                                    ")
             X = deepcopy(self)
             X.generators += [factor]
             X.delete_cached_properties()

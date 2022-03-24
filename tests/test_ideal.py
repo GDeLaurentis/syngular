@@ -45,6 +45,8 @@ def test_primary_intersection():
     J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x2'])
     K = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2'])
     assert I == J & K
+    assert I == Ideal.intersection(*(J, I, K))
+    assert I == Ideal.intersection(*(I, ))
 
 
 def test_eliminate():
