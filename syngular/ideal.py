@@ -88,7 +88,7 @@ class Ideal(Ideal_Algorithms, object):
         output = execute_singular_command(singular_commands)
         if output == 'empty list':
             return []
-        indepSets = [tuple(map(int, line.replace(" ", "").split(","))) for line in output.split("\n") if":" not in line]
+        indepSets = [tuple(map(int, line.replace(" ", "").split(","))) for line in output.split("\n") if ":" not in line]
         return indepSets
 
     @functools.cached_property
@@ -211,7 +211,7 @@ class Ideal(Ideal_Algorithms, object):
         return cls(ring, output)
 
     def __pow__(self, n):
-        assert(type(n) is int and n >= 0)
+        assert type(n) is int and n >= 0
         cls, ring = self.__class__, self.ring
         if n == 0:
             return cls(ring, ['1'])

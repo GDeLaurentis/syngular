@@ -15,9 +15,10 @@ For now please refer to the examples at https://github.com/GDeLaurentis/syngular
     download_url='https://github.com/GDeLaurentis/syngular/archive/v0.1.2.tar.gz',
     keywords=['syngular', 'singular', 'algebraic geometry'],
     packages=find_packages(),
-    install_requires=['numpy',
-                      'sympy',
-                      'mutableint',
+    install_requires=[
+        'numpy',
+        'sympy',
+        'mutableint'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
