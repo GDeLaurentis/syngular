@@ -45,7 +45,9 @@ class Ring(object):
     @ordering.setter
     def ordering(self, ordering):
         if isinstance(ordering, str):
-            assert ordering in ['lp', 'rp', 'dp', 'Dp']
+            assert ordering in ['lp', 'rp', 'dp', 'Dp', 'ls', 'rs', 'ds', 'Ds']
+            if ordering[1] == 's':
+                print("Warning: chosen ordering is not a well-ordering.")
         else:
             ordering = str(ordering).replace("'", "")
         self._ordering = ordering

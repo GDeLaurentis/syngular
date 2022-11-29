@@ -1,6 +1,7 @@
 import functools
 import re
 import sympy
+import numpy
 import inspect
 
 from .tools import execute_singular_command
@@ -105,6 +106,18 @@ class Ideal(Ideal_Algorithms, object):
         return output
 
     @functools.cached_property
+    def leadGBmonomials(self):
+        """Gives the leading monomials of the Groebner basis polynomials."""
+        singular_commands = [f"ring r = {self.ring};",
+                             f"ideal gb = {','.join(self.groebner_basis)};",
+                             "def lts = lead(gb);",
+                             "print(lts);"]
+        output = execute_singular_command(singular_commands)
+        # print(output)
+        output = [line.replace(",", "") for line in output.split("\n")]
+        return output
+
+    @functools.cached_property
     def minbase(self):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",
@@ -113,6 +126,20 @@ class Ideal(Ideal_Algorithms, object):
         output = execute_singular_command(singular_commands)
         output = [line.replace(",", "") for line in output.split("\n")]
         return output
+
+    @functools.cached_property
+    def radical(self):
+        """Returns the radical of the ideal."""
+        singular_commands = ["LIB \"primdec.lib\";",
+                             f"ring r = {self.ring};",
+                             f"ideal i = {self};",
+                             "def pr = radical(i);",   # options: GTZ / SY
+                             "print(pr);",
+                             "$"]
+        output = execute_singular_command(singular_commands)
+        output = [line.replace(",", "") for line in output.split("\n")]
+        cls, ring = self.__class__, self.ring
+        return cls(ring, output)
 
     @functools.cached_property
     def primary_decomposition(self):
@@ -307,3 +334,26 @@ class Ideal(Ideal_Algorithms, object):
 
 def reduce(poly, ideal):
     return ideal.reduce(poly)
+
+
+def monomial_to_exponents(variables, monomial):
+    """Converts a monomial in the variables of a polynomial ring into a numpy.array of exponents."""
+    """Converts a monomial in the variables of a polynomial ring into a numpy.array of exponents."""
+    exps = numpy.zeros(len(variables), dtype=int)
+    variables = list(map(str, variables))  # in case sympy symbols are passsed
+    _split_monomial = list(filter(lambda x: x != '', monomial.replace("^", "**").split("*")))
+    split_monomial = []
+    for entry in _split_monomial:  # need to fix Singular notation for exponents (e.g. if x2 is not a ring variable then x^2 is written as x2)
+        if not entry.isdigit() and entry not in variables:
+            exp = re.findall(r"(\d+)", entry)[0]
+            split_monomial += [entry.replace(exp, ""), exp]
+        else:
+            split_monomial += [entry]
+    for i, ientry in enumerate(split_monomial):
+        if not ientry.isdigit():
+            if i < len(split_monomial) - 1 and split_monomial[i + 1].isdigit():
+                exp = int(split_monomial[i + 1])
+            else:
+                exp = 1
+            exps[variables.index(ientry)] += exp
+    return exps

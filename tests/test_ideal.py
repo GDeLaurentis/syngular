@@ -1,7 +1,9 @@
 import pytest
 import sympy
+import numpy
 
 from syngular import Ideal, Ring, SingularException
+from syngular.ideal import monomial_to_exponents, reduce
 
 
 def test_ideal_instantiation():
@@ -38,6 +40,13 @@ def test_primary_decomposition():
     K = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2'])
     L = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1'])
     assert I.primary_decomposition == [(J, J), (K, L)]
+
+
+def test_radical():
+    I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2*x2'])
+    J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x2'])
+    L = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1'])
+    assert I.radical == J & L
 
 
 def test_primary_intersection():
@@ -106,12 +115,17 @@ def test_ideal_to_qring_and_back():
     assert set(I.groebner_basis) == set(I.minbase) == set(['x1', 'x2'])
 
 
+def test_lead_gb_monomials():
+    R = Ring('0', ('x', 'y', ), 'dp')
+    I = Ideal(R, ['x^2', 'y'])
+    assert I.leadGBmonomials == ['y', 'x2']
+
+
 def test_ideal_reduce_poly():
     ring = Ring('0', ('x1', 'x2'), 'dp')
     I = Ideal(ring, ['x1'])
     poly = 'x1+x2'
-    remainder = I.reduce(poly)
-    assert remainder == 'x2'
+    assert I.reduce(poly) == 'x2' == reduce(poly, I)
 
 
 def test_ideal_reduce_ideal():
@@ -137,3 +151,15 @@ def test_ideal_dims_and_codims():
     assert I.dims == {1, 2}
     assert I.codim == 1
     assert I.codims == {1, 2}
+
+
+def test_monomial_to_exponents():
+    r = Ring('0', ('x1', 'x2', 'x3'), 'dp')
+    monomial = 'x1*x2^4*x3^123'
+    assert numpy.all(monomial_to_exponents(r.variables, monomial) == numpy.array([1, 4, 123]))
+
+
+def test_monomial_to_exponents_Singular_notation():
+    r = Ring('0', ('x', 'y', 'z'), 'dp')
+    monomial = 'x*y4*z123'
+    assert numpy.all(monomial_to_exponents(r.variables, monomial) == numpy.array([1, 4, 123]))
