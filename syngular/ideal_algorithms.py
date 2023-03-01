@@ -190,6 +190,11 @@ class Ideal_Algorithms:
                 return False
         return True
 
+    def test_primality(self, *args, **kwargs):
+        """Tests if an ideal is prime. Not to be confused with primary."""
+        # eventually check assumptions and decide which test to use
+        return self.primeTestDLP(*args, **kwargs)
+
 
 class Inconclusive(Exception):
     pass
