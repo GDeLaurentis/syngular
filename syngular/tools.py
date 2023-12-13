@@ -20,7 +20,7 @@ def execute_singular_command(singular_command, timeout=syngular.TIMEOUT, verbose
     if 'halt' in output:
         raise TimeoutError(f"{timeout} s")
     if 'error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output:
-        raise SingularException(output)
+        raise SingularException(f"{output}\n\n\nError occured while executing:\n{singular_command}")
     if '   ? `Q` is undefined' in output:
         output = output.replace("   ? `Q` is undefined", "")
         print("Singular Error: Q is undefined")

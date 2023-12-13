@@ -319,8 +319,8 @@ class Ideal(Ideal_Algorithms, object):
         self.ring = qring
 
     def to_full_ring(self):
-        self.delete_cached_properties()
         if isinstance(self.ring, QuotientRing):
+            self.delete_cached_properties()
             self.generators = (self.ring.ideal + self).generators
             self.ring = self.ring.ideal.ring
 
