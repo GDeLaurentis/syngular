@@ -118,7 +118,7 @@ def test_ideal_to_qring_and_back():
 def test_lead_gb_monomials():
     R = Ring('0', ('x', 'y', ), 'dp')
     I = Ideal(R, ['x^2', 'y'])
-    assert I.leadGBmonomials == ['y', 'x2']
+    assert I.leadGBmonomials == ['y', 'x^2']
 
 
 def test_ideal_reduce_poly():
