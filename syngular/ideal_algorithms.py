@@ -125,6 +125,8 @@ class Ideal_Algorithms:
     def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600):
         """Returns True if the ideal is prime, False if it is not. Raises Inconclusive if it can't decide. Assumes equidimensionality of input ideal."""
         import syngular
+        # algorithm works over rings, if in a qring convert to the full ring.
+        self.to_full_ring()
         # first step: find zero dimensional projections which are linear in the dependent variables, i.e. are a single point.
         linear_projection_indepSetIndices = []
         for i in range(len(self.indepSets)):
@@ -164,7 +166,12 @@ class Ideal_Algorithms:
             try:
                 f_polys_factors += [self.extension_contraction_fpoly(U, "lp")]
             except TimeoutError:
-                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 20]]
+                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
+                continue
+            except Exception as e:
+                if verbose:
+                    print(f"An exception occurred: {e}")
+                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
                 continue
         # just keep the one with the smallest greatest factor
         syngular.TIMEOUT.set(timeout_fpoly)
@@ -172,7 +179,7 @@ class Ideal_Algorithms:
         if verbose:
             print("\n easiest projection:", linear_projection_indepSetIndices[max_lengths.index(min(max_lengths))])
         smallest_fpoly_factors = f_polys_factors[max_lengths.index(min(max_lengths))]
-        if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 20]:
+        if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 80]:
             raise Inconclusive
         if verbose:
             print(f"\r smallest f poly factors: {smallest_fpoly_factors}", end="                    \n")

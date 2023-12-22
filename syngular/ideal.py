@@ -13,6 +13,8 @@ from .ideal_algorithms import Ideal_Algorithms
 class Ideal(Ideal_Algorithms, object):
 
     def __init__(self, ring, generators):
+        if isinstance(generators, tuple):
+            generators = list(generators)
         if not isinstance(ring, Ring) or not isinstance(generators, list):
             raise Exception("Invalid Ideal initialisation.")
         self.ring = ring
@@ -88,7 +90,7 @@ class Ideal(Ideal_Algorithms, object):
                              "$"]
         output = execute_singular_command(singular_commands)
         if output == 'empty list':
-            return []
+            return [self.indepSet]
         indepSets = [tuple(map(int, line.replace(" ", "").split(","))) for line in output.split("\n") if ":" not in line]
         return indepSets
 
@@ -98,6 +100,7 @@ class Ideal(Ideal_Algorithms, object):
                              f"ring r = {self.ring};",
                              f"ideal i = {self};",
                              "ideal gb = groebner(i);",
+                             "short=0;",
                              "print(gb);",
                              "$"]
         singular_command = "\n".join(singular_commands)
@@ -111,6 +114,7 @@ class Ideal(Ideal_Algorithms, object):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal gb = {','.join(self.groebner_basis)};",
                              "def lts = lead(gb);",
+                             "short=0;",
                              "print(lts);"]
         output = execute_singular_command(singular_commands)
         # print(output)
@@ -121,6 +125,7 @@ class Ideal(Ideal_Algorithms, object):
     def minbase(self):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",
+                             "short=0;",
                              "print(minbase(i));",
                              "$"]
         output = execute_singular_command(singular_commands)
