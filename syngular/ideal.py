@@ -8,9 +8,10 @@ from .tools import execute_singular_command
 from .ring import Ring
 from .qring import QuotientRing
 from .ideal_algorithms import Ideal_Algorithms
+from .variety import Variety_of_Ideal
 
 
-class Ideal(Ideal_Algorithms, object):
+class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
 
     def __init__(self, ring, generators):
         if isinstance(generators, tuple):
@@ -335,6 +336,9 @@ class Ideal(Ideal_Algorithms, object):
     def delete_cached_properties(self):
         for cached_property in self._get_cached_properties_names():
             delattr(self, cached_property)
+
+    def generators_eval(self, **kwargs):
+        return [eval(generator.replace("^", "**"), kwargs) for generator in self.generators]
 
 
 def reduce(poly, ideal):

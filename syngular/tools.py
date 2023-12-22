@@ -40,3 +40,7 @@ def execute_singular_command(singular_command, timeout=syngular.TIMEOUT, verbose
 
 class SingularException(Exception):
     pass
+
+
+class RootNotInFieldError(Exception):
+    pass
