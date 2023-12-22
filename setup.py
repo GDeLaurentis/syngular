@@ -21,7 +21,8 @@ setup(
     install_requires=[
         'numpy',
         'sympy',
-        'mutableint'
+        'mutableint',
+        'pyadic',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
