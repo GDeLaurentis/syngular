@@ -23,5 +23,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic interface functions.
 - Primality test.
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.3...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.1.3...HEAD
 [0.0.1]: https://github.com/GDeLaurentis/syngular/releases/tag/v0.1.3
