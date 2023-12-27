@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='syngular',
-    version='v0.1.3',
+    version='v0.2.0',
     license='GNU General Public License v3.0',
     description='An Object-Oriented Python Interface to Singular',
     long_description=long_description,
@@ -15,7 +15,7 @@ setup(
     author='Giuseppe De Laurentis',
     author_email='g.dl@hotmail.it',
     url='https://github.com/GDeLaurentis/syngular',
-    download_url='https://github.com/GDeLaurentis/syngular/archive/v0.1.3.tar.gz',
+    download_url='https://github.com/GDeLaurentis/syngular/archive/v0.2.0.tar.gz',
     keywords=['syngular', 'singular', 'algebraic geometry'],
     packages=find_packages(),
     install_requires=[
@@ -25,7 +25,7 @@ setup(
         'pyadic',
     ],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 3 - Beta',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering :: Physics',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',

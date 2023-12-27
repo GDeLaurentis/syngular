@@ -7,21 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2023-12-27
+
 ### Added
 
 - Ideal method to generate points of varieties, `Ideal.point_on_variety`.
-- Field object (from [lips](https://github.com/GDeLaurentis/lips))
+- Field object (moved from [lips](https://github.com/GDeLaurentis/lips))
 
 ### Fixed
 
-- Syntax consistency when printing polynomials over rings with single-character variables
+- Syntax consistency when printing polynomials over rings with single-character variables (forced `short=0` always).
+- Import path in Singular for `poly.lib` is now `polylib.lib`.
 
 ## [0.1.3] - 2023-03-02
 
 ### Added
 
-- Basic interface functions.
-- Primality test.
+- Basic interface functions for `Ring`, `QuotientRing` and `Ideal`.
+- Primality test, `Ideal.test_primality`.
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.1.3...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/GDeLaurentis/syngular/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/GDeLaurentis/syngular/releases/tag/v0.1.3
