@@ -44,7 +44,7 @@ class Ideal_Algorithms:
         return I_extended
 
     singular_commands_EXTCONT1 = r"""
-        LIB "poly.lib";
+        LIB "polylib.lib";
         // K(U)[X \ U]
         ring r2 = {r2};
         ideal G = {extended_ideal};
@@ -85,7 +85,7 @@ class Ideal_Algorithms:
         return ['1'] + f_polys_factors
 
     singular_commands_EXTCONT2 = """
-        LIB "poly.lib";
+        LIB "polylib.lib";
         // option(redSB);
         ring r2 = {r2};
         ideal G = {extended_ideal};
