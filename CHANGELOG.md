@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `QRing` is an alias for `QuotientRing`.
+- `test_primality` accepts optional `kwarg`, `iterated_degbound_computation`, with defult value `False`. Behaviour is unchanged on default setting. If set to `True`, the codimensions of ideals involving f-poly factors are computed with subsequently looser degree bounds, until the either a prest degre (18) is exceeded or the codim is greater than that of the original ideal. Use is recommended only for ideals that are expected to be prime and for which the computation without degree bound fails.
 
 ### Changed
 

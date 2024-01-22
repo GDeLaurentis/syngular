@@ -122,8 +122,10 @@ class Ideal_Algorithms:
         Ideal = self.__class__
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 
-    def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600):
-        """Returns True if the ideal is prime, False if it is not. Raises Inconclusive if it can't decide. Assumes equidimensionality of input ideal."""
+    def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600, iterated_degbound_computation=False):
+        """Returns True if the ideal is prime, False if it is not. Raises Inconclusive if it can't decide. Assumes equidimensionality of input ideal.
+        Experimental new feature with iterated_degbound_computation=True, may help when ideal is prime and deg-unbounded computation fails.
+        """
         import syngular
         # algorithm works over rings, if in a qring convert to the full ring.
         self.to_full_ring()
@@ -185,16 +187,35 @@ class Ideal_Algorithms:
             print(f"\r smallest f poly factors: {smallest_fpoly_factors}", end="                    \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
         syngular.TIMEOUT.set(timeout_dim)
+        self.codim  # just cache it
         for i, factor in enumerate(smallest_fpoly_factors):
             if verbose:
-                print(f"\r at factor {i}: {factor}.", end="                                    ")
+                print(f"\r at factor {i}: {factor}.", end="                                       \n")
             X = deepcopy(self)
             X.generators += [factor]
             X.delete_cached_properties()
-            # print(X)
-            # print(self.indepSet.count(0), X.indepSet.count(0))
-            if self.indepSet.count(0) >= X.indepSet.count(0):
-                return False
+
+            # Experimental - Assumes codim w/ deg bound <= true codim.
+            # Helps termiante the prime test early, IF the result is True.
+            for deg_bound in [4, 6, 8, 10, 12, 14, 16, 18] * iterated_degbound_computation:
+                syngular.DEGBOUND.set(deg_bound)
+                X.delete_cached_properties()
+                if self.codim < X.codim:
+                    if verbose:
+                        print(f"deg_bound {deg_bound} computation was conclusive.", end="\n")
+                    break
+                else:
+                    if verbose:
+                        print(f"deg_bound {deg_bound} computation was inconclusive.", end="\n")
+
+            else:  # loop completed without encountering a break
+                if verbose:
+                    print("deg_bound reset to zero. Performing full computation.", end="\n")
+                syngular.DEGBOUND.set(0)
+                # if self.indepSet.count(0) >= X.indepSet.count(0):   # deprecated, equivalent to next line.
+                if self.codim >= X.codim:
+                    return False
+        syngular.DEGBOUND.set(0)  # Reset it to zero
         return True
 
     def test_primality(self, *args, **kwargs):

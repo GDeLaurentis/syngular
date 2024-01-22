@@ -19,11 +19,14 @@ def test_extension_contraction():
 def test_primeTestDLP():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
     J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x2'])
-    assert I.primeTestDLP(verbose=True) is False
-    assert J.primeTestDLP(verbose=True) is True
+    assert I.test_primality(verbose=True) is False
+    assert I.test_primality(verbose=True, iterated_degbound_computation=True) is False
+    assert J.test_primality(verbose=True) is True
+    assert J.test_primality(verbose=True, iterated_degbound_computation=True) is True
 
 
 def test_primeTestDLP_inconclusive():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2'])
     with pytest.raises(Inconclusive):
-        assert I.primeTestDLP(verbose=True) is False
+        assert I.test_primality(verbose=True) is False
+        assert I.test_primality(verbose=True, iterated_degbound_computation=True) is False
