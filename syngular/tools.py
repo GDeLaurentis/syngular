@@ -44,3 +44,7 @@ class SingularException(Exception):
 
 class RootNotInFieldError(Exception):
     pass
+
+
+class RootPrecisionError(Exception):
+    pass

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `QRing` is an alias for `QuotientRing`.
+
+### Changed
+
+- Default `max_tries` for `Ideal.point_on_variety` increased to 100 from 10: needed when generating a large number of points.
+
+
+### Fixed
+
+- Occasinally, when generating a `point_on_variety` with multi-precision complex (`mpc`) the `lex_groebner_basis` computation can return the unit ideal, due to precision loss. Introduced a new `RootPrecisionError` exception and added this to the retry logic.
+
 ## [0.2.0] - 2023-12-27
 
 ### Added
