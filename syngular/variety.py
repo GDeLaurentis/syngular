@@ -64,7 +64,11 @@ class Variety_of_Ideal:
 
         # handle directions, i.e. the generators of the sub-ideal of maximal codimension
         if directions == []:
-            directions = sorted(self.generators, key=lambda x: len(x))[:self.codim]
+            for poly in sorted(self.generators, key=lambda x: len(x)):
+                if Ideal(self.ring, directions + [poly, ]).codim > Ideal(self.ring, directions).codim:
+                    directions += [poly, ]
+                if len(directions) == self.codim:
+                    break
             assert Ideal(self.ring, directions).codim == self.codim
         # extra directions in qring
         if isinstance(self.ring, QuotientRing):
