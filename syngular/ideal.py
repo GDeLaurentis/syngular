@@ -340,6 +340,10 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
     def generators_eval(self, **kwargs):
         return [eval(generator.replace("^", "**"), kwargs) for generator in self.generators]
 
+    @property
+    def is_unit_ideal(self):
+        return self == Ideal(self.ring, ('1', ))
+
 
 def reduce(poly, ideal):
     return ideal.reduce(poly)
