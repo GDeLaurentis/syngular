@@ -29,7 +29,7 @@ class Field(object):
         self.digits = args[2]
 
     def __str__(self):
-        return "({}, {}, {})".format(self.name, self.characteristic, self.digits)
+        return "('{}', {}, {})".format(self.name, self.characteristic, self.digits)
 
     def __repr__(self):
         return str(self)
