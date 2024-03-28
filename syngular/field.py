@@ -108,16 +108,25 @@ class Field(object):
         else:
             return None
 
-    @property
-    def sqrt(self):
+    def sqrt(self, val):
         if self.name == "finite field":
-            return finite_field_sqrt
+            if not isinstance(val, ModP):
+                val = self(val)
+            return finite_field_sqrt(val)
         elif self.name == "padic":
-            return padic_sqrt
+            if not isinstance(val, PAdic):
+                val = self(val)
+            return padic_sqrt(val)
         elif self.name == "mpc":
-            return mpmath.sqrt
+            return mpmath.sqrt(val)
         else:
             raise Exception(f"Field not understood: {self.field.name}")
+
+    @property
+    def j(self):
+        return self.sqrt(-1)
+
+    i = I = j
 
     def random_element(self, shape=(1, )):
         if shape == (1, ):
@@ -134,6 +143,22 @@ class Field(object):
                 raise NotImplementedError
         else:
             raise NotImplementedError
+
+    def epsilon(self, shape=(1, ), ):
+        if shape == (1, ):
+            if self.name == "padic":
+                return self.characteristic
+            elif self.name == "finite field":
+                raise ValueError("Finite field infinitesimal does not exist.")
+            elif self.name == "mpc":
+                return mpmath.mpf('1e-30')
+            else:
+                raise NotImplementedError
+        else:
+            raise NotImplementedError
+
+    def ε(self, *args, **kwargs):
+        return self.epsilon(*args, **kwargs)
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
