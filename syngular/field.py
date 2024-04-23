@@ -146,19 +146,28 @@ class Field(object):
 
     def epsilon(self, shape=(1, ), ):
         if shape == (1, ):
-            if self.name == "padic":
-                return self.characteristic
-            elif self.name == "finite field":
-                raise ValueError("Finite field infinitesimal does not exist.")
-            elif self.name == "mpc":
-                return mpmath.mpf('1e-30')
-            else:
-                raise NotImplementedError
+            if not hasattr(self, "_ε"):
+                if self.name == "padic":
+                    self._ε = self.characteristic
+                elif self.name == "finite field":
+                    raise ValueError("Finite field infinitesimal does not exist.")
+                elif self.name == "mpc":
+                    self._ε = mpmath.mpf('1e-30')
+                else:
+                    raise NotImplementedError
+            return self._ε
         else:
             raise NotImplementedError
 
-    def ε(self, *args, **kwargs):
-        return self.epsilon(*args, **kwargs)
+    @property
+    def ε(self):
+        if not hasattr(self, "_ε"):
+            self._ε = self.epsilon
+        return self._ε
+
+    @ε.setter
+    def ε(self, temp_ε):
+        self._ε = temp_ε
 
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
