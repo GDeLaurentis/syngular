@@ -7,9 +7,12 @@ import sympy
 import syngular
 
 from copy import copy, deepcopy
+from fractions import Fraction as Q
 from pyadic import PAdic, ModP
 
 from .tools import RootNotInFieldError, RootPrecisionError
+from .field import Field
+from .polynomial import Polynomial
 
 # this fixes a weird bug where sympy does not respect precision even if mpmath.mp.dps precision is set
 # (sympy seems to use mpmath as backhand)
@@ -57,7 +60,7 @@ class Variety_of_Ideal:
         from .ideal import Ideal
         from .qring import QuotientRing
 
-        assert all([valuation > 0 for valuation in valuations])
+        assert all([isinstance(valuation, str) or valuation >= 0 for valuation in valuations])
         self = deepcopy(self)   # don't modify self within this function
 
         random.seed(seed)
@@ -183,6 +186,9 @@ class Variety_of_Ideal:
 
                 if newIndepSymbols != tuple():  # this happens only with padics - codimension during iterative lift may drop
 
+                    if field.name != "padic":
+                        raise Exception(f"Codimension changed while not using padics, the field was {field}. Are you sure number of valuations is correct?")
+
                     rand_dict = {newIndepSymbol: random.randrange(1, field.characteristic ** (field.digits - iteration)) for newIndepSymbol in newIndepSymbols}
 
                     update_point_dict(base_point, rand_dict, field)
@@ -208,43 +214,33 @@ class Variety_of_Ideal:
         from .ideal import Ideal
         from .ring import Ring
 
+        print("calling semi numerical ideal")
+
         # on subsequent iterations, switch to an ideal of maximal codimension (potentiallty losing branch information), beacuse:
         # (floats) need to append perturbations to equations; (padics) may need to solve less equations; (finite field) iteration > 0 does not make sense, perturbation impossible.
         if iteration > 0:
             generators = list(copy(directions))
             if field.characteristic == 0:
                 for i, valuation in enumerate(valuations):
-                    generators[i] = str(generators[i]) + "-" + str(sympy.sympify(valuation))
+                    generators[i] = str(generators[i]) + " + " + str(-field(valuation))
         else:
             generators = copy(self.generators)
 
-        generators = sympy.sympify(generators)
-        generators = [sympy.expand(generator.subs(base_point)) for generator in generators]
+        print(base_point)
+        print(generators)
+        generators = [Polynomial(generator, field=field) for generator in generators]
+        generators = [generator.subs(base_point, field=field) for generator in generators]
         generators = list(filter(lambda x: x != 0, generators))
+        print(generators)
 
         if field.characteristic == 0:
-            generators = [str(generator) for generator in generators]
+            generators = [re.sub(r"(\d)j", r"\1*I", str(generator), ) for generator in generators]
         else:
-            def field_division(match):
-                """Patch division as in Fp or Qp, else the polynomial coefficients may not be explicitly in the field."""
-                integer_numerator = match.group(1)
-                symbolic_monomial = match.group(2)
-                if symbolic_monomial is None:
-                    symbolic_monomial = ''
-                integer_denominator = match.group(3)
-                # print(integer_numerator, symbolic_monomial, integer_denominator)
-                if field.name == "padic":
-                    quotient = PAdic(int(integer_numerator), field.characteristic, field.digits) / int(integer_denominator)
-                    return str(int(quotient) * field.characteristic ** quotient.n) + symbolic_monomial
-                elif field.name == "finite field":
-                    return str(int(ModP(int(integer_numerator), field.characteristic) / int(integer_denominator))) + symbolic_monomial
-                else:
-                    raise Exception("field not understood while patching sympy division.")
-            generators = [re.sub(r"(\d+)(\*[^+-]+)*\/(\d+)", field_division, str(generator)) for generator in generators]
-            generators = [re.sub(r"(?<![a-z])(\d+)",
-                                 lambda match: str(int(match.group(1)) // field.characteristic ** iteration % field.characteristic),
-                                 str(generator)) for generator in generators]
-            generators = sympy.sympify(generators)
+            for i, generator in enumerate(generators):
+                generators[i] = generator / field.characteristic ** iteration
+                generators[i].field = int
+                generators[i].field = Field("finite field", field.characteristic, 1)
+                generators[i].field = int
             generators = list(filter(lambda x: x != 0, generators))
 
         oZeroDimIdeal = Ideal(Ring(field.singular_notation, depSymbols, "lp"), generators)

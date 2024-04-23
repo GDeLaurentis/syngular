@@ -1,5 +1,6 @@
 import mpmath
 import random
+import re
 
 from fractions import Fraction as Q
 
@@ -37,7 +38,7 @@ class Field(object):
     def __call__(self, other):
         """Cast to field."""
         if self.name == "mpc":
-            return mpmath.mpc(other)
+            return mpmath.mpc(mpmath.mpmathify(other))
         elif self.name == "padic":
             return PAdic(other, self.characteristic, self.digits)
         elif self.name == "finite field":
