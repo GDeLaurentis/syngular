@@ -84,6 +84,9 @@ class Field(object):
         else:
             self._digits = value
 
+    def __contains__(self, other):
+        return isinstance(other, self(1).__class__)
+
     @property
     def is_algebraically_closed(self):
         if self.name == 'mpc':
