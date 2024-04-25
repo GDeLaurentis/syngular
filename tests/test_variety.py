@@ -19,7 +19,11 @@ def test_padic_variety_point():
     I = Ideal(Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp'), ['zb^2*wb*X^2-zb*w*wb*X-zb^2*X^2-zb*wb*X^2+zb*wb*X+zb*X^2-w*wb+wb',
                                                              'z*w*wb*X+zb*w*wb*X+z*w^2+z*w*wb-z*w*X-zb*w*X-z*wb*X-w*wb*X-2*z*w-w^2-z*wb+z*X+w*X+z+w',
                                                              'z*zb*X-z*w+z+w'])
-    point_dict = I.point_on_variety(Qp, directions=('(zb^2*wb*X^2-zb*w*wb*X-zb^2*X^2-zb*wb*X^2+zb*wb*X+zb*X^2-w*wb+wb)/123', '(z*zb*X-z*w+z+w)/456'), valuations=(1, 2))
+    point_dict = I.point_on_variety(Qp, directions=(
+        'X**2*wb*zb**2/123 - X**2*wb*zb/123 - X**2*zb**2/123 + X**2*zb/123 - X*w*wb*zb/123 + X*wb*zb/123 - w*wb/123 + wb/123',
+        'X*z*zb/456 - w*z/456 + w/456 + z/456'),
+        valuations=(1, 2)
+    )
     assert numpy.all(numpy.array([entry.n for entry in I.generators_eval(**point_dict)]) >= 1)
     assert eval('(zb^2*wb*X^2-zb*w*wb*X-zb^2*X^2-zb*wb*X^2+zb*wb*X+zb*X^2-w*wb+wb)/123'.replace("^", "**"), point_dict).n == 1
     assert eval('(z*zb*X-z*w+z+w)/456'.replace("^", "**"), point_dict).n == 2

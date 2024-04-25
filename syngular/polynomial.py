@@ -87,15 +87,15 @@ class Polynomial(object):
         self._field = field
 
     def __str__(self, for_repr=False):
-        return " + ".join((f"({str(coeff) if not for_repr else repr(coeff)})" 
-                           if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else 
-                           f"{str(coeff) if not for_repr else repr(coeff)}") + 
-                          (f"*{monomial}" if str(monomial) != "" else "") 
+        return " + ".join((f"({str(coeff) if not for_repr else repr(coeff)})"
+                           if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
+                           f"{str(coeff) if not for_repr else repr(coeff)}") +
+                          (f"*{monomial}" if str(monomial) != "" else "")
                           for coeff, monomial in self.coeffs_and_monomials).replace("+-", "-")
 
     def __repr__(self):
         return f"Polynomial(\"{self.__str__(for_repr=True)}\", {self.field})"
-    
+
     def __getitem__(self, index):
         return self.coeffs_and_monomials[index]
 
@@ -114,7 +114,7 @@ class Polynomial(object):
 
     @field.setter
     def field(self, temp_field):
-        if not isinstance(temp_field, Field) and not temp_field in [int, Q]:
+        if not isinstance(temp_field, Field) and temp_field not in [int, Q]:
             raise Exception(f"temp_field: {temp_field} is not a field")
         if not hasattr(self, "field") or temp_field != self.field:
             self._field = temp_field
@@ -127,7 +127,7 @@ class Polynomial(object):
     @coeffs.setter
     def coeffs(self, temp_coeffs):
         self.coeffs_and_monomials = [(temp_coeff, monomial) for temp_coeff, (coeff, monomial) in zip(temp_coeffs, self.coeffs_and_monomials)]
-        
+
     def rationalise(self):
         from pyadic.finite_field import vec_chained_FF_rationalize
         rat_coeffs = vec_chained_FF_rationalize([numpy.array(self.coeffs).astype(int), ], [self.field.characteristic, ]).tolist()
@@ -175,12 +175,18 @@ class Polynomial(object):
             coeff = re.findall(r"^[+-]?[\%\+\-\(\)\.j\d/e]*", coeff_and_monomial_string)[0]
             monomial = coeff_and_monomial_string.replace(coeff, "", 1)
             coeff = "+1" if coeff == "+" or coeff == "" else "-1" if coeff == "-" else coeff
+            coeff_denom = re.findall(r"/(\d+)", monomial)
+            if coeff_denom != []:
+                coeff_denom = int(coeff_denom[0])
+                monomial = monomial.replace(f"/{coeff_denom}", "")
+            else:
+                coeff_denom = 1
             if len(monomial) > 0 and monomial[0] == "*":
                 monomial = monomial[1:]
             if coeff[:2] == "+(" and coeff[-1:] == ")":
                 coeff = coeff[2:-1]
             # print("string:", coeff_and_monomial_string, "\ncoeff", coeff, "\nmonomial:", monomial)
-            coeffs_and_monomials += [(field(coeff), Monomial(monomial))]
+            coeffs_and_monomials += [(field(coeff) / coeff_denom, Monomial(monomial))]
         return coeffs_and_monomials
 
     def subs(self, base_point, field=None):
@@ -209,7 +215,7 @@ class Polynomial(object):
         elif isinstance(other, str):
             try:
                 return set(self.coeffs_and_monomials) == set(Polynomial(other, self.field).coeffs_and_monomials)
-            except:
+            except:  # noqa
                 return False
         else:
             raise NotImplementedError(f"Operation: __eq__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
@@ -222,7 +228,7 @@ class Polynomial(object):
             return Polynomial(self.coeffs_and_monomials + other.coeffs_and_monomials, self.field)
         else:
             raise NotImplementedError(f"Operation: __add__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
-    
+
     def __mul__(self, other):
         if isinstance(other, Polynomial):
             new_coeffs_and_monomials = []

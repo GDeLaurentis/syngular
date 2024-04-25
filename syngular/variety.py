@@ -7,8 +7,7 @@ import sympy
 import syngular
 
 from copy import copy, deepcopy
-from fractions import Fraction as Q
-from pyadic import PAdic, ModP
+from pyadic import ModP
 
 from .tools import RootNotInFieldError, RootPrecisionError
 from .field import Field
@@ -123,7 +122,7 @@ class Variety_of_Ideal:
         if base_point == {}:
             base_point = {indepSymbol: field.random_element() for indepSymbol in indepSymbols}
         else:
-            base_point = {str(key): val for key, val in base_point.items()}
+            base_point = {str(key): field(val) for key, val in base_point.items()}
         base_point |= {depSymbol: Polynomial(depSymbol, field) for depSymbol in depSymbols}
 
         oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=False, iteration=0)
@@ -209,8 +208,9 @@ class Variety_of_Ideal:
                     oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=False, iteration=iteration + 1)
 
         for key, val in base_point.items():
-            if not val in field:
-                assert isinstance(base_point[key], Polynomial)
+            if val not in field:
+                if not isinstance(base_point[key], Polynomial):
+                    raise ValueError(f"{base_point[key]} is {type(base_point[key])} instead of a Polynomial")
                 assert len(base_point[key]) == 1 and base_point[key].coeffs_and_monomials[0][1] == Monomial("")
                 base_point[key] = base_point[key].coeffs_and_monomials[0][0]
 

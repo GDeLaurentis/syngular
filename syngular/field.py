@@ -1,6 +1,5 @@
 import mpmath
 import random
-import re
 
 from fractions import Fraction as Q
 
