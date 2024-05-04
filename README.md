@@ -5,15 +5,17 @@
 [![PyPI Downloads](https://img.shields.io/pypi/dm/syngular.svg?label=PyPI%20downloads)](https://pypi.org/project/syngular/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/GDeLaurentis/syngular/HEAD)
 
+The `syngular` library is a Python 3 package for algebraic geometry computations. It provides an intuitive and object-oriented interface to [Singular](https://www.singular.uni-kl.de/). Furthermore, it extends the numerical capabilities of Singular, providing a numerical solver for arbitrary systems of polynomial equations in tandem with [pyadic](https://github.com/GDeLaurentis/pyadic), and its applicaibility to physics computations, where generic algorithms may be insufficient.
+
 ## Interface
 
-- Ideals, Rings, Quotient Rings functions
+Python classes for 'Ideal', 'Ring' and 'QuotientRing'. Several related functions accessible as attributes or methods. Intuitive operations through magic methods, e.g. Ideal addition '+' and intersection '&'.
 
 ## Extension
 
 ### Points on varieties over $\mathbb{F}_p$, $\mathbb{Q}_p$ and $\mathbb{C}$.
 
-The function `ideal.point_on_variety` allows generate solutions to arbirary systems of polynomial equations in arbitrary polynomial quotient rings, over any of the three above mentioned fields. The system of equations may be underconstrained, i.e. the ideal may have any dimension. The $p$-adic and complex solutions can be requested as not exact. I.e. the point may lie close to but not exactly on the associated variety. This is essential for numerical computations where otherwise division-by-zero erros may occur. The limitation is that Singular must be able to compute an indepednent set for the ideal, in order to reduce it to a zero dimensional sub-variety.
+The function `ideal.point_on_variety` allows generate numerical solutions to arbirary systems of polynomial equations in arbitrary polynomial quotient rings, over any of the three above mentioned fields. The system of equations may be underconstrained, i.e. the ideal may have any dimension. The $p$-adic and complex solutions can be requested as not exact. I.e. the point may lie close to but not exactly on the associated variety. This is essential for numerical computations where otherwise division-by-zero erros may occur. The limitation is that Singular must be able to compute an indepednent set for the ideal, in order to reduce it to a zero dimensional sub-variety.
 
 ### Primality test (lighter than a primary decomposition).
 
