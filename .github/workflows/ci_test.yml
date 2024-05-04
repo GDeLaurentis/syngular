@@ -32,12 +32,19 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest pytest-cov
+        pip install pytest pytest-cov
         pip install -e syngular-dev
     - name: Test with pytest
       run: |
         cd syngular-dev
         pytest |& tee coverage.txt
+        PYTEST_EXIT_CODE=${PIPESTATUS[0]}
+        if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
+          echo "pytest failed with exit code $PYTEST_EXIT_CODE"
+          exit 1
+        else
+          echo "pytest passed with exit code 0"
+        fi
     - name: Run update-badges script
       run: |
         cd syngular-dev
