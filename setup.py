@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='syngular',
-    version='v0.2.0',
+    version='v0.2.1',
     license='GNU General Public License v3.0',
     description='An Object-Oriented Python Interface to Singular',
     long_description=long_description,
