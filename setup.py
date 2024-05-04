@@ -23,6 +23,7 @@ setup(
         'sympy',
         'mutableint',
         'pyadic',
+        'multiset'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
