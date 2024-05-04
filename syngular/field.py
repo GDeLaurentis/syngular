@@ -37,7 +37,7 @@ class Field(object):
     def __call__(self, other):
         """Cast to field."""
         if self.name == "mpc":
-            return mpmath.mpc(other)
+            return mpmath.mpc(mpmath.mpmathify(other))
         elif self.name == "padic":
             return PAdic(other, self.characteristic, self.digits)
         elif self.name == "finite field":
@@ -82,6 +82,9 @@ class Field(object):
             mpmath.mp.dps = value
         else:
             self._digits = value
+
+    def __contains__(self, other):
+        return isinstance(other, self(1).__class__)
 
     @property
     def is_algebraically_closed(self):

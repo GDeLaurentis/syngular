@@ -7,9 +7,11 @@ import sympy
 import syngular
 
 from copy import copy, deepcopy
-from pyadic import PAdic, ModP
+from pyadic import ModP
 
 from .tools import RootNotInFieldError, RootPrecisionError
+from .field import Field
+from .polynomial import Monomial, Polynomial
 
 # this fixes a weird bug where sympy does not respect precision even if mpmath.mp.dps precision is set
 # (sympy seems to use mpmath as backhand)
@@ -57,8 +59,8 @@ class Variety_of_Ideal:
         from .ideal import Ideal
         from .qring import QuotientRing
 
-        assert all([valuation > 0 for valuation in valuations])
-        self = deepcopy(self)   # don't modify self within this function
+        assert all([isinstance(valuation, str) or valuation >= 0 for valuation in valuations])
+        self = deepcopy(self)   # don't modify self within this fuanction
 
         random.seed(seed)
 
@@ -73,6 +75,10 @@ class Variety_of_Ideal:
                 if len(directions) == self.codim:
                     break
             assert Ideal(self.ring, directions).codim == self.codim
+        # make sure provided directions are expanded strings
+        for i, direction in enumerate(directions):
+            if isinstance(direction, sympy.core.Basic):
+                directions[i] = str(sympy.expand(direction))
         # extra directions in qring
         if isinstance(self.ring, QuotientRing):
             directions += self.ring.ideal.generators
@@ -107,8 +113,8 @@ class Variety_of_Ideal:
         if indepSetNbr is None:
             indepSetNbr = random.randint(0, len(indepSets) - 1)
         indepSet = indepSets[indepSetNbr]
-        indepSymbols = tuple([symbol for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 1])
-        depSymbols = tuple([symbol for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 0])
+        indepSymbols = tuple([str(symbol) for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 1])
+        depSymbols = tuple([str(symbol)for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 0])
         if verbose:
             print("Chosen indepSet:", indepSet, "indepSymbols:", indepSymbols, "depSymbols:", depSymbols)
 
@@ -116,8 +122,8 @@ class Variety_of_Ideal:
         if base_point == {}:
             base_point = {indepSymbol: field.random_element() for indepSymbol in indepSymbols}
         else:
-            base_point = {sympy.symbols(str(key)): val for key, val in base_point.items()}
-        base_point |= {depSymbol: depSymbol for depSymbol in depSymbols}
+            base_point = {str(key): field(val) for key, val in base_point.items()}
+        base_point |= {depSymbol: Polynomial(depSymbol, field) for depSymbol in depSymbols}
 
         oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=False, iteration=0)
 
@@ -147,15 +153,19 @@ class Variety_of_Ideal:
                     raise RootNotInFieldError(f"Got root_dicts: {root_dicts}, for lex Groebner basis:\n{oSemiNumericalIdeal.groebner_basis}.")
                 else:
                     raise IndexError(f"Got root_dicts: {root_dicts}, for lex Groebner basis:\n{oSemiNumericalIdeal.groebner_basis}.")
-            root_dict = {key: root_dict[key] for key in root_dict.keys() if key not in indepSymbols}
+            # root_dict = {key: root_dict[key] for key in root_dict.keys() if key not in indepSymbols}
 
-            if iteration < iterations - 1:  # happens only with p-adics
+            if iteration < iterations - 1:
                 for key in root_dict.keys():
-                    root_dict[key] = root_dict[key] + (prime if prime is not None else 1) * key
-
-            # print("root_dict:, root_dict)
+                    if field.name == "padic":
+                        root_as_poly = Polynomial(root_dict[key], Field("finite field", field.characteristic, 1))
+                        root_as_poly.field = field
+                    else:
+                        root_as_poly = Polynomial(root_dict[key], field)
+                    root_dict[key] = root_as_poly + Polynomial(f"{(prime if prime is not None else 1)} * {key}", field)
 
             update_point_dict(base_point, root_dict, field)
+            # print("updated point:", base_point)
 
             if iteration < iterations - 1:
                 if prime is not None:
@@ -183,6 +193,9 @@ class Variety_of_Ideal:
 
                 if newIndepSymbols != tuple():  # this happens only with padics - codimension during iterative lift may drop
 
+                    if field.name != "padic":
+                        raise Exception(f"Codimension changed while not using padics, the field was {field}. Are you sure number of valuations is correct?")
+
                     rand_dict = {newIndepSymbol: random.randrange(1, field.characteristic ** (field.digits - iteration)) for newIndepSymbol in newIndepSymbols}
 
                     update_point_dict(base_point, rand_dict, field)
@@ -194,10 +207,12 @@ class Variety_of_Ideal:
 
                     oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=False, iteration=iteration + 1)
 
-        if field.name == "padic":
-            for key, val in base_point.items():
-                if not isinstance(val, PAdic):
-                    base_point[key] = PAdic(base_point[key], field.characteristic, field.digits)
+        for key, val in base_point.items():
+            if val not in field:
+                if not isinstance(base_point[key], Polynomial):
+                    raise ValueError(f"{base_point[key]} is {type(base_point[key])} instead of a Polynomial")
+                assert len(base_point[key]) == 1 and base_point[key].coeffs_and_monomials[0][1] == Monomial("")
+                base_point[key] = base_point[key].coeffs_and_monomials[0][0]
 
         return {str(key): val for key, val in base_point.items()}
 
@@ -214,37 +229,21 @@ class Variety_of_Ideal:
             generators = list(copy(directions))
             if field.characteristic == 0:
                 for i, valuation in enumerate(valuations):
-                    generators[i] = str(generators[i]) + "-" + str(sympy.sympify(valuation))
+                    generators[i] = str(generators[i]) + " + " + str(-field(valuation))
         else:
             generators = copy(self.generators)
 
-        generators = sympy.sympify(generators)
-        generators = [sympy.expand(generator.subs(base_point)) for generator in generators]
+        generators = [Polynomial(generator, field=field) for generator in generators]
+        generators = [generator.subs(base_point, field=field) for generator in generators]
         generators = list(filter(lambda x: x != 0, generators))
 
         if field.characteristic == 0:
-            generators = [str(generator) for generator in generators]
-        else:
-            def field_division(match):
-                """Patch division as in Fp or Qp, else the polynomial coefficients may not be explicitly in the field."""
-                integer_numerator = match.group(1)
-                symbolic_monomial = match.group(2)
-                if symbolic_monomial is None:
-                    symbolic_monomial = ''
-                integer_denominator = match.group(3)
-                # print(integer_numerator, symbolic_monomial, integer_denominator)
-                if field.name == "padic":
-                    quotient = PAdic(int(integer_numerator), field.characteristic, field.digits) / int(integer_denominator)
-                    return str(int(quotient) * field.characteristic ** quotient.n) + symbolic_monomial
-                elif field.name == "finite field":
-                    return str(int(ModP(int(integer_numerator), field.characteristic) / int(integer_denominator))) + symbolic_monomial
-                else:
-                    raise Exception("field not understood while patching sympy division.")
-            generators = [re.sub(r"(\d+)(\*[^+-]+)*\/(\d+)", field_division, str(generator)) for generator in generators]
-            generators = [re.sub(r"(?<![a-z])(\d+)",
-                                 lambda match: str(int(match.group(1)) // field.characteristic ** iteration % field.characteristic),
-                                 str(generator)) for generator in generators]
-            generators = sympy.sympify(generators)
+            generators = [re.sub(r"(\d)j", r"\1*I", str(generator), ) for generator in generators]
+        elif field.name == "padic":
+            for i, generator in enumerate(generators):
+                generators[i] = generator / field.characteristic ** iteration
+                generators[i].coeffs = [coeff.as_tuple_from_zero[0] for coeff in generators[i].coeffs]
+                generators[i]._field = Field("finite field", field.characteristic, 1)
             generators = list(filter(lambda x: x != 0, generators))
 
         oZeroDimIdeal = Ideal(Ring(field.singular_notation, depSymbols, "lp"), generators)
@@ -258,8 +257,8 @@ def update_point_dict(base_point_dict, new_vals_dict, field):
             base_point_dict[key] = new_vals_dict[key]
         elif key in new_vals_dict:
             base_point_dict[key] = base_point_dict[key].subs(new_vals_dict)
-        if hasattr(base_point_dict[key], "free_symbols") and base_point_dict[key].free_symbols == set() and field.name == "mpc":
-            base_point_dict[key] = mpmath.mpc(base_point_dict[key])
+        elif key in list(map(str, new_vals_dict.keys())):
+            base_point_dict[key] = base_point_dict[key].subs({str(key): val for key, val in new_vals_dict.items()})
     return base_point_dict
 
 
