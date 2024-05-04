@@ -1,9 +1,12 @@
 # A Python Interface \& Extension to [Singular](https://www.singular.uni-kl.de/)
 
-[![Continuous Integration Status](https://github.com/GDeLaurentis/syngular/actions/workflows/continuous_integration.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions)
+[![CI Lint](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_lint.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_lint.yml)
+[![CI Test](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_test.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_test.yml)
 [![Coverage](https://img.shields.io/badge/Coverage-86%25-greenyellow?labelColor=2a2f35)](https://github.com/GDeLaurentis/syngular/actions)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/syngular.svg?label=PyPI%20downloads)](https://pypi.org/project/syngular/)
+[![PyPI](https://img.shields.io/pypi/v/syngular.svg?label=PyPI)](https://pypi.org/project/syngular/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/syngular.svg?label=PyPI%20downloads)](https://pypistats.org/packages/syngular)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/GDeLaurentis/syngular/HEAD)
+[![DOI](https://zenodo.org/badge/378157462.svg)](https://zenodo.org/doi/10.5281/zenodo.11113680)
 
 The `syngular` library is a Python 3 package for algebraic geometry computations. It provides an intuitive and object-oriented interface to [Singular](https://www.singular.uni-kl.de/). Furthermore, it extends the numerical capabilities of Singular, providing a numerical solver for arbitrary systems of polynomial equations in tandem with [pyadic](https://github.com/GDeLaurentis/pyadic), and its applicaibility to physics computations, where generic algorithms may be insufficient.
 
