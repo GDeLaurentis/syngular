@@ -154,6 +154,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
                              f"ideal i = {self};",
                              # f"ideal gb = {','.join(self.groebner_basis)};",
                              "def pr = primdecGTZ(i);",   # options: GTZ / SY
+                             "short=0;",
                              "print(pr);",
                              "$"]
         output = execute_singular_command(singular_commands)

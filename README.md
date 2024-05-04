@@ -44,7 +44,69 @@ pytest --cov syngular/ --cov-report html tests/ --verbose
 
 ## Quick Start
 
+Define an ideal over a ring in two variables
 ```
 from syngular import Ideal, Ring
 I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
+```
+You can now inspect `I` to see what methods and attributes are available.
+
+## Solving arbitrary systems of polynomial equations
+
+Generate a $p$-adic solution to a system of 2 polynomial equations in 3 variables, controlling the precision to which they are solved.
+```
+field = Field("padic", 2 ** 31 - 1, 8)
+ring = Ring('0', ('x', 'y', 'z', ), 'dp')
+I = Ideal(ring, ['x*y^2+y^3-z^2, x^3+y^3-z^2', ])
+```
+
+The variety associated to `I` has 3 branches. In other words, the system of equations has 3 types of solutions.
+```
+(Q1, P1), (Q2, P2), (Q3, P3) = I.primary_decomposition
+```
+
+Generate a solution on the first branch
+```
+numerical_point = Q1.point_on_variety(field=field, directions=I.generators, valuations=(1, 1, ), ) 
+```
+is a dictionary of numerical values for each variable in the ring.
+
+These are small with valuations (1, 1)
+```
+list(map(lambda string: Polynomial(string, field).subs(numerical_point), Q1.generators))
+```
+
+while these are O(1) with valuations (0, 0)
+```
+list(map(lambda string: Polynomial(string, field).subs(numerical_point), Q2.generators))
+```
+
+See [arXiv:2207.10125](https://arxiv.org/pdf/2207.10125) Fig. 1 for a graphical depiction.
+
+## Citation
+
+If you found this library useful, please consider citing it and [Singular](https://www.singular.uni-kl.de/)
+
+
+```bibtex
+@inproceedings{DeLaurentis:2023qhd,
+    author = "De Laurentis, Giuseppe",
+    title = "{Lips: $p$-adic and singular phase space}",
+    booktitle = "{21th International Workshop on Advanced Computing and Analysis Techniques in Physics Research}: {AI meets Reality}",
+    eprint = "2305.14075",
+    archivePrefix = "arXiv",
+    primaryClass = "hep-th",
+    reportNumber = "PSI-PR-23-14",
+    month = "5",
+    year = "2023"
+}
+```
+
+```bibtex
+@misc {DGPS,
+ title = {{\sc Singular} {4-3-0} --- {A} computer algebra system for polynomial computations},
+ author = {Decker, Wolfram and Greuel, Gert-Martin and Pfister, Gerhard and Sch\"onemann, Hans},
+ year = {2022},
+ howpublished = {\url{http://www.singular.uni-kl.de}},
+}
 ```
