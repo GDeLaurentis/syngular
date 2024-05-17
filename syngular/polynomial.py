@@ -2,6 +2,7 @@ import functools
 import numpy
 import operator
 import re
+import sympy
 
 from collections import defaultdict
 from multiset import FrozenMultiset
@@ -48,6 +49,9 @@ class Monomial(FrozenMultiset):
     def __str__(self):
         return "*".join([f"{key}^{val}" for key, val in self.items()])
 
+    def tolist(self):
+        return [entry for key, val in self.items() for entry in [key, ] * val]
+
     def subs(self, values_dict):
         return functools.reduce(operator.mul, [values_dict[key] ** val for key, val in self.items()], 1)
 
@@ -77,12 +81,19 @@ class Polynomial(object):
     #     return self
 
     def __init__(self, coeffs_and_monomials, field):
-        if isinstance(coeffs_and_monomials, str):
-            coeffs_and_monomials = self.__rstr__(coeffs_and_monomials, field)
-        elif coeffs_and_monomials in field:
-            coeffs_and_monomials = [(coeffs_and_monomials, Monomial(''))]
+        if isinstance(coeffs_and_monomials, str) or isinstance(coeffs_and_monomials, sympy.Basic):
+            coeffs_and_monomials = self.__rstr__(str(coeffs_and_monomials), field)
         elif isinstance(coeffs_and_monomials, Polynomial):
             coeffs_and_monomials = coeffs_and_monomials.coeffs_and_monomials
+        elif isinstance(coeffs_and_monomials, list):
+            assert all([isinstance(entry, tuple) for entry in coeffs_and_monomials])
+            assert all([len(entry) == 2 for entry in coeffs_and_monomials])
+            assert all([entry[0] in field for entry in coeffs_and_monomials if entry[0] != 0])
+            assert all([isinstance(entry[1], Monomial) for entry in coeffs_and_monomials])
+        elif coeffs_and_monomials in field:
+            coeffs_and_monomials = [(coeffs_and_monomials, Monomial(''))]
+        else:
+            raise NotImplementedError(f"Received {coeffs_and_monomials} \n of type {type(coeffs_and_monomials)}")
         self.coeffs_and_monomials = coeffs_and_monomials
         self._field = field
 
@@ -91,7 +102,7 @@ class Polynomial(object):
                            if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
                            f"{str(coeff) if not for_repr else repr(coeff)}") +
                           (f"*{monomial}" if str(monomial) != "" else "")
-                          for coeff, monomial in self.coeffs_and_monomials).replace("+-", "-")
+                          for coeff, monomial in self.coeffs_and_monomials).replace("+-", "-").replace("+ -", "- ")
 
     def __repr__(self):
         return f"Polynomial(\"{self.__str__(for_repr=True)}\", {self.field})"
@@ -107,6 +118,8 @@ class Polynomial(object):
     def coeffs_and_monomials(self, temp_coeffs_and_monomials):
         self._coeffs_and_monomials = [(coeff, monomial) for coeff, monomial in temp_coeffs_and_monomials if coeff != 0]
         self.reduce()
+        if self._coeffs_and_monomials == []:  # ensure there is at least an entry
+            self._coeffs_and_monomials = [(0, Monomial(''))]
 
     @property
     def field(self):
@@ -128,6 +141,10 @@ class Polynomial(object):
     def coeffs(self, temp_coeffs):
         self.coeffs_and_monomials = [(temp_coeff, monomial) for temp_coeff, (coeff, monomial) in zip(temp_coeffs, self.coeffs_and_monomials)]
 
+    @property
+    def monomials(self):
+        return [monomial for _, monomial in self.coeffs_and_monomials]
+
     def rationalise(self):
         from pyadic.finite_field import vec_chained_FF_rationalize
         rat_coeffs = vec_chained_FF_rationalize([numpy.array(self.coeffs).astype(int), ], [self.field.characteristic, ]).tolist()
@@ -138,7 +155,7 @@ class Polynomial(object):
 
     def reduce(self):
         """Merges equal monomials"""
-        unequal_monoms = set([monom for coeff, monom in self.coeffs_and_monomials])
+        unequal_monoms = set([monom for _, monom in self.coeffs_and_monomials])
         if len(unequal_monoms) == len(self.coeffs_and_monomials):
             return  # already reduced
         new_coeffs_and_monomials = []
@@ -149,10 +166,12 @@ class Polynomial(object):
 
     @staticmethod
     def __rstr__(polynomial, field):
+        polynomial = polynomial.replace(" ", "").replace("+-", "-")
+        polynomial = re.sub(r"(\+|\-)I\*{0,1}([\d\.]+)", r"\1\2j", polynomial)  # format complex nbrs
         parentheses = [(("(", ), (")", )), (("{", ), ("}", )), (("[", "⟨", "<", ), ("]", "⟩", ">"))]
         lopen_parentheses = [parenthesis[0] for parenthesis in parentheses]
         lclos_parentheses = [parenthesis[1] for parenthesis in parentheses]
-        parentheses_balance = [0 for parenthesis in parentheses]
+        parentheses_balance = [0 for _ in parentheses]
         next_match = ""
         coeffs_and_monomials_strings = []
         for char in polynomial:
@@ -201,12 +220,15 @@ class Polynomial(object):
         new_poly.reduce()
         return new_poly
 
+    def __call__(self, *args, **kwargs):
+        return self.subs(*args, **kwargs)
+
     def __len__(self):
         return len(self.coeffs_and_monomials)
 
     def __eq__(self, other):
         if other == 0:
-            if self.coeffs_and_monomials == []:
+            if len(self) == 1 and self.coeffs[0] == 0 and self.monomials[0] == Monomial(''):
                 return True
             else:
                 return False
@@ -229,6 +251,9 @@ class Polynomial(object):
         else:
             raise NotImplementedError(f"Operation: __add__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
 
+    def __sub__(self, other):
+        return self + (-1 * other)
+
     def __mul__(self, other):
         if isinstance(other, Polynomial):
             new_coeffs_and_monomials = []
@@ -244,6 +269,9 @@ class Polynomial(object):
 
     def __rmul__(self, other):
         return self * other
+
+    def __neg__(self):
+        return -1 * self
 
     def __pow__(self, n):
         assert (isinstance(n, int) or n.is_integer())

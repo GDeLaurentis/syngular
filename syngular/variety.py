@@ -50,7 +50,8 @@ def retry_to_find_root(max_tries=100):
 class Variety_of_Ideal:
 
     @retry_to_find_root(max_tries=100)
-    def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, seed=None, verbose=False):
+    def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, seed=None,
+                         verbose=False, directions_analytic_check=False):
         """Generate a representative point on or close to the variety associated to this ideal.
         The point is 'valuations' away from the exact variety, in the directions specified by 'directions'.
         If 'directions' are not provided, pick the first n=codim simplest generators from 'self'.
@@ -64,17 +65,26 @@ class Variety_of_Ideal:
 
         random.seed(seed)
 
+        # do not modify directions, in case re-try is triggered, better the input is identical
+        directions = deepcopy(directions)
         # handle directions, i.e. the generators of the sub-ideal of maximal codimension
         if directions is None or directions == []:
             directions = []
-            if verbose:
-                print("Directions not provided, obtaining them from ideal generators.")
-            for poly in sorted(self.generators, key=lambda x: len(x)):
-                if Ideal(self.ring, directions + [poly, ]).codim > Ideal(self.ring, directions).codim:
-                    directions += [poly, ]
-                if len(directions) == self.codim:
-                    break
-            assert Ideal(self.ring, directions).codim == self.codim
+            if field.name != "finite field":
+                if verbose:
+                    print("Directions not provided, obtaining them from ideal generators.")
+                for poly in sorted(self.generators, key=lambda x: len(x)):
+                    if Ideal(self.ring, directions + [poly, ]).codim > Ideal(self.ring, directions).codim:
+                        directions += [poly, ]
+                    if len(directions) == self.codim:
+                        break
+                assert Ideal(self.ring, directions).codim == self.codim
+        elif directions_analytic_check:
+            # make sure the provided directions make sense, given the ideal (they need to belong to it)
+            # if this is not triggered, then the check is perfomed numerically later. The analytic check can be expensive.
+            for direction in directions:
+                if Polynomial(direction, Field("rational", 0, 0)) not in self:
+                    raise Exception(f"Invalid direction, {direction} was not in {self}.")
         # make sure provided directions are expanded strings
         for i, direction in enumerate(directions):
             if isinstance(direction, sympy.core.Basic):
@@ -87,7 +97,7 @@ class Variety_of_Ideal:
         if field.name == "padic":
             prime, iterations = field.characteristic, field.digits
             if valuations == tuple():
-                valuations = tuple(field.digits for poly in directions)
+                valuations = tuple(field.digits for _ in directions)
         elif field.name == "finite field":
             prime, iterations = field.characteristic, 1
         elif field.name == "mpc":
@@ -120,7 +130,7 @@ class Variety_of_Ideal:
 
         # handle the base point, i.e. the values of the independent variables
         if base_point == {}:
-            base_point = {indepSymbol: field.random_element() for indepSymbol in indepSymbols}
+            base_point = {indepSymbol: field.random() for indepSymbol in indepSymbols}
         else:
             base_point = {str(key): field(val) for key, val in base_point.items()}
         base_point |= {depSymbol: Polynomial(depSymbol, field) for depSymbol in depSymbols}
@@ -144,7 +154,7 @@ class Variety_of_Ideal:
                 raise Exception("The dimension of the semi-numerical ideal was not zero.")
 
             root_dicts = lex_groebner_solve(oSemiNumericalIdeal.groebner_basis, prime=prime)
-            check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, prime=prime)
+            check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, field)  # they may be stricter then wanted for mpc.
 
             try:
                 root_dict = root_dicts[0]
@@ -166,6 +176,15 @@ class Variety_of_Ideal:
 
             update_point_dict(base_point, root_dict, field)
             # print("updated point:", base_point)
+
+            if iteration == 0 and not directions_analytic_check:
+                # instead of analytically checking the directions are consistent with the ideal
+                # we check they vanish numerically at the constructed point
+                for direction in directions:
+                    num_poly = Polynomial(direction, field).subs(base_point).subs({key: 0 for key in depSymbols}).coeffs[0]
+                    # print("val:", float(abs(num_poly)))
+                    if abs(num_poly) > abs(field.ε):
+                        raise Exception(f"Invalid direction, {direction} was not in {self}. Numerical membership check failed.")
 
             if iteration < iterations - 1:
                 if prime is not None:
@@ -336,18 +355,14 @@ def lex_groebner_solve(equations, prime=None):
     return root_dicts
 
 
-def check_solutions(equations, root_dicts, prime=None):
+def check_solutions(equations, root_dicts, field):
     """Checks that all solutions in root_dicts solve the equations."""
+    field = field if field.name not in ["padic", "Qp"] else Field("finite field", field.characteristic, 1)
     for root_dict in root_dicts:
-        check = []
-        for equation in equations:
-            check += [sympy.sympify(equation)]
-            for key, value in root_dict.items():
-                if prime is None:
-                    check[-1] = sympy.simplify(check[-1].subs(key, value))
-                else:
-                    check[-1] = check[-1].subs(key, value) % prime
-        if prime is None:
-            assert all([numpy.isclose(complex(entry), 0) for entry in check])
-        else:
-            assert all([entry == 0 for entry in check])
+        check = [Polynomial(equation, field).subs(root_dict) for equation in equations]
+        assert all([len(entry) == 1 for entry in check])  # check these are elements of the field
+        if not all([abs(entry.coeffs[0]) <= field.tollerance for entry in check]):
+            if field.characteristic == 0:
+                raise RootPrecisionError
+            else:
+                raise AssertionError

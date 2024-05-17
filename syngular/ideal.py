@@ -9,6 +9,7 @@ from .ring import Ring
 from .qring import QuotientRing
 from .ideal_algorithms import Ideal_Algorithms
 from .variety import Variety_of_Ideal
+from .polynomial import Polynomial
 
 
 class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
@@ -192,8 +193,10 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         """Implements ideal membership."""
         if isinstance(other, Ideal):
             return self.__ideal_contains__(other)
-        elif isinstance(other, sympy.Expr) or isinstance(other, str):
+        elif isinstance(other, (str, sympy.Expr, Polynomial)):
             return self.__poly_contains__(other)
+        else:
+            raise NotImplementedError
 
     def __ideal_contains__(self, other):
         qIdeal = self / other
@@ -203,7 +206,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
             return False
 
     def __poly_contains__(self, other):
-        if isinstance(other, sympy.Expr):
+        if not isinstance(other, str):
             other = str(other)
         assert isinstance(other, str)
         singular_commands = [f"ring r = {self.ring};",

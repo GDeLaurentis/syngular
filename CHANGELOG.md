@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Custom `Monomial` and `Polynomial` classes, to better handle polynomials with coefficients in any of $\mathbb{C}, \mathbb{F}_p, \mathbb{Q}_p$.
 - DOI.
+- `Ideal.point_on_variety` now checks whether the provided `directions` are consistent with the given variety.
+- Added support for rational field, `Field('rational', 0, 0)`.
+- Tentatively introducing shorter aliases for field names, such as `C`, `Qp` and `Fp`.
 
 ### Changed
 
@@ -20,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Improved logic for call to `Singular` with long commands requiring the writing of a file. As a consequence, parallelised calls should now have much better stability.
+
+### Deprecated
+
+- `Field.random_element` is now deprecated. Use `Field.random` instead.
 
 ## [0.2.1] - 2024-05-04
 
