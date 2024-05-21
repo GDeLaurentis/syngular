@@ -90,7 +90,7 @@ class Variety_of_Ideal:
             if isinstance(direction, sympy.core.Basic):
                 directions[i] = str(sympy.expand(direction))
         # extra directions in qring
-        if isinstance(self.ring, QuotientRing):
+        if isinstance(self.ring, QuotientRing) and field.name not in ['finite field', 'Fp']:
             directions += self.ring.ideal.generators
 
         # handle valuations - if valuations == tuple() return a point exactly on the variety
