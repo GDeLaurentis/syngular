@@ -27,7 +27,7 @@ The function `ideal.test_primality` allows to test whether an ideal is prime or 
 
 ## Requirements
 ```
-numpy, sympy, mutableint, Singular
+numpy, sympy, Singular
 ```
 
 

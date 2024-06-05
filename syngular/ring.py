@@ -1,5 +1,4 @@
 import sympy
-import mutableint
 import syngular
 
 

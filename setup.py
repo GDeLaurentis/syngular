@@ -21,7 +21,6 @@ setup(
     install_requires=[
         'numpy',
         'sympy',
-        'mutableint',
         'pyadic',
         'multiset'
     ],
