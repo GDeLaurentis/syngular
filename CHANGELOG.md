@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Ideal.point_on_variety` no longer relies on `sympy` for parsing the polynomials, resulting in a drastic performance boost for complicated systems of polynomials. Interface should be unchanged.
 - Splitting CI Test and CI Lint.
+- <span style="color:red"> Breaking: </span> `syngular.TIMEOUT` and `syngular.DEGBOUND` are not normal integers (`.set()` will not work any longer). Removed `mutableint` because it breaks with python3.12 and might not be needed in the first place.
 
 ### Fixed
 

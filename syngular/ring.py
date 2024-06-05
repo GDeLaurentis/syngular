@@ -54,7 +54,7 @@ class Ring(object):
 
     def __str__(self):
         string = ", ".join(map(str, [self.field, self.variables, self.ordering])).replace(",)", ")")
-        if syngular.DEGBOUND != mutableint.MutableInt(0):
+        if syngular.DEGBOUND != 0:
             string += f";\ndegBound = {syngular.DEGBOUND};\noption()"
         return string
 

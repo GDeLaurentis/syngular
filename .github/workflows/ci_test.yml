@@ -8,35 +8,45 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-    branches: [ main ]
 
 jobs:
 
-  CI:
-    runs-on: ubuntu-latest
+  CI-Test:
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Install singular
       run: |
         sudo apt-get update
         sudo apt-get install singular
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.python-version }}
+
     - name: Checkout this Repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
-        path: syngular-dev
+        path: syngular
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest pytest-cov
-        pip install -e syngular-dev
+        pip install -e syngular
+
     - name: Test with pytest
       run: |
-        cd syngular-dev
+        cd syngular
         pytest |& tee coverage.txt
         PYTEST_EXIT_CODE=${PIPESTATUS[0]}
         if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
@@ -45,13 +55,17 @@ jobs:
         else
           echo "pytest passed with exit code 0"
         fi
+
     - name: Run update-badges script
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
       run: |
-        cd syngular-dev
+        cd syngular
         python update-badges.py
+
     - name: Update badges and commit README.md
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         file_pattern: README.md
-        repository: syngular-dev
+        repository: syngular
         commit_message: "Automatic badge update"

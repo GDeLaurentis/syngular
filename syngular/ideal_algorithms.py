@@ -176,7 +176,7 @@ class Ideal_Algorithms:
                 f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
                 continue
         # just keep the one with the smallest greatest factor
-        syngular.TIMEOUT.set(timeout_fpoly)
+        syngular.TIMEOUT = timeout_fpoly
         max_lengths = [max(map(len, f_poly_factors)) for f_poly_factors in f_polys_factors]
         if verbose:
             print("\n easiest projection:", linear_projection_indepSetIndices[max_lengths.index(min(max_lengths))])
@@ -186,7 +186,7 @@ class Ideal_Algorithms:
         if verbose:
             print(f"\r smallest f poly factors: {smallest_fpoly_factors}", end="                    \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
-        syngular.TIMEOUT.set(timeout_dim)
+        syngular.TIMEOUT = timeout_dim
         self.codim  # just cache it
         for i, factor in enumerate(smallest_fpoly_factors):
             if verbose:
@@ -198,7 +198,7 @@ class Ideal_Algorithms:
             # Experimental - Assumes codim w/ deg bound <= true codim.
             # Helps termiante the prime test early, IF the result is True.
             for deg_bound in [4, 6, 8, 10, 12, 14, 16, 18] * iterated_degbound_computation:
-                syngular.DEGBOUND.set(deg_bound)
+                syngular.DEGBOUND = deg_bound
                 X.delete_cached_properties()
                 if self.codim < X.codim:
                     if verbose:
@@ -211,11 +211,11 @@ class Ideal_Algorithms:
             else:  # loop completed without encountering a break
                 if verbose:
                     print("deg_bound reset to zero. Performing full computation.", end="\n")
-                syngular.DEGBOUND.set(0)
+                syngular.DEGBOUND = 0
                 # if self.indepSet.count(0) >= X.indepSet.count(0):   # deprecated, equivalent to next line.
                 if self.codim >= X.codim:
                     return False
-        syngular.DEGBOUND.set(0)  # Reset it to zero
+        syngular.DEGBOUND = 0  # Reset it to zero
         return True
 
     def test_primality(self, *args, **kwargs):
