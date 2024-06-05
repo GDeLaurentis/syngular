@@ -9,17 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Deprecated
+
+## [0.2.2] - 2024-06-06
+
+### Added
+
 - Custom `Monomial` and `Polynomial` classes, to better handle polynomials with coefficients in any of $\mathbb{C}, \mathbb{F}_p, \mathbb{Q}_p$.
 - DOI.
 - `Ideal.point_on_variety` now checks whether the provided `directions` are consistent with the given variety.
 - Added support for rational field, `Field('rational', 0, 0)`.
 - Tentatively introducing shorter aliases for field names, such as `C`, `Qp` and `Fp`.
+- Continuous depolymnet of Documentation via GitHub Pages.
+- CI checks several python versions.
 
 ### Changed
 
 - `Ideal.point_on_variety` no longer relies on `sympy` for parsing the polynomials, resulting in a drastic performance boost for complicated systems of polynomials. Interface should be unchanged.
 - Splitting CI Test and CI Lint.
-- <span style="color:red"> Breaking: </span> `syngular.TIMEOUT` and `syngular.DEGBOUND` are not normal integers (`.set()` will not work any longer). Removed `mutableint` because it breaks with python3.12 and might not be needed in the first place.
+- <span style="color:red"> Breaking: </span> `syngular.TIMEOUT` and `syngular.DEGBOUND` are now normal integers (instead of mutableints) (`.set()` will not work any longer). Removed `mutableint` because it breaks with python3.12 and might not be needed in the first place.
 
 ### Fixed
 
@@ -63,7 +75,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic interface functions for `Ring`, `QuotientRing` and `Ideal`.
 - Primality test, `Ideal.test_primality`.
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.1...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/GDeLaurentis/syngular/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/GDeLaurentis/syngular/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/GDeLaurentis/syngular/compare/v0.1.3...v0.2.0
 [0.1.3]: https://github.com/GDeLaurentis/syngular/releases/tag/v0.1.3
