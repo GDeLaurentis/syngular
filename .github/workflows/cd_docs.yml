@@ -50,7 +50,7 @@ jobs:
         rm -r docs/
         cp -r docs.back/ docs/
         touch docs/.nojekyll
-        git checkout main README.md
+        git checkout main -- README.md
         git add -f docs/.nojekyll
         git add -f docs/.buildinfo
         git add README.md docs/*

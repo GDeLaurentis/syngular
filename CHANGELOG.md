@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Ideal.point_on_variety` now checks whether the provided `directions` are consistent with the given variety.
 - Added support for rational field, `Field('rational', 0, 0)`.
 - Tentatively introducing shorter aliases for field names, such as `C`, `Qp` and `Fp`.
-- Continuous depolymnet of Documentation via GitHub Pages.
+- Continuous depolyment of Documentation via GitHub Pages.
 - CI checks several python versions.
 
 ### Changed
