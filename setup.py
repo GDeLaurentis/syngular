@@ -16,7 +16,12 @@ setup(
     author_email='g.dl@hotmail.it',
     url='https://github.com/GDeLaurentis/syngular',
     download_url=f'https://github.com/GDeLaurentis/syngular/archive/{version}.tar.gz',
-    keywords=['syngular', 'singular', 'algebraic geometry'],
+    project_urls={
+        'Documentation': 'https://gdelaurentis.github.io/syngular/',
+        'Issues': 'https://github.com/GDeLaurentis/syngular/issues',
+    },
+    keywords=['syngular', 'singular', 'algebraic geometry', 'ring', 'ideal',
+              'polynomials', 'polynomial equations'],
     packages=find_packages(),
     install_requires=[
         'numpy',
