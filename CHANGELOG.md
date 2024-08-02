@@ -9,9 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added warning `to point_on_variety` if `directions` are specified when the field is a finite field (and thus the directions cannot be imposed).
+
 ### Changed
 
 ### Fixed
+
+- Fixed issue where TIMEOUT was not being correctly set after removing mutableint.
+- Fixed issue in README where the example could not be copy-pasted into code (missing quotation marks).
 
 ### Deprecated
 

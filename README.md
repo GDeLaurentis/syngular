@@ -59,7 +59,7 @@ Generate a $p$-adic solution to a system of 2 polynomial equations in 3 variable
 ```
 field = Field("padic", 2 ** 31 - 1, 8)
 ring = Ring('0', ('x', 'y', 'z', ), 'dp')
-I = Ideal(ring, ['x*y^2+y^3-z^2, x^3+y^3-z^2', ])
+I = Ideal(ring, ['x*y^2+y^3-z^2', 'x^3+y^3-z^2', ])
 ```
 
 The variety associated to `I` has 3 branches. In other words, the system of equations has 3 types of solutions.

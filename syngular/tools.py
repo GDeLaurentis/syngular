@@ -6,7 +6,9 @@ import random
 from pathlib import Path
 
 
-def execute_singular_command(singular_command, timeout=syngular.TIMEOUT, verbose=False):
+def execute_singular_command(singular_command, timeout='default', verbose=False):
+    if timeout == 'default':
+        timeout = syngular.TIMEOUT
     if isinstance(singular_command, list):
         singular_command = "\n".join(singular_command)
     # print(singular_command)

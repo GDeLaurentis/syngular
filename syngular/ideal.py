@@ -141,6 +141,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
                              f"ring r = {self.ring};",
                              f"ideal i = {self};",
                              "def pr = radical(i);",   # options: GTZ / SY
+                             "short=0;",
                              "print(pr);",
                              "$"]
         output = execute_singular_command(singular_commands)

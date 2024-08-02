@@ -68,6 +68,10 @@ class Variety_of_Ideal:
         # do not modify directions, in case re-try is triggered, better the input is identical
         directions = deepcopy(directions)
         # handle directions, i.e. the generators of the sub-ideal of maximal codimension
+        if directions is not None and directions != [] and field.name == "finite field":
+            if verbose:
+                print("Warning: directions passed with a finite field. Discarding them.")
+            directions = []
         if directions is None or directions == []:
             directions = []
             if field.name != "finite field":
