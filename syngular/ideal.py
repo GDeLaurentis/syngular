@@ -55,7 +55,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
     def dim(self):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",    # Check which is better
-                             f"ideal gb =  std(i);",   # {','.join(self.groebner_basis)};",
+                             "ideal gb =  std(i);",   # {','.join(self.groebner_basis)};",
                              "print(dim(gb));",
                              "$"]
         output = execute_singular_command(singular_commands)

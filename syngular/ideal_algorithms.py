@@ -122,7 +122,7 @@ class Ideal_Algorithms:
         Ideal = self.__class__
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 
-    def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600, 
+    def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600,
                      iterated_degbound_computation=False, projection_number=None):
         """Returns True if the ideal is prime, False if it is not. Raises Inconclusive if it can't decide. Assumes equidimensionality of input ideal.
         Experimental new feature with iterated_degbound_computation=True, may help when ideal is prime and deg-unbounded computation fails.
