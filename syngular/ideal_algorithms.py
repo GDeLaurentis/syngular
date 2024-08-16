@@ -122,7 +122,8 @@ class Ideal_Algorithms:
         Ideal = self.__class__
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 
-    def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600, iterated_degbound_computation=False):
+    def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600, 
+                     iterated_degbound_computation=False, projection_number=None):
         """Returns True if the ideal is prime, False if it is not. Raises Inconclusive if it can't decide. Assumes equidimensionality of input ideal.
         Experimental new feature with iterated_degbound_computation=True, may help when ideal is prime and deg-unbounded computation fails.
         """
@@ -130,61 +131,79 @@ class Ideal_Algorithms:
         # algorithm works over rings, if in a qring convert to the full ring.
         self.to_full_ring()
         # first step: find zero dimensional projections which are linear in the dependent variables, i.e. are a single point.
-        linear_projection_indepSetIndices = []
-        for i in range(len(self.indepSets)):
+        if projection_number is None:
+            linear_projection_indepSetIndices = []
+            for i in range(len(self.indepSets)):
+                if verbose:
+                    print(f"\r @ {i}/{len(self.indepSets)}", end="")
+                indepSet = self.indepSets[i]
+                X = self.ring.variables                                            # all variables: X
+                U = tuple(var for is_indep, var in zip(indepSet, X) if is_indep)   # independent variables: U
+                XqU = tuple(entry for entry in X if entry not in U)                # dependent variables X / U
+                projection = {entry: randint(1, 2 ** 31 - 19) for entry in U}      # random values for U
+                zeroDimSelf = deepcopy(self)
+                zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=2 ** 31 - 19).as_expr()) for entry in sympy.sympify(zeroDimSelf.generators)]
+                zeroDimSelf.ring = Ring(str(2 ** 31 - 19), XqU, 'lp')
+                zeroDimSelf.delete_cached_properties()
+                degrees = list(map(int, re.findall(r"\^(\d)", "".join(zeroDimSelf.groebner_basis))))
+                if degrees == []:
+                    max_degree = 1
+                else:
+                    max_degree = max(degrees)
+                if max_degree == 1:
+                    linear_projection_indepSetIndices += [i]
+                if verbose:
+                    print(f"\r @ {i}/{len(self.indepSets)} linear projections found: {len(linear_projection_indepSetIndices)}", end="")
             if verbose:
-                print(f"\r @ {i}/{len(self.indepSets)}", end="")
-            indepSet = self.indepSets[i]
-            X = self.ring.variables                                            # all variables: X
-            U = tuple(var for is_indep, var in zip(indepSet, X) if is_indep)   # independent variables: U
-            XqU = tuple(entry for entry in X if entry not in U)                # dependent variables X / U
-            projection = {entry: randint(1, 2 ** 31 - 19) for entry in U}      # random values for U
-            zeroDimSelf = deepcopy(self)
-            zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=2 ** 31 - 19).as_expr()) for entry in sympy.sympify(zeroDimSelf.generators)]
-            zeroDimSelf.ring = Ring(str(2 ** 31 - 19), XqU, 'lp')
-            zeroDimSelf.delete_cached_properties()
-            degrees = list(map(int, re.findall(r"\^(\d)", "".join(zeroDimSelf.groebner_basis))))
-            if degrees == []:
-                max_degree = 1
-            else:
-                max_degree = max(degrees)
-            if max_degree == 1:
-                linear_projection_indepSetIndices += [i]
+                print(f"\r linear projections found: {len(linear_projection_indepSetIndices)}", end="                    ")
+            if len(linear_projection_indepSetIndices) == 0:
+                raise Inconclusive
+            # for each single-point zero-dimensional projection, get the factors of the f-polynomial in EXTCONT (Becker et al. Proposition 8.96)
+            f_polys_factors = []
+            for i, linear_projection_indepSetIndex in enumerate(linear_projection_indepSetIndices):
+                if verbose:
+                    print(f"\r gathering f-poly factors: @ {i}/{len(linear_projection_indepSetIndices)}", end="                                   ")
+                indepSet = self.indepSets[linear_projection_indepSetIndex]
+                # 0 dim slice
+                X = self.ring.variables
+                U = tuple(var for is_indep, var in zip(indepSet, X) if is_indep)
+                try:
+                    f_polys_factors += [self.extension_contraction_fpoly(U, "lp")]
+                except TimeoutError:
+                    f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
+                    continue
+                except Exception as e:
+                    if verbose:
+                        print(f"An exception occurred: {e}")
+                    f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
+                    continue
+            # just keep the one with the smallest greatest factor
+            syngular.TIMEOUT = timeout_fpoly
+            max_lengths = [max(map(len, f_poly_factors)) for f_poly_factors in f_polys_factors]
             if verbose:
-                print(f"\r @ {i}/{len(self.indepSets)} linear projections found: {len(linear_projection_indepSetIndices)}", end="")
-        if verbose:
-            print(f"\r linear projections found: {len(linear_projection_indepSetIndices)}", end="                    ")
-        if len(linear_projection_indepSetIndices) == 0:
-            raise Inconclusive
-        # for each single-point zero-dimensional projection, get the factors of the f-polynomial in EXTCONT (Becker et al. Proposition 8.96)
-        f_polys_factors = []
-        for i, linear_projection_indepSetIndex in enumerate(linear_projection_indepSetIndices):
+                print("\n easiest projection:", linear_projection_indepSetIndices[max_lengths.index(min(max_lengths))])
+            smallest_fpoly_factors = f_polys_factors[max_lengths.index(min(max_lengths))]
+        else:
             if verbose:
-                print(f"\r gathering f-poly factors: @ {i}/{len(linear_projection_indepSetIndices)}", end="                                   ")
-            indepSet = self.indepSets[linear_projection_indepSetIndex]
+                print(f"\r gathering f-poly factors for projection: {projection_number}.", end="                                   ")
+            indepSet = self.indepSets[projection_number]
             # 0 dim slice
             X = self.ring.variables
             U = tuple(var for is_indep, var in zip(indepSet, X) if is_indep)
+            smallest_fpoly_factors = []
             try:
-                f_polys_factors += [self.extension_contraction_fpoly(U, "lp")]
+                smallest_fpoly_factors += self.extension_contraction_fpoly(U, "lp")
             except TimeoutError:
-                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
-                continue
+                smallest_fpoly_factors += ['- TIMEDOUT - probably very very long ' * 80]
             except Exception as e:
                 if verbose:
                     print(f"An exception occurred: {e}")
-                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
-                continue
-        # just keep the one with the smallest greatest factor
-        syngular.TIMEOUT = timeout_fpoly
-        max_lengths = [max(map(len, f_poly_factors)) for f_poly_factors in f_polys_factors]
-        if verbose:
-            print("\n easiest projection:", linear_projection_indepSetIndices[max_lengths.index(min(max_lengths))])
-        smallest_fpoly_factors = f_polys_factors[max_lengths.index(min(max_lengths))]
+                smallest_fpoly_factors += ['- TIMEDOUT - probably very very long ' * 80]
         if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 80]:
-            raise Inconclusive
+            raise Inconclusive("Timedout on fpoly factors gathering.")
+        smallest_fpoly_factors = sorted(smallest_fpoly_factors, key=lambda x: len(x))
         if verbose:
-            print(f"\r smallest f poly factors: {smallest_fpoly_factors}", end="                    \n")
+            print(f"\r smallest f poly factors ({len(smallest_fpoly_factors)}): {smallest_fpoly_factors}", end="                    \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
         syngular.TIMEOUT = timeout_dim
         self.codim  # just cache it
@@ -197,7 +216,7 @@ class Ideal_Algorithms:
 
             # Experimental - Assumes codim w/ deg bound <= true codim.
             # Helps termiante the prime test early, IF the result is True.
-            for deg_bound in [4, 6, 8, 10, 12, 14, 16, 18] * iterated_degbound_computation:
+            for deg_bound in [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24] * iterated_degbound_computation:
                 syngular.DEGBOUND = deg_bound
                 X.delete_cached_properties()
                 if self.codim < X.codim:
