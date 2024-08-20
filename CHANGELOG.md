@@ -9,7 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Deprecated
+
+## [0.2.3] - 2024-08-20
+
+### Added
+
 - Added warning `to point_on_variety` if `directions` are specified when the field is a finite field (and thus the directions cannot be imposed).
+- Support for `wp` weighted reverse lex order from Singular.
+- `test_primality` allows to skip to a given `projection_number` (optional keyword argument)
 
 ### Changed
 
@@ -19,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed issue in README where the example could not be copy-pasted into code (missing quotation marks).
 
 ### Deprecated
+
+- Python 3.8 no longer supported.
 
 ## [0.2.2] - 2024-06-06
 
@@ -80,7 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic interface functions for `Ring`, `QuotientRing` and `Ideal`.
 - Primality test, `Ideal.test_primality`.
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.2...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.3...HEAD
+[0.2.3]: https://github.com/GDeLaurentis/syngular/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/GDeLaurentis/syngular/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/GDeLaurentis/syngular/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/GDeLaurentis/syngular/compare/v0.1.3...v0.2.0
