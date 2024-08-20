@@ -2,7 +2,7 @@
 
 [![CI Lint](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_lint.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_lint.yml)
 [![CI Test](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_test.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_test.yml)
-[![Coverage](https://img.shields.io/badge/Coverage-87%25-greenyellow?labelColor=2a2f35)](https://github.com/GDeLaurentis/syngular/actions)
+[![Coverage](https://img.shields.io/badge/Coverage-86%25-greenyellow?labelColor=2a2f35)](https://github.com/GDeLaurentis/syngular/actions)
 [![Docs](https://github.com/GDeLaurentis/syngular/actions/workflows/cd_docs.yml/badge.svg?label=Docs)](https://gdelaurentis.github.io/syngular/)
 [![PyPI](https://img.shields.io/pypi/v/syngular.svg?label=PyPI)](https://pypi.org/project/syngular/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/syngular.svg?label=PyPI%20downloads)](https://pypistats.org/packages/syngular)
@@ -59,7 +59,7 @@ Generate a $p$-adic solution to a system of 2 polynomial equations in 3 variable
 ```
 field = Field("padic", 2 ** 31 - 1, 8)
 ring = Ring('0', ('x', 'y', 'z', ), 'dp')
-I = Ideal(ring, ['x*y^2+y^3-z^2, x^3+y^3-z^2', ])
+I = Ideal(ring, ['x*y^2+y^3-z^2', 'x^3+y^3-z^2', ])
 ```
 
 The variety associated to `I` has 3 branches. In other words, the system of equations has 3 types of solutions.
