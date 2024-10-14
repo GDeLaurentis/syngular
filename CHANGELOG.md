@@ -11,7 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Improved stability of `point_on_variety` when using arbitrary precision floats.
+
 ### Fixed
+
+- Fixed issue when parsing complex floats with imaginary part in scientific notation.
 
 ### Deprecated
 
@@ -19,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added warning `to point_on_variety` if `directions` are specified when the field is a finite field (and thus the directions cannot be imposed).
+- Added warning to `point_on_variety` if `directions` are specified when the field is a finite field (and thus the directions cannot be imposed).
 - Support for `wp` weighted reverse lex order from Singular.
 - `test_primality` allows to skip to a given `projection_number` (optional keyword argument)
 
