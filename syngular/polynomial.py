@@ -167,7 +167,7 @@ class Polynomial(object):
     @staticmethod
     def __rstr__(polynomial, field):
         polynomial = polynomial.replace(" ", "").replace("+-", "-")
-        polynomial = re.sub(r"(\+|\-)I\*{0,1}([\d\.]+)", r"\1\2j", polynomial)  # format complex nbrs
+        polynomial = re.sub(r"(\+|\-)I\*{0,1}([\d\.e\+\-]+)", r"\1\2j", polynomial)  # format complex nbrs
         parentheses = [(("(", ), (")", )), (("{", ), ("}", )), (("[", "⟨", "<", ), ("]", "⟩", ">"))]
         lopen_parentheses = [parenthesis[0] for parenthesis in parentheses]
         lclos_parentheses = [parenthesis[1] for parenthesis in parentheses]

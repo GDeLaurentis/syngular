@@ -9,6 +9,8 @@ import syngular
 from copy import copy, deepcopy
 from pyadic import ModP
 
+from mpmath.libmp.libhyper import NoConvergence
+
 from .tools import RootNotInFieldError, RootPrecisionError
 from .field import Field
 from .polynomial import Monomial, Polynomial
@@ -32,10 +34,10 @@ def retry_to_find_root(max_tries=100):
                         res = func(self, field, base_point=base_point, directions=directions, valuations=valuations,
                                    indepSetNbr=indepSetNbr, seed=seed, verbose=verbose)
                         break
-                    except (RootNotInFieldError, RootPrecisionError) as e:
+                    except (RootNotInFieldError, RootPrecisionError, NoConvergence, AssertionError) as e:
                         if try_nbr != max_tries - 1:
                             if verbose:
-                                print(f"Caught {type(e).__name__}, retrying...")
+                                print(f"Caught {type(e).__name__} at try number {try_nbr}, retrying...")
                             if seed is not None:  # maintain pseudo-randomness, but change seed, else retring has no effect.
                                 random.seed(seed)
                                 seed += random.randint(10 ** 5, 10**6)
@@ -157,7 +159,7 @@ class Variety_of_Ideal:
             if prime is None and oSemiNumericalIdeal.groebner_basis == ['1']:
                 raise RootPrecisionError
             if not oSemiNumericalIdeal.dim == 0:
-                raise Exception("The dimension of the semi-numerical ideal was not zero.")
+                raise AssertionError("The dimension of the semi-numerical ideal was not zero.")
 
             root_dicts = lex_groebner_solve(oSemiNumericalIdeal.groebner_basis, prime=prime)
             check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, field)  # they may be stricter then wanted for mpc.
