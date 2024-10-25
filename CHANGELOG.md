@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `zero_ideal` and `random_point` functions for `Ring` class.
+
 ### Changed
 
 - Improved stability of `point_on_variety` when using arbitrary precision floats.

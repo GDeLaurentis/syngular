@@ -63,3 +63,13 @@ class Ring(object):
     def __eq__(self, other):
         assert isinstance(self, Ring) and isinstance(other, Ring)
         return self.field == other.field and self.variables == other.variables and self.ordering == other.ordering
+
+    def zero_ideal(self):
+        """Returns the zero ideal ⟨0⟩ in the ring."""
+        from .ideal import Ideal
+        return Ideal(self, [])
+
+    def random_point(self, field):
+        """Returns a random numerical point in the given field on the zero ideal of the ring."""
+        j = self.zero_ideal()
+        return j.point_on_variety(field=field)
