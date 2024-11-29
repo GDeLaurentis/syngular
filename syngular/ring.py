@@ -69,7 +69,7 @@ class Ring(object):
         from .ideal import Ideal
         return Ideal(self, [])
 
-    def random_point(self, field):
+    def random_point(self, field, seed=None):
         """Returns a random numerical point in the given field on the zero ideal of the ring."""
         j = self.zero_ideal()
-        return j.point_on_variety(field=field)
+        return j.point_on_variety(field=field, seed=seed)
