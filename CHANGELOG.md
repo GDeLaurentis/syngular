@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed issue when parsing complex floats with imaginary part in scientific notation.
+- Fixed bug in primality test where if the deg. bounded computation was inconclusive the deg. bounded Groebner basis was still being using in the computation without a degree bound, causing erroneous failures.
 
 ### Deprecated
 

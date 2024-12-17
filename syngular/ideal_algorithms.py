@@ -231,6 +231,7 @@ class Ideal_Algorithms:
                 if verbose:
                     print("deg_bound reset to zero. Performing full computation.", end="\n")
                 syngular.DEGBOUND = 0
+                X.delete_cached_properties()
                 # if self.indepSet.count(0) >= X.indepSet.count(0):   # deprecated, equivalent to next line.
                 if self.codim >= X.codim:
                     return False
