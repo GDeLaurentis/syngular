@@ -216,7 +216,7 @@ class Ideal_Algorithms:
 
             # Experimental - Assumes codim w/ deg bound <= true codim.
             # Helps termiante the prime test early, IF the result is True.
-            for deg_bound in [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24] * iterated_degbound_computation:
+            for deg_bound in syngular.DEGBOUNDs * iterated_degbound_computation:
                 syngular.DEGBOUND = deg_bound
                 X.delete_cached_properties()
                 if self.codim < X.codim:
