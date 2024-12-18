@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+### Deprecated
+
+
+## [0.2.4] - 2024-12-18
 
 ### Added
 
@@ -21,7 +33,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed issue when parsing complex floats with imaginary part in scientific notation.
 - Fixed bug in primality test where if the deg. bounded computation was inconclusive the deg. bounded Groebner basis was still being using in the computation without a degree bound, causing erroneous failures.
 
-### Deprecated
 
 ## [0.2.3] - 2024-08-20
 
@@ -31,8 +42,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `wp` weighted reverse lex order from Singular.
 - `test_primality` allows to skip to a given `projection_number` (optional keyword argument)
 
-### Changed
-
 ### Fixed
 
 - Fixed issue where TIMEOUT was not being correctly set after removing mutableint.
@@ -41,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 - Python 3.8 no longer supported.
+
 
 ## [0.2.2] - 2024-06-06
 
@@ -68,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Field.random_element` is now deprecated. Use `Field.random` instead.
 
+
 ## [0.2.1] - 2024-05-04
 
 ### Added
@@ -83,6 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Occasinally, when generating a `point_on_variety` with multi-precision complex (`mpc`) the `lex_groebner_basis` computation can return the unit ideal, due to precision loss. Introduced a new `RootPrecisionError` exception and added this to the retry logic.
 
+
 ## [0.2.0] - 2023-12-27
 
 ### Added
@@ -95,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Syntax consistency when printing polynomials over rings with single-character variables (forced `short=0` always).
 - Import path in Singular for `poly.lib` is now `polylib.lib`.
 
+
 ## [0.1.3] - 2023-03-02
 
 ### Added
@@ -102,7 +115,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic interface functions for `Ring`, `QuotientRing` and `Ideal`.
 - Primality test, `Ideal.test_primality`.
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.3...HEAD
+
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.2.4...HEAD
+[0.2.4]: https://github.com/GDeLaurentis/syngular/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/GDeLaurentis/syngular/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/GDeLaurentis/syngular/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/GDeLaurentis/syngular/compare/v0.2.0...v0.2.1
