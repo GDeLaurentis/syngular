@@ -149,6 +149,13 @@ class Field(object):
         else:
             raise NotImplementedError
 
+    def random_square(self):
+        from pyadic.field_extension import FieldExtension
+        for i in range(10000):
+            val = self.random()
+            if not isinstance(self.sqrt(val), FieldExtension):
+                return val
+
     def random_element(self, *args, **kwargs):
         import warnings
         warnings.warn(
