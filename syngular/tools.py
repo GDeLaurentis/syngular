@@ -21,7 +21,15 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         test = subprocess.Popen(["timeout", str(timeout), "Singular", "--quiet", file_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
         test = subprocess.Popen(["timeout", str(timeout), "Singular", "--quiet", "--execute", singular_command], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    output = test.communicate()[0]
+    try:
+        output = test.communicate()[0]
+    except KeyboardInterrupt:
+        print("Keyboard interrupt received. Terminating the Singular process.")
+        if test.poll() is None:  # Check if the process is still running
+            import os
+            import signal
+            os.kill(test.pid, signal.SIGTERM)
+        raise KeyboardInterrupt
     output = output.decode("utf-8")
     if output[-1] == "\n":
         output = output[:-1]
