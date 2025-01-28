@@ -4,6 +4,7 @@ import syngular
 import random
 
 from pathlib import Path
+from packaging.version import Version
 
 
 def execute_singular_command(singular_command, timeout='default', verbose=False):
@@ -66,3 +67,9 @@ class RootNotInFieldError(Exception):
 
 class RootPrecisionError(Exception):
     pass
+
+
+test = subprocess.Popen(["timeout", "5", "Singular", "--dump-versiontuple"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+output = test.communicate()[0]
+output = output.decode("utf-8").replace("\n", "")
+Singular_version = Version(output)

@@ -3,8 +3,9 @@ import re
 
 from random import randint
 from copy import deepcopy
+from packaging.version import Version
 
-from .tools import execute_singular_command
+from .tools import execute_singular_command, Singular_version
 from .ring import Ring
 
 
@@ -96,7 +97,7 @@ class Ideal_Algorithms:
         int s = 0;
         for (int i_=1; i_<=size(factors); i_=i_+1)
         {{
-            Iec_and_s = sat(Iec, ideal(factors[i_]));
+            Iec_and_s = {sat}(Iec, ideal(factors[i_]));
             Iec = Iec_and_s[1];
             s = max(s, Iec_and_s[2]);
         }}
@@ -117,8 +118,9 @@ class Ideal_Algorithms:
             r2 = Ring((sympy.symbols('0'), ) + U, XqU, 'dp')
         else:
             raise ValueError
-        string = execute_singular_command(self.singular_commands_EXTCONT2.format(**{"extended_ideal": self.extension(U, ordering),
-                                                                                    "f_polys_factors": ','.join(self.extension_contraction_fpoly(U, ordering)), "r": r, "r2": r2}))
+        string = execute_singular_command(self.singular_commands_EXTCONT2.format(**{
+            "extended_ideal": self.extension(U, ordering), "f_polys_factors": ','.join(self.extension_contraction_fpoly(U, ordering)),
+            "r": r, "r2": r2, "sat": "sat" if Singular_version <= Version('4.3.1') else 'sat_with_exp'}))
         Ideal = self.__class__
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 
