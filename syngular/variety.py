@@ -24,7 +24,7 @@ sympy.nroots(equation, n=300, maxsteps=500)
 def retry_to_find_root(max_tries=100):
     def retry_to_find_root_decorator(func):
         @functools.wraps(func)
-        def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet=None, 
+        def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet=None,
                     seed=None, verbose=False):
             if base_point != {} and indepSetNbr is not None:
                 return func(self, field, base_point=base_point, directions=directions, valuations=valuations,
