@@ -24,15 +24,16 @@ sympy.nroots(equation, n=300, maxsteps=500)
 def retry_to_find_root(max_tries=100):
     def retry_to_find_root_decorator(func):
         @functools.wraps(func)
-        def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, seed=None, verbose=False):
+        def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet=None, 
+                    seed=None, verbose=False):
             if base_point != {} and indepSetNbr is not None:
                 return func(self, field, base_point=base_point, directions=directions, valuations=valuations,
-                            indepSetNbr=indepSetNbr, seed=seed, verbose=verbose)
+                            indepSetNbr=indepSetNbr, indepSet=indepSet, seed=seed, verbose=verbose)
             else:
                 for try_nbr in range(max_tries):
                     try:
                         res = func(self, field, base_point=base_point, directions=directions, valuations=valuations,
-                                   indepSetNbr=indepSetNbr, seed=seed, verbose=verbose)
+                                   indepSetNbr=indepSetNbr, indepSet=indepSet, seed=seed, verbose=verbose)
                         break
                     except (RootNotInFieldError, RootPrecisionError, NoConvergence, AssertionError) as e:
                         if try_nbr != max_tries - 1:
@@ -52,8 +53,8 @@ def retry_to_find_root(max_tries=100):
 class Variety_of_Ideal:
 
     @retry_to_find_root(max_tries=100)
-    def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, seed=None,
-                         verbose=False, directions_analytic_check=False):
+    def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet=None,
+                         seed=None, verbose=False, directions_analytic_check=False):
         """Generate a representative point on or close to the variety associated to this ideal.
         The point is 'valuations' away from the exact variety, in the directions specified by 'directions'.
         If 'directions' are not provided, pick the first n=codim simplest generators from 'self'.
@@ -122,13 +123,14 @@ class Variety_of_Ideal:
             self.to_full_ring()
 
         # handle independent set
-        indepSets = self.indepSets
-        if verbose:
-            print("Codimensions:", set(indepSet.count(0) for indepSet in indepSets))
-            print("Number of indepSets:", len(indepSets))
-        if indepSetNbr is None:
-            indepSetNbr = random.randint(0, len(indepSets) - 1)
-        indepSet = indepSets[indepSetNbr]
+        if indepSet is None:
+            indepSets = self.indepSets
+            if verbose:
+                print("Codimensions:", set(indepSet.count(0) for indepSet in indepSets))
+                print("Number of indepSets:", len(indepSets))
+            if indepSetNbr is None:
+                indepSetNbr = random.randint(0, len(indepSets) - 1)
+            indepSet = indepSets[indepSetNbr]
         indepSymbols = tuple([str(symbol) for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 1])
         depSymbols = tuple([str(symbol)for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 0])
         if verbose:
