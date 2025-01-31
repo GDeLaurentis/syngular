@@ -17,6 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 
+## [0.2.5] - 2024-12-31
+
+### Added
+
+- `Field.random_square` generates a random perfect square in a field.
+- Experimental new feature to bypass `indepSet` generation for `point_on_variety` (to be improved). For now it needs to be supplied as kwarg and it has to be a valid `indepSet` which takes the ideal directly down to a zero dimensional one.
+
+### Fixed
+
+- `KeyboardInterrupt` e.g. from a Jupyter notebook should now kill Singular child processes.
+- Fixed issue where `sat` changed to `sat_with_exp` in Singular (unclear if in 4.3.2 or 4.4).
+
+
 ## [0.2.4] - 2024-12-18
 
 ### Added
