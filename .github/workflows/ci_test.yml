@@ -29,6 +29,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew install singular
+        brew install coreutils
 
     - uses: actions/checkout@v4
 
