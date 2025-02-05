@@ -52,7 +52,7 @@ jobs:
     - name: Test with pytest
       run: |
         cd syngular
-        pytest |& tee coverage.txt
+        pytest 2>&1 | tee coverage.txt
         PYTEST_EXIT_CODE=${PIPESTATUS[0]}
         if [ "$PYTEST_EXIT_CODE" -ne 0 ]; then
           echo "pytest failed with exit code $PYTEST_EXIT_CODE"
