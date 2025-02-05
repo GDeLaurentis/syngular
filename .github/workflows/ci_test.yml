@@ -19,10 +19,17 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Install singular
+    - name: Install Singular on Ubuntu
+      if: runner.os == 'Linux'
       run: |
         sudo apt-get update
         sudo apt-get install singular
+
+    - name: Install Singular on macOS
+      if: runner.os == 'macOS'
+      run: |
+        brew update
+        brew install singular
 
     - uses: actions/checkout@v4
 
