@@ -28,7 +28,6 @@ jobs:
     - name: Install Singular on macOS
       if: runner.os == 'macOS'
       run: |
-        brew update
         brew install singular
 
     - uses: actions/checkout@v4
