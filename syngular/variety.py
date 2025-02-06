@@ -5,6 +5,7 @@ import random
 import re
 import sympy
 import syngular
+import warnings
 
 from copy import copy, deepcopy
 from pyadic import ModP
@@ -24,16 +25,24 @@ sympy.nroots(equation, n=300, maxsteps=500)
 def retry_to_find_root(max_tries=100):
     def retry_to_find_root_decorator(func):
         @functools.wraps(func)
-        def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet=None,
+        def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet='guess',
                     seed=None, verbose=False):
-            if base_point != {} and indepSetNbr is not None:
+
+            if indepSetNbr is not None and indepSet == 'guess':
+                indepSet = indepSetNbr
+                warnings.warn(
+                    "Key word argument 'indepSetNbr' is deprecated and will be removed in a future version. "
+                    "Please use 'indepSet' instead.", DeprecationWarning, stacklevel=2
+                )
+
+            if base_point != {} and indepSet not in [None, 'guess']:
                 return func(self, field, base_point=base_point, directions=directions, valuations=valuations,
-                            indepSetNbr=indepSetNbr, indepSet=indepSet, seed=seed, verbose=verbose)
+                            indepSet=indepSet, seed=seed, verbose=verbose)
             else:
                 for try_nbr in range(max_tries):
                     try:
                         res = func(self, field, base_point=base_point, directions=directions, valuations=valuations,
-                                   indepSetNbr=indepSetNbr, indepSet=indepSet, seed=seed, verbose=verbose)
+                                   indepSet=indepSet, seed=seed, verbose=verbose)
                         break
                     except (RootNotInFieldError, RootPrecisionError, NoConvergence, AssertionError) as e:
                         if try_nbr != max_tries - 1:
@@ -44,7 +53,7 @@ def retry_to_find_root(max_tries=100):
                                 seed += random.randint(10 ** 5, 10**6)
                             continue
                         else:
-                            raise type(e)(f"Could not find a root in the field {field} after {max_tries} attempts. {e}")
+                            raise type(e)(f"Could not find a solution in {field} after {max_tries} attempts. {e}")
                 return res
         return wrapper
     return retry_to_find_root_decorator
@@ -53,7 +62,7 @@ def retry_to_find_root(max_tries=100):
 class Variety_of_Ideal:
 
     @retry_to_find_root(max_tries=100)
-    def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet=None,
+    def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSet='guess',
                          seed=None, verbose=False, directions_analytic_check=False):
         """Generate a representative point on or close to the variety associated to this ideal.
         The point is 'valuations' away from the exact variety, in the directions specified by 'directions'.
@@ -64,6 +73,7 @@ class Variety_of_Ideal:
         from .qring import QuotientRing
 
         assert all([isinstance(valuation, str) or valuation >= 0 for valuation in valuations])
+        original_self = self
         self = deepcopy(self)   # don't modify self within this fuanction
 
         random.seed(seed)
@@ -116,25 +126,29 @@ class Variety_of_Ideal:
             valuations = valuations + (0, ) * len(self.ring.ideal.generators)
 
         if verbose:
-            print("Directions, valuations:", directions, valuations)
+            print("Directions:", directions, )
+            print("Valuations:", valuations)
 
         # if in qring, go to full ring
         if isinstance(self.ring, QuotientRing):
             self.to_full_ring()
 
         # handle independent set
-        if indepSet is None:
+        if indepSet == 'guess':
+            chose_indepSet = self.guess_indep_set()
+        elif indepSet is None or isinstance(indepSet, int):
             indepSets = self.indepSets
             if verbose:
                 print("Codimensions:", set(indepSet.count(0) for indepSet in indepSets))
                 print("Number of indepSets:", len(indepSets))
-            if indepSetNbr is None:
-                indepSetNbr = random.randint(0, len(indepSets) - 1)
-            indepSet = indepSets[indepSetNbr]
-        indepSymbols = tuple([str(symbol) for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 1])
-        depSymbols = tuple([str(symbol)for i, symbol in enumerate(self.ring.variables) if indepSet[i] == 0])
+            chose_indepSet = indepSets[random.randint(0, len(indepSets) - 1) if indepSet is None else indepSet]
+        indepSymbols = tuple([str(symbol) for i, symbol in enumerate(self.ring.variables) if chose_indepSet[i] == 1])
+        depSymbols = tuple([str(symbol)for i, symbol in enumerate(self.ring.variables) if chose_indepSet[i] == 0])
         if verbose:
-            print("Chosen indepSet:", indepSet, "indepSymbols:", indepSymbols, "depSymbols:", depSymbols)
+            print("Chosen indepSet:", chose_indepSet)
+            print("indepSymbols:", indepSymbols)
+            print("depSymbols:", depSymbols)
+            print(f"{'Guessing codim' if indepSet == 'guess' and self._dim is None else 'Codim'} {len(depSymbols)} variety in {len(chose_indepSet)}-dim space")
 
         # handle the base point, i.e. the values of the independent variables
         if base_point == {}:
@@ -143,7 +157,7 @@ class Variety_of_Ideal:
             base_point = {str(key): field(val) for key, val in base_point.items()}
         base_point |= {depSymbol: Polynomial(depSymbol, field) for depSymbol in depSymbols}
 
-        oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=False, iteration=0)
+        oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=verbose, iteration=0)
 
         # print(repr(oSemiNumericalIdeal))
 
@@ -161,7 +175,16 @@ class Variety_of_Ideal:
             if prime is None and oSemiNumericalIdeal.groebner_basis == ['1']:
                 raise RootPrecisionError
             if not oSemiNumericalIdeal.dim == 0:
-                raise AssertionError("The dimension of the semi-numerical ideal was not zero.")
+                if oSemiNumericalIdeal.dim > 0 and indepSet == 'guess':
+                    # determines dimension of original ideal in the full ring from that of the semi-numerical slice
+                    learnt_dimension = len(self.ring.variables) - len(self.generators) + oSemiNumericalIdeal.dim
+                    if isinstance(original_self.ring, QuotientRing):
+                        original_self.dim_in_full_ring = learnt_dimension
+                    else:
+                        original_self.dim = learnt_dimension
+                    if verbose:
+                        print(f"Determined the actual dimension to be {self.dim}")
+                raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero.")
 
             root_dicts = lex_groebner_solve(oSemiNumericalIdeal.groebner_basis, prime=prime)
             check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, field)  # they may be stricter then wanted for mpc.
@@ -276,6 +299,10 @@ class Variety_of_Ideal:
             generators = list(filter(lambda x: x != 0, generators))
 
         oZeroDimIdeal = Ideal(Ring(field.singular_notation, depSymbols, "lp"), generators)
+
+        if verbose:
+            print("Constructed semi-numerical ideal slice:")
+            print(repr(oZeroDimIdeal))
 
         return oZeroDimIdeal
 

@@ -67,9 +67,32 @@ def test_padic_variety_point_in_qring():
     directions = [sympy.sympify(direction) for direction in directions]
     J = Ideal(qring, directions)
     Qp = Field("padic", 2 ** 31 - 1, 11)
-    point = J.point_on_variety(Qp, directions=directions, valuations=(2, 2))
+    point = J.point_on_variety(Qp, directions=directions, valuations=(2, 2), indepSet=None)
     assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0].n == 2 for direction in directions])
     # This is (s_123-s_234), which lives in the radical of J but not in J.
     member_of_radical = '(a1*c1 + a2*c2 + a3*c3)*(b1*d1 + b2*d2 + b3*d3) - (-a1*d1 - a2*d2 - a3*d3)*(-b1*c1 - b2*c2 - b3*c3) - (a2*c2 + a3*c3 + a4*c4)*(b2*d2 + b3*d3 + b4*d4) + (-a2*d2 - a3*d3 - a4*d4)*(-b2*c2 - b3*c3 - b4*c4)'  # noqa
     member_of_radical = sympy.sympify(member_of_radical).expand()
     assert Polynomial(member_of_radical.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0].n == 1
+
+
+def test_padic_variety_point_in_qring_hard_groebner_basis():
+    """This is ("⟨34⟩+[34]", "⟨34⟩-⟨56⟩", "⟨56⟩+[56]", "⟨1|(3+4)|2]", "⟨1|(5+6)|(7+8)|1⟩") from lips at eight point."""
+    ring = Ring(0, ('a1', 'b1', 'c1', 'd1', 'a2', 'b2', 'c2', 'd2', 'a3', 'b3', 'c3', 'd3', 'a4', 'b4', 'c4', 'd4',
+                    'a5', 'b5', 'c5', 'd5', 'a6', 'b6', 'c6', 'd6', 'a7', 'b7', 'c7', 'd7', 'a8', 'b8', 'c8', 'd8'), 'dp')
+    ideal = Ideal(ring, ['b1*d1 + b2*d2 + b3*d3 + b4*d4 + b5*d5 + b6*d6 + b7*d7 + b8*d8',
+                         '-a1*d1 - a2*d2 - a3*d3 - a4*d4 - a5*d5 - a6*d6 - a7*d7 - a8*d8',
+                         '-b1*c1 - b2*c2 - b3*c3 - b4*c4 - b5*c5 - b6*c6 - b7*c7 - b8*c8',
+                         'a1*c1 + a2*c2 + a3*c3 + a4*c4 + a5*c5 + a6*c6 + a7*c7 + a8*c8'])
+    qring = QRing(ring, ideal)
+    directions = [
+        '-a3*b4 +a4*b3 +c3*d4 -c4*d3', '-a3*b4 +a4*b3 +a5*b6 -a6*b5', '-a5*b6 +a6*b5 +c5*d6 -c6*d5',
+        'a1*b3*c2*d3 -a1*b3*c3*d2 +a1*b4*c2*d4 -a1*b4*c4*d2 -a3*b1*c2*d3 +a3*b1*c3*d2 -a4*b1*c2*d4 +a4*b1*c4*d2',
+        '-a1**2*b5*b7*c5*d7 +a1**2*b5*b7*c7*d5 -a1**2*b5*b8*c5*d8 +a1**2*b5*b8*c8*d5 -a1**2*b6*b7*c6*d7 +a1**2*b6*b7*c7*d6 -a1**2*b6*b8*c6*d8 +a1**2*b6*b8*c8*d6 +a1*a5*b1*b7*c5*d7 -a1*a5*b1*b7*c7*d5 +a1*a5*b1*b8*c5*d8 -a1*a5*b1*b8*c8*d5 +a1*a6*b1*b7*c6*d7 -a1*a6*b1*b7*c7*d6 +a1*a6*b1*b8*c6*d8 -a1*a6*b1*b8*c8*d6 +a1*a7*b1*b5*c5*d7 -a1*a7*b1*b5*c7*d5 +a1*a7*b1*b6*c6*d7 -a1*a7*b1*b6*c7*d6 +a1*a8*b1*b5*c5*d8 -a1*a8*b1*b5*c8*d5 +a1*a8*b1*b6*c6*d8 -a1*a8*b1*b6*c8*d6 -a5*a7*b1**2*c5*d7 +a5*a7*b1**2*c7*d5 -a5*a8*b1**2*c5*d8 +a5*a8*b1**2*c8*d5 -a6*a7*b1**2*c6*d7 +a6*a7*b1**2*c7*d6 -a6*a8*b1**2*c6*d8 +a6*a8*b1**2*c8*d6'  # noqa
+    ]
+    directions = [sympy.sympify(direction) for direction in directions]
+    J = Ideal(qring, directions)
+    Qp = Field("padic", 2 ** 31 - 1, 11)
+    point = J.point_on_variety(Qp, directions=directions, valuations=(11, 11, 11, 1, 1))
+    print([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0] for direction in directions])
+    assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0] == 0 for direction in directions[:3]])
+    assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0].n == 1 for direction in directions[3:]])
