@@ -81,7 +81,7 @@ class Polynomial(object):
     #     return self
 
     def __init__(self, coeffs_and_monomials, field):
-        if isinstance(coeffs_and_monomials, str) or isinstance(coeffs_and_monomials, sympy.Basic):
+        if isinstance(coeffs_and_monomials, (str, int)) or isinstance(coeffs_and_monomials, sympy.Basic):
             coeffs_and_monomials = self.__rstr__(str(coeffs_and_monomials), field)
         elif isinstance(coeffs_and_monomials, Polynomial):
             coeffs_and_monomials = coeffs_and_monomials.coeffs_and_monomials
