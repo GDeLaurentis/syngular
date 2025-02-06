@@ -32,6 +32,8 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
             os.kill(test.pid, signal.SIGTERM)
         raise KeyboardInterrupt
     output = output.decode("utf-8")
+    if len(output) == 0:
+        raise SingularException(f"Empty output while executing:\n{singular_command}")
     if output[-1] == "\n":
         output = output[:-1]
     if 'halt' in output:
