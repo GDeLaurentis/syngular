@@ -11,6 +11,7 @@ from .qring import QuotientRing
 from .ideal_algorithms import Ideal_Algorithms
 from .variety import Variety_of_Ideal
 from .polynomial import Polynomial
+from .field import Field
 
 
 class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
@@ -83,12 +84,18 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         return {zeroIdeal_dim - dim for dim in self.dims}
 
     def guess_indep_set(self):
-        n = len(self.ring.variables)
-        m = self.dim if self._dim is not None else (n - len(self.generators))
+        equations = self.generators
         if isinstance(self.ring, QuotientRing):
-            m -= len(self.ring.ideal.generators)
+            equations += self.ring.ideal.generators
+        n = len(self.ring.variables)
+        m = self.dim if self._dim is not None else (n - len(equations))
         lst = [0] * (n - m) + [1] * m
-        random.shuffle(lst)
+        equations_variables = [Polynomial(equation, field=Field("rational", 0, 0)).variables for equation in equations]
+        for _ in range(1000):  # discard obviously wrong indep sets: all equations must have at least 1 dependent variable
+            random.shuffle(lst)
+            guess_dict = dict(zip(map(str, self.ring.variables), lst))
+            if all([0 in [guess_dict[variable] for variable in variables] for variables in equations_variables]):
+                break
         return tuple(lst)
 
     @functools.cached_property

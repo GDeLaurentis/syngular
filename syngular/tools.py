@@ -2,9 +2,10 @@ import re
 import subprocess
 import syngular
 import random
+import warnings
 
 from pathlib import Path
-from packaging.version import Version
+from packaging.version import Version, InvalidVersion
 
 
 def execute_singular_command(singular_command, timeout='default', verbose=False):
@@ -74,4 +75,8 @@ class RootPrecisionError(Exception):
 test = subprocess.Popen(["timeout", "5", "Singular", "--dump-versiontuple"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 output = test.communicate()[0]
 output = output.decode("utf-8").replace("\n", "")
-Singular_version = Version(output)
+try:
+    Singular_version = Version(output)
+except InvalidVersion:
+    warnings.warn("Could not determine Singular version. Are you sure Singular is installed?", stacklevel=2)
+    Singular_version = None

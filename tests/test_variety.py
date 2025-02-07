@@ -95,4 +95,5 @@ def test_padic_variety_point_in_qring_hard_groebner_basis():
     point = J.point_on_variety(Qp, directions=directions, valuations=(11, 11, 11, 1, 1))
     print([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0] for direction in directions])
     assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0] == 0 for direction in directions[:3]])
-    assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0].n == 1 for direction in directions[3:]])
+    # the ideal is not radical on the branch "⟨1|", if that branch is (randomly) chosen then the valuation of the second poly will be 2
+    assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0].n >= 1 for direction in directions[3:]])

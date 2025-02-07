@@ -15,6 +15,7 @@ from mpmath.libmp.libhyper import NoConvergence
 from .tools import RootNotInFieldError, RootPrecisionError
 from .field import Field
 from .polynomial import Monomial, Polynomial
+from .settings import TemporarySetting
 
 # this fixes a weird bug where sympy does not respect precision even if mpmath.mp.dps precision is set
 # (sympy seems to use mpmath as backhand)
@@ -34,6 +35,18 @@ def retry_to_find_root(max_tries=100):
                     "Key word argument 'indepSetNbr' is deprecated and will be removed in a future version. "
                     "Please use 'indepSet' instead.", DeprecationWarning, stacklevel=2
                 )
+
+            if indepSet == 'guess':  # check if indep set can be computed quickly
+                if verbose:
+                    print("At first try, trying to compute the indepSets. ", end="")
+                with TemporarySetting("syngular", "TIMEOUT", 3):
+                    try:
+                        self.indepSets
+                        indepSet = None  # if this suceeds there is no reason to guess
+                        print("IndepSet computation is cheap. Will compute it.")
+                    except TimeoutError:
+                        if verbose:
+                            print("Gave up after 3 seconds. Will proceed with guesses.")
 
             if base_point != {} and indepSet not in [None, 'guess']:
                 return func(self, field, base_point=base_point, directions=directions, valuations=valuations,

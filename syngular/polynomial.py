@@ -145,6 +145,10 @@ class Polynomial(object):
     def monomials(self):
         return [monomial for _, monomial in self.coeffs_and_monomials]
 
+    @property
+    def variables(self):
+        return set([var for monomial in self.monomials for var in monomial.tolist()])
+
     def rationalise(self):
         from pyadic.finite_field import vec_chained_FF_rationalize
         rat_coeffs = vec_chained_FF_rationalize([numpy.array(self.coeffs).astype(int), ], [self.field.characteristic, ]).tolist()

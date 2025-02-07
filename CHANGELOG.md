@@ -10,13 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `Ideal.guess_indep_set` guesses an independent set by estimating the codimension of the ideal. The codimension is always estimated to be either the true value, or bigger. If a bigger codimension than the true one is estimated, the true (co)dimension of the ideal will be learnt in while generating the `point_on_variety`.
+- `Ideal.guess_indep_set` guesses an independent set by estimating the codimension of the ideal. The codimension is always estimated to be either the true value, or bigger. If a bigger codimension than the true one is estimated, the true (co)dimension of the ideal will be learnt in while generating the `point_on_variety`. Tries not to return obviously wrong guesses (all generators must have at least 1 dependent variable).
 
 - `Ideal.dim_in_full_ring` attribute is used to keep track of the dimension while moving in and out of quotient rings.
 
+- `TemporarySetting` allows to locally set values for settings with context manager syntax (`with ...`).
+
+- `Polynomial.variables` yields all appearing variables.
+
 ### Changed
 
-- `point_on_variety` default behavior is to iteratively guess a correct idependent set, rather than compute it. This avoids having to compute a Groebner basis of the fully analytical ideal. New behaviour is much faster for complicated ideals.
+- `point_on_variety` default behavior is to iteratively guess a correct idependent set, rather than compute it. This avoids having to compute a Groebner basis of the fully analytical ideal. New behaviour is much faster for complicated ideals. Still checks if independent set can be computed cheaply (within 3 seconds), and if so avoids guessing.
 
 - `Ideal.dim` is now a property with setter and getter. The Singular computation is triggered only if `-dim` is None. For instance, the dimension is learned during the `point_on_variety` computation without actually computing a GB.
 

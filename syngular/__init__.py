@@ -8,3 +8,4 @@ from .qring import QuotientRing, QRing  # noqa
 from .tools import SingularException, Singular_version  # noqa
 from .field import Field  # noqa
 from .polynomial import Polynomial, Monomial  # noqa
+from .settings import TemporarySetting  # noqa
