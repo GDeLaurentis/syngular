@@ -43,7 +43,8 @@ def retry_to_find_root(max_tries=100):
                     try:
                         self.indepSets
                         indepSet = None  # if this suceeds there is no reason to guess
-                        print("IndepSet computation is cheap. Will compute it.")
+                        if verbose:
+                            print("IndepSet computation is cheap. Will compute it.")
                     except TimeoutError:
                         if verbose:
                             print("Gave up after 3 seconds. Will proceed with guesses.")
