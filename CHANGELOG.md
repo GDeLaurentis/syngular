@@ -39,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixing issue where missing Singular installation would prevent importing syngular.
 
-### Deprecated
-
 
 ## [0.2.5] - 2024-12-31
 

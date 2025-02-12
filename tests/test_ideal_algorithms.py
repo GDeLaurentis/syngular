@@ -26,11 +26,12 @@ def test_test_primality():
     assert J.test_primality(verbose=True, iterated_degbound_computation=True) is True
 
 
-def test_test_primality_inconclusive():
+def test_test_primality_primary_but_not_prime():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2'])
-    with pytest.raises(Inconclusive):
-        assert I.test_primality(verbose=True) is False
-        assert I.test_primality(verbose=True, iterated_degbound_computation=True) is False
+    assert I.test_primality(verbose=True) is False
+    assert I.test_primality(verbose=True, iterated_degbound_computation=True) is False
+    assert I.test_primality(verbose=True, astuple=True) == (True, False)
+    assert I.test_primality(verbose=True, iterated_degbound_computation=True, astuple=True) == (True, False)
 
 
 def test_test_primality_with_degree_bound():
