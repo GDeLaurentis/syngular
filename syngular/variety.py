@@ -156,6 +156,10 @@ class Variety_of_Ideal:
                 print("Codimensions:", set(indepSet.count(0) for indepSet in indepSets))
                 print("Number of indepSets:", len(indepSets))
             chose_indepSet = indepSets[random.randint(0, len(indepSets) - 1) if indepSet is None else indepSet]
+        elif isinstance(indepSet, tuple):
+            chose_indepSet = indepSet
+        else:
+            raise NotImplementedError
         indepSymbols = tuple([str(symbol) for i, symbol in enumerate(self.ring.variables) if chose_indepSet[i] == 1])
         depSymbols = tuple([str(symbol)for i, symbol in enumerate(self.ring.variables) if chose_indepSet[i] == 0])
         if verbose:
