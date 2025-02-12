@@ -20,9 +20,9 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         file_path = f"/tmp/.singular_commands/singular_command_{random_integer}"
         with open(file_path, "w+") as file:
             file.write(singular_command)
-        test = subprocess.Popen(["timeout", str(timeout), "Singular", "--quiet", file_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", file_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
-        test = subprocess.Popen(["timeout", str(timeout), "Singular", "--quiet", "--execute", singular_command], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", "--execute", singular_command], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     try:
         output = test.communicate()[0]
     except KeyboardInterrupt:
@@ -37,7 +37,7 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         raise SingularException(f"Empty output while executing:\n{singular_command}")
     if output[-1] == "\n":
         output = output[:-1]
-    if 'halt' in output:
+    if 'halt' in output or 'timeout' in output:
         raise TimeoutError(f"{timeout} s")
     if 'error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output:
         raise SingularException(f"{output}\n\n\nError occured while executing:\n{singular_command}")
