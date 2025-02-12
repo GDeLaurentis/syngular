@@ -20,9 +20,11 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         file_path = f"/tmp/.singular_commands/singular_command_{random_integer}"
         with open(file_path, "w+") as file:
             file.write(singular_command)
-        test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", file_path], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", file_path, "2>&1"],
+                                stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     else:
-        test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", "--execute", singular_command], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", "--execute", singular_command, "2>&1"],
+                                stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     try:
         output = test.communicate()[0]
     except KeyboardInterrupt:
