@@ -26,7 +26,7 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         test = subprocess.Popen(["timeout", "--verbose", str(timeout), "Singular", "--quiet", "--execute", singular_command, "2>&1"],
                                 stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     try:
-        output = test.communicate()[0]
+        output, stderr = test.communicate()
     except KeyboardInterrupt:
         print("Keyboard interrupt received. Terminating the Singular process.")
         if test.poll() is None:  # Check if the process is still running
@@ -35,11 +35,12 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
             os.kill(test.pid, signal.SIGTERM)
         raise KeyboardInterrupt
     output = output.decode("utf-8")
+    stderr = stderr.decode("utf-8")
     if len(output) == 0:
         raise SingularException(f"Empty output while executing:\n{singular_command}")
     if output[-1] == "\n":
         output = output[:-1]
-    if 'halt' in output or 'timeout' in output:
+    if 'halt' in output or 'timeout' in stderr:
         raise TimeoutError(f"{timeout} s")
     if 'error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output:
         raise SingularException(f"{output}\n\n\nError occured while executing:\n{singular_command}")
