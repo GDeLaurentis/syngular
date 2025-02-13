@@ -2,7 +2,7 @@ import pytest
 import syngular
 
 from syngular import Ideal, Ring
-from syngular.ideal_algorithms import Inconclusive
+# from syngular.ideal_algorithms import Inconclusive
 
 
 def test_extension_contraction():

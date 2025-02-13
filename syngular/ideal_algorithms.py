@@ -151,8 +151,8 @@ class Ideal_Algorithms:
             prime = 536870909  # largest prime below 2 ** 29
             projection = {entry: randint(1, prime) for entry in U}             # random values for U
             zeroDimSelf = deepcopy(self)
-            zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=prime).as_expr()) 
-                                        for entry in sympy.sympify(zeroDimSelf.generators)]
+            zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=prime).as_expr())
+                                      for entry in sympy.sympify(zeroDimSelf.generators)]
             zeroDimSelf.ring = Ring(str(prime), XqU, 'lp')
             zeroDimSelf.delete_cached_properties()
             degrees = list(map(int, re.findall(r"\^(\d)", "".join(zeroDimSelf.groebner_basis))))
@@ -173,8 +173,8 @@ class Ideal_Algorithms:
         f_polys_factors = []
         for i, indepSet in enumerate(lowest_degree_projection_indepSets):
             if verbose:
-                number_of_timedout_fpolys = ["TIMEDOUT" in entry for entry in f_polys_factors].count(True)
-                print(f"\rgathering f-poly factors: @ {i}/{len(lowest_degree_projection_indepSets)} of which {number_of_timedout_fpolys} timedout", 
+                number_of_timedout_fpolys = ["TIMEDOUT" in entry[0] for entry in f_polys_factors].count(True)
+                print(f"\rgathering f-poly factors: @ {i}/{len(lowest_degree_projection_indepSets)} of which {number_of_timedout_fpolys} timedout",
                       end="                                   ")
             # 0 dim slice
             X = self.ring.variables
@@ -208,8 +208,8 @@ class Ideal_Algorithms:
                 prime = 536870909  # largest prime below 2 ** 29
                 projection = {entry: randint(1, prime) for entry in U}             # random values for U
                 zeroDimSelf = deepcopy(self)
-                zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=prime).as_expr()) 
-                                            for entry in sympy.sympify(zeroDimSelf.generators)]
+                zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=prime).as_expr())
+                                          for entry in sympy.sympify(zeroDimSelf.generators)]
                 zeroDimSelf.ring = Ring(str(prime), XqU, 'lp')
                 zeroDimSelf.delete_cached_properties()
                 zeroDim_prim_dec = zeroDimSelf.primary_decomposition
