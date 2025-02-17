@@ -228,7 +228,8 @@ class Ideal_Algorithms:
             raise Inconclusive("Timedout on fpoly factors gathering.")
         smallest_fpoly_factors = sorted(smallest_fpoly_factors, key=lambda x: len(x))
         if verbose:
-            print(f"\r smallest f poly factors ({len(smallest_fpoly_factors)}): {smallest_fpoly_factors}", end="                    \n")
+            print(f"\r smallest f poly factors ({len(smallest_fpoly_factors)}): complexity {sum(map(len, smallest_fpoly_factors))}",
+                  end="                              \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
         with TemporarySetting("syngular", "TIMEOUT", timeout_dim):
             self.codim  # just cache it

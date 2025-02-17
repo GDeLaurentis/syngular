@@ -76,11 +76,15 @@ class RootPrecisionError(Exception):
     pass
 
 
-test = subprocess.Popen(["timeout", "5", "Singular", "--dump-versiontuple"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-output = test.communicate()[0]
-output = output.decode("utf-8").replace("\n", "")
 try:
-    Singular_version = Version(output)
-except InvalidVersion:
-    warnings.warn("Could not determine Singular version. Are you sure Singular is installed?", stacklevel=2)
+    test = subprocess.Popen(["timeout", "5", "Singular", "--dump-versiontuple"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    output = test.communicate()[0]
+    output = output.decode("utf-8").replace("\n", "")
+    try:
+        Singular_version = Version(output)
+    except InvalidVersion:
+        warnings.warn("Could not determine Singular version. Are you sure Singular is installed?", stacklevel=2)
+        Singular_version = None
+except FileNotFoundError as e:
+    warnings.warn(f"\nAre you sure timeout is installed for use in the command line?\n{e}\nCould not determine Singular version.", stacklevel=2)
     Singular_version = None
