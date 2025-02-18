@@ -192,9 +192,9 @@ class Ideal_Algorithms:
                 continue
         # just keep the one with the smallest greatest factor
         max_lengths = [max(map(len, f_poly_factors)) for f_poly_factors in f_polys_factors]
+        easiest_projection_indepSet = lowest_degree_projection_indepSets[max_lengths.index(min(max_lengths))]
+        easiest_projection_indepSet_index = self.indepSets.index(easiest_projection_indepSet)
         if verbose:
-            easiest_projection_indepSet = lowest_degree_projection_indepSets[max_lengths.index(min(max_lengths))]
-            easiest_projection_indepSet_index = self.indepSets.index(easiest_projection_indepSet)
             print(f"\neasiest projection is {easiest_projection_indepSet_index}: {easiest_projection_indepSet} of degree {lowest_degree}")
         smallest_fpoly_factors = f_polys_factors[max_lengths.index(min(max_lengths))]
         if lowest_degree > 1:
