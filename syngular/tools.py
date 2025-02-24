@@ -62,8 +62,8 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
     if len(singular_command) >= 131072:
         Path(file_path).unlink()
     if syngular.DEBUG:
-        print("DEBUG - Command received:", singular_command)
-        print("DEBUG - Output obtained:", output)
+        print("DEBUG - Command received:\n", singular_command)
+        print("DEBUG - Output obtained:\n", output)
     return output
 
 
