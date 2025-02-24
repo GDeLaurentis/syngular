@@ -8,6 +8,8 @@ import syngular
 import warnings
 
 from copy import copy, deepcopy
+from packaging import version
+
 from pyadic import ModP
 
 from mpmath.libmp.libhyper import NoConvergence
@@ -17,10 +19,12 @@ from .field import Field
 from .polynomial import Monomial, Polynomial
 from .settings import TemporarySetting
 
-# this fixes a weird bug where sympy does not respect precision even if mpmath.mp.dps precision is set
-# (sympy seems to use mpmath as backhand)
-equation = sympy.sympify(f"x - 1.{'0' * 290}1")
-sympy.nroots(equation, n=300, maxsteps=500)
+if version.parse(sympy.__version__) < version.parse('1.14'):
+    # See sympy issue #23861, fixed in sympy pull request #27650
+    # this fixes a weird bug where sympy does not respect precision even if mpmath.mp.dps precision is set
+    # (sympy seems to use mpmath as backhand)
+    equation = sympy.sympify(f"x - 1.{'0' * 290}1")
+    sympy.nroots(equation, n=300, maxsteps=500)
 
 
 def retry_to_find_root(max_tries=100):
