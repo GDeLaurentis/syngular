@@ -61,6 +61,9 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         output = output.replace('// ** groebner base computations with inexact coefficients can not be trusted due to rounding errors\n', '')
     if len(singular_command) >= 131072:
         Path(file_path).unlink()
+    if syngular.DEBUG:
+        print("DEBUG - Command received:", singular_command)
+        print("DEBUG - Output obtained:", output)
     return output
 
 
