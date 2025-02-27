@@ -10,9 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `point_on_variety` keyword argument `indepSet='force guess'` skips attempting to compute the independet set. While this only saves 3 seconds, it is noticeable when generating thousands of points.
+
 ### Changed
 
+- `Ideal.dim` recycles the cached `Ideal.groebner_basis`, instead of computing a fresh standard basis. Unclear if Singular `std` or `groebner` is better here, but at least now caching is used.
+
 ### Fixed
+
+- `point_on_variety` catches `TimeoutError` which may be raised if the Groebner basis is complicated even for the semi-numerical ideal.
 
 ### Deprecated
 

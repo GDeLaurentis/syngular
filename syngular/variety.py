@@ -52,6 +52,8 @@ def retry_to_find_root(max_tries=100):
                     except TimeoutError:
                         if verbose:
                             print("Gave up after 3 seconds. Will proceed with guesses.")
+            elif indepSet in ('force guess', 'force-guess'):
+                indepSet = 'guess'
 
             if base_point != {} and indepSet not in [None, 'guess']:
                 return func(self, field, base_point=base_point, directions=directions, valuations=valuations,
@@ -62,7 +64,8 @@ def retry_to_find_root(max_tries=100):
                         res = func(self, field, base_point=base_point, directions=directions, valuations=valuations,
                                    indepSet=indepSet, seed=seed, verbose=verbose)
                         break
-                    except (RootNotInFieldError, RootPrecisionError, NoConvergence, AssertionError) as e:
+                    except (RootNotInFieldError, RootPrecisionError, NoConvergence, AssertionError,
+                            *((TimeoutError, ) if indepSet == "guess" else ())) as e:
                         if try_nbr != max_tries - 1:
                             if verbose:
                                 print(f"Caught {type(e).__name__} at try number {try_nbr}, retrying...")
