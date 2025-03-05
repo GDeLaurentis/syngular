@@ -173,7 +173,7 @@ class Ideal_Algorithms:
         f_polys_factors = []
         for i, indepSet in enumerate(lowest_degree_projection_indepSets):
             if verbose:
-                number_of_timedout_fpolys = ["TIMEDOUT" in entry[0] for entry in f_polys_factors].count(True)
+                number_of_timedout_fpolys = ["TIMEDOUT" in entry[-1] for entry in f_polys_factors].count(True)
                 print(f"\rgathering f-poly factors: @ {i}/{len(lowest_degree_projection_indepSets)} of which {number_of_timedout_fpolys} timedout",
                       end="                                   ")
             # 0 dim slice
@@ -183,12 +183,12 @@ class Ideal_Algorithms:
                 with TemporarySetting("syngular", "TIMEOUT", timeout_fpoly):
                     f_polys_factors += [self.extension_contraction_fpoly(U, "lp")]
             except TimeoutError:
-                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
+                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 8000]]
                 continue
             except Exception as e:
                 if verbose:
                     print(f"An exception occurred: {e}")
-                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 80]]
+                f_polys_factors += [['- TIMEDOUT - probably very very long ' * 8000]]
                 continue
         # just keep the one with the smallest greatest factor
         max_lengths = [max(map(len, f_poly_factors)) for f_poly_factors in f_polys_factors]
@@ -216,15 +216,16 @@ class Ideal_Algorithms:
                 if len(zeroDim_prim_dec) == 1:
                     Q, P = zeroDim_prim_dec[0]
                     radical = True if Q == P else False
+                    print("\rWas irreducible at the chosen point. Continuing test.", end="                    ")
                     break  # conclusive
                 elif verbose:
                     print(f"\rWas reducible at the chosen points, checking again. At try {i}.", end="")
             else:
-                raise Inconclusive("Likely reducible, since it was reducible on {tries_for_irreducibility} zero dim extensions.")
+                raise Inconclusive(f"Likely reducible, since it was reducible on {tries_for_irreducibility} zero dim extensions.")
                 # return False if not astuple else (False, False)   - statistical statement, can't be 100% sure
         else:
             radical = True
-        if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 80]:
+        if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 8000]:
             raise Inconclusive("Timedout on fpoly factors gathering.")
         smallest_fpoly_factors = sorted(smallest_fpoly_factors, key=lambda x: len(x))
         if verbose:
