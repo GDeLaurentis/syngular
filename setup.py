@@ -2,8 +2,15 @@ from setuptools import setup, find_packages
 from pathlib import Path
 from version import __version__ as version
 
+
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
+
+
+with (this_directory / "syngular" / "version.py").open() as f:
+    exec(f.read())
+    version = __version__  # noqa
+
 
 setup(
     name='syngular',
