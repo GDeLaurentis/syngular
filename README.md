@@ -18,13 +18,13 @@ Python classes for 'Ideal', 'Ring' and 'QuotientRing'. Several related functions
 
 ## Extension
 
-### Points on varieties over $\mathbb{F}_p$, $\mathbb{Q}_p$ and $\mathbb{C}$.
+### Multivariate solver - i.e. points on varieties over $\mathbb{F}_p$, $\mathbb{Q}_p$ and $\mathbb{C}$.
 
-The function `ideal.point_on_variety` allows to obtain numerical solutions to arbirary systems of polynomial equations in arbitrary polynomial quotient rings, over any of the three above mentioned fields. The system of equations may be underconstrained, i.e. the ideal may have any dimension. The $p$-adic and complex solutions can be requested as not exact. I.e. the point may lie close to but not exactly on the associated variety. This is essential for numerical computations where otherwise division-by-zero erros may occur. The limitation is that Singular must be able to compute an indepednent set for the ideal, in order to reduce it to a zero dimensional sub-variety.
+The function `ideal.point_on_variety` allows to obtain numerical solutions to arbirary systems of polynomial equations in arbitrary polynomial (quotient) rings, over any of the three above mentioned fields. The system of equations may be underconstrained, i.e. the ideal may have any dimension. The $p$-adic and complex solutions can be requested as not exact, meaning the point may lie close to but not exactly on the associated variety. This is essential for numerical computations where otherwise division-by-zero erros may occur when using exact solutions. The limitation is that Singular must be able to compute an indepednent set for the semi-numerical ideals of low dimension.
 
 ### Primality test (lighter than a primary decomposition).
 
-The function `ideal.test_primality` allows to test whether an ideal is prime or not, without performing a full primary decomposition. The algorithm can run also with successively looser degree bounds. It returns True if the idea is prime, False if it is not, or raises an `Inconclusive` exception if it cannot decide. The latter case happens, for instance, if the ideal is not radical, since the algorithm may not be able to find a linear projection. Inconclusive cases include when the ideal is primary but not prime.
+The function `ideal.test_primality` allows to test whether an ideal is prime, primary or neither, without performing a full primary decomposition. The algorithm can run also with successively looser degree bounds. It returns True if the idea is prime, False if it is not, or raises an `Inconclusive` exception if it cannot decide. If `astuple` is `True`, then it will return two booleans: (`is_primary`, `is_prime`). Inconclusive cases should now only happen with a Timeout on the computation.
 
 
 ## Requirements
