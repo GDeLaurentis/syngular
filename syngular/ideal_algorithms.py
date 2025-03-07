@@ -134,7 +134,7 @@ class Ideal_Algorithms:
         Assumes equidimensionality of input ideal.
         Returns True if the ideal is prime, False if it is not.
         If astuple is set to True, return (is_primary, is_prime) bool pair.
-        Raises Inconclusive if it can't decide. 
+        Raises Inconclusive if it can't decide.
         Experimental new feature with iterated_degbound_computation=True,
         may help when ideal is primary and deg-unbounded computation fails.
         """

@@ -199,14 +199,16 @@ class Variety_of_Ideal:
             # check it explicitly, unless the .dim property is reverted to use grobner_basis instead of std
             if prime is None and oSemiNumericalIdeal.groebner_basis == ['1']:
                 raise RootPrecisionError
+
+            # determines dimension of original ideal in the full ring from that of the semi-numerical slice
+            learnt_dimension = len(self.ring.variables) - len(self.generators) + oSemiNumericalIdeal.dim
+            if isinstance(original_self.ring, QuotientRing):
+                original_self.dim_in_full_ring = learnt_dimension
+            else:
+                original_self.dim = learnt_dimension
+
             if not oSemiNumericalIdeal.dim == 0:
                 if oSemiNumericalIdeal.dim > 0 and indepSet == 'guess':
-                    # determines dimension of original ideal in the full ring from that of the semi-numerical slice
-                    learnt_dimension = len(self.ring.variables) - len(self.generators) + oSemiNumericalIdeal.dim
-                    if isinstance(original_self.ring, QuotientRing):
-                        original_self.dim_in_full_ring = learnt_dimension
-                    else:
-                        original_self.dim = learnt_dimension
                     if verbose:
                         print(f"Determined the actual dimension to be {self.dim}")
                 raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero.")
