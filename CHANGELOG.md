@@ -10,7 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+### Deprecated
+
+## [0.4.0] - 2025-03-7
+
+### Added
+
+- Improved functionality of `test_primality`, which can now handle ideals without linear projections. The `astuple` kwarg if set to True will return a pair of booleans with the answers to (is primary, is prime)
 - `point_on_variety` keyword argument `indepSet='force guess'` skips attempting to compute the independet set. While this only saves 3 seconds, it is noticeable when generating thousands of points.
+- `syngular.DEBUG` allows to inspect Singular's output when set to True.
 
 ### Changed
 
@@ -19,8 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `point_on_variety` catches `TimeoutError` which may be raised if the Groebner basis is complicated even for the semi-numerical ideal.
-
-### Deprecated
 
 
 ## [0.3.0] - 2025-02-10
@@ -158,9 +168,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Primality test, `Ideal.test_primality`.
 
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.3.0...HEAD
-[0.2.4]: https://github.com/GDeLaurentis/syngular/compare/v0.2.5...v0.3.0
-[0.2.4]: https://github.com/GDeLaurentis/syngular/compare/v0.2.4...v0.2.5
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/GDeLaurentis/syngular/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/GDeLaurentis/syngular/compare/v0.2.5...v0.3.0
+[0.2.5]: https://github.com/GDeLaurentis/syngular/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/GDeLaurentis/syngular/compare/v0.2.3...v0.2.4
 [0.2.3]: https://github.com/GDeLaurentis/syngular/compare/v0.2.2...v0.2.3
 [0.2.2]: https://github.com/GDeLaurentis/syngular/compare/v0.2.1...v0.2.2
