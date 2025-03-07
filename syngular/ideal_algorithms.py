@@ -7,6 +7,8 @@ from packaging.version import Version
 
 from .tools import execute_singular_command, Singular_version
 from .ring import Ring
+from .field import Field
+from .polynomial import Polynomial
 from .settings import TemporarySetting
 
 
@@ -126,14 +128,19 @@ class Ideal_Algorithms:
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 
     def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600,
+                     seminumerical_dim_computation=False,
                      iterated_degbound_computation=False, projection_number=None, astuple=False):
-        """Returns True if the ideal is prime, False if it is not.
+        """
+        Assumes equidimensionality of input ideal.
+        Returns True if the ideal is prime, False if it is not.
         If astuple is set to True, return (is_primary, is_prime) bool pair.
-        Raises Inconclusive if it can't decide. Assumes equidimensionality of input ideal.
+        Raises Inconclusive if it can't decide. 
         Experimental new feature with iterated_degbound_computation=True,
         may help when ideal is primary and deg-unbounded computation fails.
         """
         import syngular
+        if seminumerical_dim_computation and iterated_degbound_computation:
+            raise Exception("Semi-numerical test and iterated degbound test are exclusive.")
         # algorithm works over rings, if in a qring convert to the full ring.
         self = deepcopy(self)
         self.to_full_ring()
@@ -222,7 +229,7 @@ class Ideal_Algorithms:
                     print(f"\rWas reducible at the chosen points, checking again. At try {i}.", end="")
             else:
                 raise Inconclusive(f"Likely reducible, since it was reducible on {tries_for_irreducibility} zero dim extensions.")
-                # return False if not astuple else (False, False)   - statistical statement, can't be 100% sure
+                # return False if not astuple else (False, False)  # statistical statement, may return false negatives
         else:
             radical = True
         if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 8000]:
@@ -233,15 +240,35 @@ class Ideal_Algorithms:
                   end="                              \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
         with TemporarySetting("syngular", "TIMEOUT", timeout_dim):
-            self.codim  # just cache it
+            if seminumerical_dim_computation:
+                print(self)
+                field = Field("finite field", 2 ** 31 - 1, 1)
+                points = [self.point_on_variety(field) for i in range(100)]
+            self.codim  # just cache it - if seminumerical_dim_computation then it was learnt numerically
+            if verbose:
+                print(f"Original ideal has codim {self.codim}")
             for i, factor in enumerate(smallest_fpoly_factors):
                 if verbose:
                     print(f"\r at factor {i}: {factor}.", end="                                       \n")
+                if seminumerical_dim_computation:
+                    valuations = [Polynomial(factor, field).subs(point) for point in points]
+                    zero_count = sum(1 for valuation in valuations if valuation == 0)
+                    print(f"{zero_count} zeros out of {len(valuations)} points.")
+                    if any([valuation == 0 for valuation in valuations]):
+                        return False if not astuple else (False, False)
+                    else:
+                        pass
+                        # continue  # statistical, may return false positives
                 X = deepcopy(self)
                 X.generators += [factor]
                 X.delete_cached_properties()
                 # Experimental - Assumes codim w/ deg bound <= true codim.
                 # Helps termiante the prime test early, IF the result is True.
+                if factor != '1' and seminumerical_dim_computation:
+                    X.point_on_variety(field)  # learn the dimension of X numerically
+                    assert hasattr(X, '_dim') and isinstance(X._dim, int)
+                    if verbose:
+                        print(f"Learnt codim of Ideal with f-poly factor, {X.codim}")
                 for deg_bound in syngular.DEGBOUNDs * iterated_degbound_computation:
                     with TemporarySetting("syngular", "DEGBOUND", deg_bound):
                         X.delete_cached_properties()
@@ -257,7 +284,8 @@ class Ideal_Algorithms:
                     if verbose:
                         print("deg_bound reset to zero. Performing full computation.", end="\n")
                     with TemporarySetting("syngular", "DEGBOUND", 0):
-                        X.delete_cached_properties()
+                        if not seminumerical_dim_computation:
+                            X.delete_cached_properties()
                         # if self.indepSet.count(0) >= X.indepSet.count(0):   # deprecated, equivalent to next line.
                         if self.codim >= X.codim:
                             return False if not astuple else (False, False)
