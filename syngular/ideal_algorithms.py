@@ -281,7 +281,7 @@ class Ideal_Algorithms:
                                 print(f"deg_bound {deg_bound} computation was inconclusive.", end="\n")
 
                 else:  # loop completed without encountering a break
-                    if verbose:
+                    if verbose and iterated_degbound_computation:
                         print("deg_bound reset to zero. Performing full computation.", end="\n")
                     with TemporarySetting("syngular", "DEGBOUND", 0):
                         if not seminumerical_dim_computation:

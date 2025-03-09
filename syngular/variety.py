@@ -201,11 +201,12 @@ class Variety_of_Ideal:
                 raise RootPrecisionError
 
             # determines dimension of original ideal in the full ring from that of the semi-numerical slice
-            learnt_dimension = len(self.ring.variables) - len(self.generators) + oSemiNumericalIdeal.dim
-            if isinstance(original_self.ring, QuotientRing):
-                original_self.dim_in_full_ring = learnt_dimension
-            else:
-                original_self.dim = learnt_dimension
+            if oSemiNumericalIdeal.dim >= 0:
+                learnt_dimension = len(self.ring.variables) - len(self.generators) + oSemiNumericalIdeal.dim
+                if isinstance(original_self.ring, QuotientRing):
+                    original_self.dim_in_full_ring = learnt_dimension
+                else:
+                    original_self.dim = learnt_dimension
 
             if not oSemiNumericalIdeal.dim == 0:
                 if oSemiNumericalIdeal.dim > 0 and indepSet == 'guess':
