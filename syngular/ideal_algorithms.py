@@ -147,6 +147,20 @@ class Ideal_Algorithms:
         # first step: find zero dimensional projections which are linear in the dependent variables, i.e. are a single point.
         if projection_number is not None:
             self.indepSets = self.indepSets[projection_number:projection_number + 1]
+        if seminumerical_dim_computation:
+            try:
+                self.indepSets
+                self.dim
+            except TimeoutError:
+                if verbose:
+                    print("indepSet and dim computation timedout - will learn semi-numerically.")
+            field = Field("finite field", 2 ** 31 - 1, 1)
+            nbr_points = 100
+            points = []
+            for i in range(nbr_points):
+                if verbose:
+                    print(f"\rGenerating point #{i}        ", end="")
+                points += [self.point_on_variety(field, indepSet='force guess', seed=i)]
         lowest_degree_projection_indepSets = []
         lowest_degree = 9999999
         for i, indepSet in enumerate(self.indepSets):
@@ -173,9 +187,9 @@ class Ideal_Algorithms:
             if max_degree == lowest_degree:
                 lowest_degree_projection_indepSets += [indepSet]
             if verbose:
-                print(f"\r@{i}/{len(self.indepSets)} projections found: {len(lowest_degree_projection_indepSets)} of degree {lowest_degree}", end="")
+                print(f"\r@{i}/{len(self.indepSets)} projections found: {len(lowest_degree_projection_indepSets)} of degree {lowest_degree}     ", end="")
         if verbose:
-            print(f"\rprojections found: {len(lowest_degree_projection_indepSets)} of degree {lowest_degree}", end="                    ")
+            print(f"\rprojections found: {len(lowest_degree_projection_indepSets)} of degree {lowest_degree}             ", end="                    ")
         # for each single-point zero-dimensional projection, get the factors of the f-polynomial in EXTCONT (Becker et al. Proposition 8.96)
         f_polys_factors = []
         for i, indepSet in enumerate(lowest_degree_projection_indepSets):
@@ -240,10 +254,6 @@ class Ideal_Algorithms:
                   end="                              \n")
         # check that the dimensionality drops when adding each of these factors separately (and hence drops for <ideal, f^s>)
         with TemporarySetting("syngular", "TIMEOUT", timeout_dim):
-            if seminumerical_dim_computation:
-                print(self)
-                field = Field("finite field", 2 ** 31 - 1, 1)
-                points = [self.point_on_variety(field) for i in range(100)]
             self.codim  # just cache it - if seminumerical_dim_computation then it was learnt numerically
             if verbose:
                 print(f"Original ideal has codim {self.codim}")

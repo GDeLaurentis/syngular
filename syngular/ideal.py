@@ -25,6 +25,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         self.generators = generators
         self.test_valid_ideal()
         self._dim = None
+        self._indepSets = None
 
     def test_valid_ideal(self):
         singular_commands = [f"ring r = {self.ring};",
@@ -108,19 +109,25 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         output = execute_singular_command(singular_commands)
         return tuple(map(int, output.split(",\n")))
 
-    @functools.cached_property
+    @property
     def indepSets(self):
-        singular_commands = [f"ring r = {self.ring};",
-                             # f"ideal gb = {','.join(self.groebner_basis)};",   # this breaks singular variety construction, especially with mpcs
-                             f"ideal i = {self};",
-                             "ideal gb = groebner(i);",
-                             "print(indepSet(gb, 1));",
-                             "$"]
-        output = execute_singular_command(singular_commands)
-        if output == 'empty list':
-            return [self.indepSet]
-        indepSets = [tuple(map(int, line.replace(" ", "").split(","))) for line in output.split("\n") if ":" not in line]
-        return indepSets
+        if self._indepSets is None:
+            singular_commands = [f"ring r = {self.ring};",
+                                 # f"ideal gb = {','.join(self.groebner_basis)};",   # this breaks singular variety construction, especially with mpcs
+                                 f"ideal i = {self};",
+                                 "ideal gb = groebner(i);",
+                                 "print(indepSet(gb, 1));",
+                                 "$"]
+            output = execute_singular_command(singular_commands)
+            if output == 'empty list':
+                return [self.indepSet]
+            indepSets = [tuple(map(int, line.replace(" ", "").split(","))) for line in output.split("\n") if ":" not in line]
+            self._indepSets = indepSets
+        return self._indepSets
+
+    @indepSets.setter
+    def indepSets(self, val):
+        self._indepSets = val
 
     @functools.cached_property
     def groebner_basis(self):
@@ -375,6 +382,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         for cached_property in self._get_cached_properties_names():
             delattr(self, cached_property)
         self._dim = None
+        self._indepSets = None
 
     def generators_eval(self, **kwargs):
         return [eval(generator.replace("^", "**"), kwargs) for generator in self.generators]
