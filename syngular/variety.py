@@ -182,6 +182,10 @@ class Variety_of_Ideal:
             base_point = {str(key): field(val) for key, val in base_point.items()}
         base_point |= {depSymbol: Polynomial(depSymbol, field) for depSymbol in depSymbols}
 
+        # handle edge case of no dependent variables (e.g. random point in ring which is not a q-ring)
+        if depSymbols == ():
+            return base_point
+
         oSemiNumericalIdeal = self._semi_numerical_slice(field, directions, valuations, base_point, depSymbols, verbose=verbose, iteration=0)
 
         # print(repr(oSemiNumericalIdeal))

@@ -252,8 +252,15 @@ class Polynomial(object):
     def __add__(self, other):
         if isinstance(other, Polynomial):
             return Polynomial(self.coeffs_and_monomials + other.coeffs_and_monomials, self.field)
+        elif isinstance(other, self.field.random().__class__):
+            return Polynomial(self.coeffs_and_monomials + [(other, Monomial('')), ], self.field)
         else:
-            raise NotImplementedError(f"Operation: __add__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
+            return NotImplemented
+            # for debugging
+            # raise NotImplementedError(f"Operation: __add__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
+
+    def __radd__(self, other):
+        return self + other
 
     def __sub__(self, other):
         return self + (-1 * other)

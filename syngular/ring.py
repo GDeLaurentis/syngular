@@ -69,6 +69,11 @@ class Ring(object):
         from .ideal import Ideal
         return Ideal(self, [])
 
+    def unit_ideal(self):
+        """Returns the unit ideal ⟨1⟩ in the ring."""
+        from .ideal import Ideal
+        return Ideal(self, ['1'])
+
     def random_point(self, field, seed=None):
         """Returns a random numerical point in the given field on the zero ideal of the ring."""
         j = self.zero_ideal()

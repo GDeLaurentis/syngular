@@ -128,6 +128,14 @@ class Field(object):
             raise Exception(f"Field not understood: {self.field.name}")
 
     @property
+    def one(self):
+        return self(1)
+
+    @property
+    def zero(self):
+        return self(0)
+
+    @property
     def j(self):
         return self.sqrt(-1)
 

@@ -42,3 +42,10 @@ def test_rstr():
     assert Polynomial(poly_reloaded, QQ) == poly
     assert Polynomial(poly_reloaded, QQ) - poly == 0
     assert poly.subs(point, Fp) == poly_reloaded.subs(point, Fp)
+
+
+def test_addition_with_field_element():
+    field = Field('padic', 2 ** 31 - 19, 10)
+    a, b = field.random(), field.random()
+    assert (b * Polynomial([(field.one, Monomial('t')), ], field) + a ==
+            a + b * Polynomial([(field.one, Monomial('t')), ], field))
