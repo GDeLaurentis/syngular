@@ -78,3 +78,40 @@ class Ring(object):
         """Returns a random numerical point in the given field on the zero ideal of the ring."""
         j = self.zero_ideal()
         return j.point_on_variety(field=field, seed=seed)
+
+    def univariate_slice(ring, field, indepSet=None, seed=None, verbose=False):
+        from .polynomial import Polynomial
+        from .ideal import Ideal
+        from .qring import QRing
+        from .tools import flatten
+        if indepSet is None:
+            indepSet = (1, ) * len(ring.variables)
+        point1 = ring.random_point(field, seed=seed)
+        xs = tuple(sympy.symbols([f"{var}x" for var in ring.variables]))
+        t = sympy.symbols('t')
+        point2partial = {str(x): 0 for i, x in enumerate(xs) if indepSet[i] == 0}
+        if isinstance(ring, QRing):
+            equations = [sympy.poly(sympy.poly(generator).subs({var: var + t * x for var, x in zip(ring.variables, xs)}).subs(point1).subs(point2partial).expand(),
+                                    modulus=field.characteristic ** field.digits)
+                         for generator in ring.ideal.generators]
+            equations = [entry for entry in flatten([sympy.poly(eq, t).all_coeffs() for eq in equations]) if entry != 0]
+            if verbose:
+                print("Built q-ring equations:")
+                print("\n".join(map(str, equations)))
+        else:
+            equations = []
+        ring2 = Ring(field.characteristic, tuple(x for i, x in enumerate(xs) if indepSet[i] == 1), 'dp')
+        ideal2 = Ideal(ring2, list(map(str, equations)))
+        point2 = ideal2.point_on_variety(field)
+        point2 = point2partial | point2
+        if verbose:
+            print("Built shift with line coefficients:")
+            print(point1)
+            print(point2)
+
+        def univariate_slice(t):
+            return {key1: point2[key2] * t + point1[key1] for i, (key1, key2) in enumerate(zip(map(str, ring.variables), map(str, xs)))}
+
+        if isinstance(ring, QRing):
+            assert all([Polynomial(generator, field).subs(univariate_slice(field.random())) == 0 for generator in ring.ideal.generators])
+        return univariate_slice
