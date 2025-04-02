@@ -87,7 +87,7 @@ class Ring(object):
         if indepSet is None:
             indepSet = (1, ) * len(ring.variables)
         point1 = ring.random_point(field, seed=seed)
-        xs = tuple(sympy.symbols([f"{var}x" for var in ring.variables]))
+        xs = tuple(sympy.symbols([f"x{var}" for var in ring.variables]))
         t = sympy.symbols('t')
         point2partial = {str(x): 0 for i, x in enumerate(xs) if indepSet[i] == 0}
         if isinstance(ring, QRing):

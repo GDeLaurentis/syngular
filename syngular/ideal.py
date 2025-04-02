@@ -398,7 +398,6 @@ def reduce(poly, ideal):
 
 def monomial_to_exponents(variables, monomial):
     """Converts a monomial in the variables of a polynomial ring into a numpy.array of exponents."""
-    """Converts a monomial in the variables of a polynomial ring into a numpy.array of exponents."""
     exps = numpy.zeros(len(variables), dtype=int)
     variables = list(map(str, variables))  # in case sympy symbols are passsed
     _split_monomial = list(filter(lambda x: x != '', monomial.replace("^", "**").split("*")))

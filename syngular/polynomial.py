@@ -1,72 +1,13 @@
-import functools
 import numpy
-import operator
 import re
 import sympy
+import syngular
 
-from collections import defaultdict
-from multiset import FrozenMultiset
 from fractions import Fraction as Q
 from copy import deepcopy
 
 from .field import Field
-
-
-class Monomial(FrozenMultiset):
-    """A FrozenMultiset representation of a Monomial. Positive integer multiplicities represent powers."""
-
-    def __init__(self, letters_and_powers={}):
-        if isinstance(letters_and_powers, (dict, tuple, FrozenMultiset, Monomial)):
-            super(Monomial, self).__init__(letters_and_powers)
-        elif isinstance(letters_and_powers, str):
-            super(Monomial, self).__init__(self.__rstr__(letters_and_powers))
-        else:
-            print("entry:", repr(letters_and_powers))
-            print("type:", type(letters_and_powers))
-            raise NotImplementedError
-
-    @staticmethod
-    def __rstr__(monomial):
-        if monomial == '':
-            return dict()
-        monomial = monomial.replace("**", "^")
-        factors = monomial.split('*')
-        factor_groups = defaultdict(list)
-        for factor in factors:
-            if '^' in factor:
-                function, power = factor.split('^')
-                power = int(power)
-            else:
-                function = factor
-                power = 1
-            factor_groups[function].append(power)
-        powers = [(function, sum(powers)) for function, powers in factor_groups.items()]
-        return dict(powers)
-
-    def __repr__(self):
-        return f"Monomial(\"{str(self)}\")"
-
-    def __str__(self):
-        return "*".join([f"{key}^{val}" for key, val in self.items()])
-
-    def tolist(self):
-        return [entry for key, val in self.items() for entry in [key, ] * val]
-
-    def subs(self, values_dict):
-        return functools.reduce(operator.mul, [values_dict[key] ** val for key, val in self.items()], 1)
-
-    def __mul__(self, other):
-        assert isinstance(other, Monomial)
-        return super(Monomial, self).__add__(other)
-
-    def __truediv__(self, other):
-        raise Exception("Monomial division not implement. Do you mean this to be a Rational Function?")
-
-    def __add__(self, other):
-        raise Exception("Monomial addition not implement. Do you mean this to be a Polynomial?")
-
-    def __sub__(self, other):
-        raise Exception("Monomial subtraction not implement. Do you mean this to be a Polynomial?")
+from .monomial import Monomial
 
 
 class Polynomial(object):
@@ -98,11 +39,11 @@ class Polynomial(object):
         self._field = field
 
     def __str__(self, for_repr=False):
-        return " + ".join((f"({str(coeff) if not for_repr else repr(coeff)})"
-                           if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
-                           f"{str(coeff) if not for_repr else repr(coeff)}") +
-                          (f"*{monomial}" if str(monomial) != "" else "")
-                          for coeff, monomial in self.coeffs_and_monomials).replace("+-", "-").replace("+ -", "- ")
+        return "+".join((f"({str(coeff) if not for_repr else repr(coeff)})"
+                         if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
+                         f"{str(coeff)}") +  # if not for_repr else repr(coeff)
+                        (f"{monomial}" if not syngular.FORCECDOTS or str(monomial) == '' else f"{syngular.CDOTCHAR}{monomial}")
+                        for coeff, monomial in self.coeffs_and_monomials).replace("+-", "-")
 
     def __repr__(self):
         return f"Polynomial(\"{self.__str__(for_repr=True)}\", {self.field})"
@@ -170,7 +111,10 @@ class Polynomial(object):
 
     @staticmethod
     def __rstr__(polynomial, field):
-        polynomial = polynomial.replace(" ", "").replace("+-", "-")
+        # print(polynomial)
+        while "  " in polynomial:
+            polynomial = polynomial.replace("  ", " ")
+        polynomial = polynomial.replace("+-", "-").replace("**", "^")
         polynomial = re.sub(r"(\+|\-)I\*{0,1}([\d\.e\+\-]+)", r"\1\2j", polynomial)  # format complex nbrs
         parentheses = [(("(", ), (")", )), (("{", ), ("}", )), (("[", "⟨", "<", ), ("]", "⟩", ">"))]
         lopen_parentheses = [parenthesis[0] for parenthesis in parentheses]
@@ -181,7 +125,7 @@ class Polynomial(object):
         for char in polynomial:
             if (char == "+" or char == "-") and all([parenthesis_balance == 0 for parenthesis_balance in parentheses_balance]):
                 if next_match != "":
-                    coeffs_and_monomials_strings += [next_match.replace(" ", "").replace("**", "^")]
+                    coeffs_and_monomials_strings += [next_match]
                 next_match = char
             else:
                 if any([char in open_parentheses for open_parentheses in lopen_parentheses]):
@@ -191,12 +135,15 @@ class Polynomial(object):
                 next_match += char
         else:
             assert all([parenthesis_balance == 0 for parenthesis_balance in parentheses_balance])
-            coeffs_and_monomials_strings += [next_match.replace(" ", "").replace("**", "^")]
+            coeffs_and_monomials_strings += [next_match]
         # print(coeffs_and_monomials_strings)
         coeffs_and_monomials = []
         for coeff_and_monomial_string in coeffs_and_monomials_strings:
-            coeff = re.findall(r"^[+-]?[\%\+\-\(\)\.j\d/e]*", coeff_and_monomial_string)[0]
+            coeff = re.findall(r"^[+-]?[\ \%\+\-\(\)\.j\d/e]*", coeff_and_monomial_string)[0]
+            while len(coeff) > 0 and coeff[-1] == "(":
+                coeff = coeff[:-1]
             monomial = coeff_and_monomial_string.replace(coeff, "", 1)
+            coeff = coeff.replace(" ", "")
             coeff = "+1" if coeff == "+" or coeff == "" else "-1" if coeff == "-" else coeff
             coeff_denom = re.findall(r"/(\d+)", monomial)
             if coeff_denom != []:
@@ -208,11 +155,12 @@ class Polynomial(object):
                 monomial = monomial[1:]
             if coeff[:2] == "+(" and coeff[-1:] == ")":
                 coeff = coeff[2:-1]
-            # print("string:", coeff_and_monomial_string, "\ncoeff", coeff, "\nmonomial:", monomial)
+            # print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
             coeffs_and_monomials += [(field(coeff) / coeff_denom, Monomial(monomial))]
         return coeffs_and_monomials
 
     def subs(self, base_point, field=None):
+        print(self, base_point)
         if field is None:
             field = self.field
         base_point = {str(key): val for key, val in base_point.items()}

@@ -17,7 +17,7 @@ from mpmath.libmp.libhyper import NoConvergence
 from .tools import RootNotInFieldError, RootPrecisionError
 from .field import Field
 from .polynomial import Monomial, Polynomial
-from .settings import TemporarySetting
+from .settings import TemporarySetting, with_other_cas_compatible_str
 
 if version.parse(sympy.__version__) < version.parse('1.14'):
     # See sympy issue #23861, fixed in sympy pull request #27650
@@ -82,6 +82,7 @@ def retry_to_find_root(max_tries=100):
 
 class Variety_of_Ideal:
 
+    @with_other_cas_compatible_str
     @retry_to_find_root(max_tries=100)
     def point_on_variety(self, field, base_point={}, directions=None, valuations=tuple(), indepSet='guess',
                          seed=None, verbose=False, directions_analytic_check=False):
@@ -305,6 +306,7 @@ class Variety_of_Ideal:
 
         return {str(key): val for key, val in base_point.items()}
 
+    @with_other_cas_compatible_str
     def _semi_numerical_slice(self, field, directions, valuations, base_point, depSymbols, verbose=False, iteration=0):
         """Helper function for point_on_variety. Uses the values in 'base_point' to return a new ideal of lower dimension.
         The potentially perturbed slice of the origial ideal 'self'."""

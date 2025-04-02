@@ -1,4 +1,5 @@
 import importlib
+import functools
 
 
 class TemporarySetting:
@@ -20,3 +21,27 @@ class TemporarySetting:
         module = importlib.import_module(self.module_name)
         if hasattr(module, self.setting_name):
             setattr(module, self.setting_name, self.old_value)
+
+
+def with_cm(cm):
+    """
+    A decorator that applies a context manager to the function.
+    This allows a `with` statement to be used as a decorator.
+    """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            with cm:
+                return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def with_other_cas_compatible_str(func):
+    @with_cm(TemporarySetting("syngular", "FORCECDOTS", True))
+    @with_cm(TemporarySetting("syngular", "CDOTCHAR", "*"))
+    @with_cm(TemporarySetting("syngular", "UNICODEPOWERS", False))
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
