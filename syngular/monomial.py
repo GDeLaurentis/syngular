@@ -24,23 +24,23 @@ def non_unicode_powers(string):
 class Monomial(FrozenMultiset):
     """A FrozenMultiset representation of a Monomial. Positive integer multiplicities represent powers."""
 
-    def __new__(cls, *args):
-        if len(args) == 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
-            combined_arg = (dict(zip(args[0], args[1])),)
-            return super(Monomial, cls).__new__(cls, *combined_arg)
-        return super(Monomial, cls).__new__(cls, *args)
+    def __new__(cls, *_):
+        return super(Monomial, cls).__new__(cls, )
 
     def __init__(self, *args):
+        print(args)
         if len(args) == 0:
             args = [(), ]
         if isinstance(args[0], (dict, FrozenMultiset, Monomial)):
             super(Monomial, self).__init__(args[0])
-        elif isinstance(args[0], (tuple, list)) and (len(args) == 1 or not isinstance(args[1], (tuple, list))):
+        elif len(args) == 1 and isinstance(args[0], (tuple, list)) and all([isinstance(entry, (list, tuple)) for entry in args[0]]):
+            super(Monomial, self).__init__(inv for inv, exp in args[0] for _ in range(int(exp)))
+        elif len(args) == 1 and isinstance(args[0], (tuple, list)) and all([isinstance(entry, str) for entry in args[0]]):
             super(Monomial, self).__init__(self.__rstr__('·'.join(args[0])))
+        elif len(args) == 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
+            super(Monomial, self).__init__(dict(zip(args[0], args[1])))
         elif isinstance(args[0], str):
             super(Monomial, self).__init__(self.__rstr__(args[0]))
-        elif len(args) >= 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
-            super(Monomial, self).__init__(dict(zip(args[0], args[1])))
         else:
             raise NotImplementedError(f"Monomial initialization not understood, received:\nargs: {args}\nargs types: {list(map(type, args))}")
 
@@ -68,7 +68,7 @@ class Monomial(FrozenMultiset):
                                         else [entry, '1'] for entry in splitted_string_partially_remerged])))
         invs = [' '.join(inv.split()) for inv in invs]
         # print(list(zip(invs, list(map(int, exps)))))
-        return dict(zip(invs, list(map(int, exps))))
+        return FrozenMultiset(inv for inv, exp in zip(invs, exps) for _ in range(int(exp)))
 
     def __repr__(self):
         return f"Monomial(\"{str(self)}\")"

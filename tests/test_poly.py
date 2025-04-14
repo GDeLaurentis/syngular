@@ -45,6 +45,17 @@ def test_rstr():
     assert poly.subs(point, Fp) == poly_reloaded.subs(point, Fp)
 
 
+def test_monomial_instantiation_from_tuple_of_strings():
+    assert Monomial(("zb", "zb", "X²", "(wb-1)")) == Monomial("zb²X²(wb-1)")
+
+
+def test_monomial_instantiation_from_tuple_of_tuples():
+    assert (
+        Monomial((('zb', 2), ('X', 2), ('(wb-1)', 1), ('(X z zb + 1)', 1), ('(w+z-w·z+X·z·zb)', 4))) ==
+        Monomial("zb·zb·X²(wb-1)(X z zb + 1)(w+z-w·z+X·z·zb)⁴")
+    )
+
+
 def test_monomial_instantiation_from_pair_of_tuples():
     assert Monomial(("zb", "X", "(wb-1)"), (1, 2, 3)) == Monomial("zb·X²(wb-1)³")
 
