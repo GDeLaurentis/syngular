@@ -160,7 +160,6 @@ class Polynomial(object):
         return coeffs_and_monomials
 
     def subs(self, base_point, field=None):
-        print(self, base_point)
         if field is None:
             field = self.field
         base_point = {str(key): val for key, val in base_point.items()}

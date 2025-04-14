@@ -24,15 +24,29 @@ def non_unicode_powers(string):
 class Monomial(FrozenMultiset):
     """A FrozenMultiset representation of a Monomial. Positive integer multiplicities represent powers."""
 
-    def __init__(self, letters_and_powers={}):
-        if isinstance(letters_and_powers, (dict, tuple, FrozenMultiset, Monomial)):
-            super(Monomial, self).__init__(letters_and_powers)
-        elif isinstance(letters_and_powers, str):
-            super(Monomial, self).__init__(self.__rstr__(letters_and_powers))
+    def __new__(cls, *args):
+        if len(args) == 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
+            combined_arg = (dict(zip(args[0], args[1])),)
+            return super(Monomial, cls).__new__(cls, *combined_arg)
+        return super(Monomial, cls).__new__(cls, *args)
+
+    def __init__(self, *args):
+        if len(args) == 0:
+            args = [(), ]
+        if isinstance(args[0], (dict, FrozenMultiset, Monomial)):
+            super(Monomial, self).__init__(args[0])
+        elif isinstance(args[0], (tuple, list)) and (len(args) == 1 or not isinstance(args[1], (tuple, list))):
+            super(Monomial, self).__init__(self.__rstr__('·'.join(args[0])))
+        elif isinstance(args[0], str):
+            super(Monomial, self).__init__(self.__rstr__(args[0]))
+        elif len(args) >= 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
+            super(Monomial, self).__init__(dict(zip(args[0], args[1])))
         else:
-            print("entry:", repr(letters_and_powers))
-            print("type:", type(letters_and_powers))
-            raise NotImplementedError
+            raise NotImplementedError(
+                f"""Monomial initialization not understood, received:\n
+                args: {args}\n
+                args types: {list(map(type, args))}
+                """)
 
     @staticmethod
     def __rstr__(string):
@@ -72,7 +86,7 @@ class Monomial(FrozenMultiset):
         return string
 
     def tolist(self):
-        return [entry for key, val in self.items() for entry in [key, ] * val]
+        return list(self.keys())
 
     def subs(self, values_dict):
         return functools.reduce(operator.mul, [values_dict[key] ** val for key, val in self.items()], 1)
@@ -82,7 +96,11 @@ class Monomial(FrozenMultiset):
         return super(Monomial, self).__add__(other)
 
     def __truediv__(self, other):
-        raise Exception("Monomial division not implement. Do you mean this to be a Rational Function?")
+        if isinstance(other, Monomial) and other <= self:
+            return Monomial(FrozenMultiset(self) - FrozenMultiset(other))
+        else:
+            return NotImplemented
+        # raise Exception("Monomial division not implement. Do you mean this to be a Rational Function?")
 
     def __add__(self, other):
         raise Exception("Monomial addition not implement. Do you mean this to be a Polynomial?")

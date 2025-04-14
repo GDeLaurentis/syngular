@@ -45,6 +45,10 @@ def test_rstr():
     assert poly.subs(point, Fp) == poly_reloaded.subs(point, Fp)
 
 
+def test_monomial_instantiation_from_pair_of_tuples():
+    assert Monomial(("zb", "X", "(wb-1)"), (1, 2, 3)) == Monomial("zb·X²(wb-1)³")
+
+
 def test_addition_with_field_element():
     field = Field('padic', 2 ** 31 - 19, 10)
     a, b = field.random(), field.random()
@@ -63,3 +67,10 @@ def test_polynomial_with_brackets():
         (Fraction(-23, 24),
          [('[1|2]', 1), ('⟨2|4⟩', 1), ('⟨3|1+2|3|2⟩', 1)])]
     assert poly == Polynomial(str(poly), Field("rational", 0, 0))
+
+
+def test_monomial_division():
+    a = Monomial("""(zb)(X)²(wb-1)(X*z*zb+1)(w+z-w*z+X*z*zb)⁴""")
+    b = Monomial("""(zb)(X)(wb-1)(zb-1)(X*z*zb+1)(w+z-w*z+X*z*zb)""")
+    x = a & b
+    assert a / x == Monomial("(X)(w+z-w*z+X*z*zb)³")
