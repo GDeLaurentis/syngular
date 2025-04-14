@@ -28,7 +28,6 @@ class Monomial(FrozenMultiset):
         return super(Monomial, cls).__new__(cls, )
 
     def __init__(self, *args):
-        print(args)
         if len(args) == 0:
             args = [(), ]
         if isinstance(args[0], (dict, FrozenMultiset, Monomial)):
