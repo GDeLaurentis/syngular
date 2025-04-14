@@ -31,13 +31,15 @@ class Monomial(FrozenMultiset):
         if len(args) == 0:
             args = [(), ]
         if isinstance(args[0], (dict, FrozenMultiset, Monomial)):
-            super(Monomial, self).__init__(args[0])
+            assert all([isinstance(exp, int) or (isinstance(exp, float) and exp.is_integer()) for exp in args[0].values()])
+            super(Monomial, self).__init__({key: int(val) for key, val in args[0].items()})
         elif len(args) == 1 and isinstance(args[0], (tuple, list)) and all([isinstance(entry, (list, tuple)) for entry in args[0]]):
             super(Monomial, self).__init__(inv for inv, exp in args[0] for _ in range(int(exp)))
         elif len(args) == 1 and isinstance(args[0], (tuple, list)) and all([isinstance(entry, str) for entry in args[0]]):
             super(Monomial, self).__init__(self.__rstr__('·'.join(args[0])))
         elif len(args) == 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
-            super(Monomial, self).__init__(dict(zip(args[0], args[1])))
+            assert all([isinstance(exp, int) or (isinstance(exp, float) and exp.is_integer()) for exp in args[1]])
+            super(Monomial, self).__init__(dict(zip(args[0], map(int, args[1]))))
         elif isinstance(args[0], str):
             super(Monomial, self).__init__(self.__rstr__(args[0]))
         else:

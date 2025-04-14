@@ -1,3 +1,5 @@
+import pytest
+
 from syngular import Monomial, Polynomial, Field, Ring, RingPoint
 
 from fractions import Fraction
@@ -58,6 +60,18 @@ def test_monomial_instantiation_from_tuple_of_tuples():
 
 def test_monomial_instantiation_from_pair_of_tuples():
     assert Monomial(("zb", "X", "(wb-1)"), (1, 2, 3)) == Monomial("zb·X²(wb-1)³")
+
+
+def test_monomial_instantiation_from_pair_of_tuples_with_float_exponents():
+    assert Monomial(("zb", "X", "(wb-1)"), (1.0, 2.0, 3)) == Monomial("zb·X²(wb-1)³")
+    with pytest.raises(AssertionError):
+        Monomial(("zb", "X", "(wb-1)"), (1.2, 2, 3))
+
+
+def test_monomial_instantiation_from_dict_with_float_exponents():
+    assert Monomial({"zb": 1.0, "X": 2.0, "(wb-1)": 3}) == Monomial("zb·X²(wb-1)³")
+    with pytest.raises(AssertionError):
+        Monomial({"zb": 1.2, "X": 2.0, "(wb-1)": 3})
 
 
 def test_addition_with_field_element():
