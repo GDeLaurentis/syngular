@@ -42,11 +42,7 @@ class Monomial(FrozenMultiset):
         elif len(args) >= 2 and isinstance(args[0], (list, tuple)) and isinstance(args[1], (list, tuple)):
             super(Monomial, self).__init__(dict(zip(args[0], args[1])))
         else:
-            raise NotImplementedError(
-                f"""Monomial initialization not understood, received:\n
-                args: {args}\n
-                args types: {list(map(type, args))}
-                """)
+            raise NotImplementedError(f"Monomial initialization not understood, received:\nargs: {args}\nargs types: {list(map(type, args))}")
 
     @staticmethod
     def __rstr__(string):
@@ -70,7 +66,7 @@ class Monomial(FrozenMultiset):
         # print(splitted_string_partially_remerged)
         invs, exps = list(map(list, zip(*[re.split(r"\^(?=\d+$)", entry) if re.findall(r"\^(?=\d+$)", entry) != []
                                         else [entry, '1'] for entry in splitted_string_partially_remerged])))
-        invs = [inv.replace(" ", "") for inv in invs]
+        invs = [' '.join(inv.split()) for inv in invs]
         # print(list(zip(invs, list(map(int, exps)))))
         return dict(zip(invs, list(map(int, exps))))
 
@@ -90,6 +86,11 @@ class Monomial(FrozenMultiset):
 
     def subs(self, values_dict):
         return functools.reduce(operator.mul, [values_dict[key] ** val for key, val in self.items()], 1)
+
+    def __call__(self, other):
+        if callable(other):
+            return self.subs({key: other(key) for key in self.keys()})
+        return self.subs(other)
 
     def __mul__(self, other):
         assert isinstance(other, Monomial)

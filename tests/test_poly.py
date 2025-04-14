@@ -1,4 +1,4 @@
-from syngular import Monomial, Polynomial, Field
+from syngular import Monomial, Polynomial, Field, Ring, RingPoint
 
 from fractions import Fraction
 
@@ -74,3 +74,9 @@ def test_monomial_division():
     b = Monomial("""(zb)(X)(wb-1)(zb-1)(X*z*zb+1)(w+z-w*z+X*z*zb)""")
     x = a & b
     assert a / x == Monomial("(X)(w+z-w*z+X*z*zb)³")
+
+
+def test_monomial_eval_vs_ring_point_eval():
+    ring = Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp')
+    oPoint = RingPoint(ring, Field("padic", 2 ** 31 - 1, 10))
+    Monomial("""zb X²(wb-1)(X z zb + 1)(w+z-w·z+X*z·zb)⁴""")(oPoint) == oPoint("zb X²(wb-1)(X z zb + 1)(w+z-w z+X·z·zb)⁴")
