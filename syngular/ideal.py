@@ -28,6 +28,8 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         self._indepSets = None
 
     def test_valid_ideal(self):
+        if any(isinstance(entry, (list, tuple)) for entry in self.generators):
+            raise ValueError("Ideal generators should not contain lists or tuples. Have you forgotten to flatten?")
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",
                              "print(i);"
