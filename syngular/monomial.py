@@ -21,6 +21,15 @@ def non_unicode_powers(string):
                   string)
 
 
+def preserve_class_binary_op(func):
+    @functools.wraps(func)
+    def wrapper(self, other):
+        result = func(self, other)
+        cls = self.__class__ if issubclass(self.__class__, other.__class__) else other.__class__
+        return cls(result)
+    return wrapper
+
+
 class Monomial(FrozenMultiset):
     """A FrozenMultiset representation of a Monomial. Positive integer multiplicities represent powers."""
 
@@ -52,7 +61,7 @@ class Monomial(FrozenMultiset):
             string = string[1:]
         if string == '':
             return dict()
-        splitted_string = [entry for entry in re.split(r"(?<![\+\-\(])(?<!tr5)([⟨\[]|(?<![a-zA-Z])[\(a-zA-ZΔΩΠ])", string) if entry != '']
+        splitted_string = [entry for entry in re.split(r"(?<![\+\-\(])(?<!tr5)(?<!tr)([⟨\[\(]|(?<![a-zA-Z])[a-zA-ZΔΩΠ])", string) if entry != '']
         splitted_string = [splitted_string[i] + splitted_string[i + 1] if i + 1 < len(splitted_string) else splitted_string[i]
                            for i in range(len(splitted_string))[::2]]
         # sqeuentially remerge strings until parenthesis are (minimally) balanced
@@ -93,13 +102,15 @@ class Monomial(FrozenMultiset):
             return self.subs({key: other(key) for key in self.keys()})
         return self.subs(other)
 
+    @preserve_class_binary_op
     def __mul__(self, other):
         assert isinstance(other, Monomial)
-        return super(Monomial, self).__add__(other)
+        return FrozenMultiset(self) + FrozenMultiset(other)
 
+    @preserve_class_binary_op
     def __truediv__(self, other):
         if isinstance(other, Monomial) and other <= self:
-            return Monomial(FrozenMultiset(self) - FrozenMultiset(other))
+            return FrozenMultiset(self) - FrozenMultiset(other)
         else:
             return NotImplemented
         # raise Exception("Monomial division not implement. Do you mean this to be a Rational Function?")
@@ -109,3 +120,15 @@ class Monomial(FrozenMultiset):
 
     def __sub__(self, other):
         raise Exception("Monomial subtraction not implement. Do you mean this to be a Polynomial?")
+
+    @property
+    def invs(self):
+        return [inv for inv, _ in self.items()]
+
+    @property
+    def exps(self):
+        return [exp for _, exp in self.items()]
+
+    @property
+    def variables(self):
+        return set(self.invs)

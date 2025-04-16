@@ -2,6 +2,8 @@ import numpy
 import re
 import sympy
 import syngular
+import functools
+import operator
 
 from fractions import Fraction as Q
 from copy import deepcopy
@@ -27,23 +29,34 @@ class Polynomial(object):
         elif isinstance(coeffs_and_monomials, Polynomial):
             coeffs_and_monomials = coeffs_and_monomials.coeffs_and_monomials
         elif isinstance(coeffs_and_monomials, list):
-            assert all([isinstance(entry, tuple) for entry in coeffs_and_monomials])
-            assert all([len(entry) == 2 for entry in coeffs_and_monomials])
-            assert all([entry[0] in field for entry in coeffs_and_monomials if entry[0] != 0])
-            assert all([isinstance(entry[1], Monomial) for entry in coeffs_and_monomials])
+            if not all([isinstance(entry, tuple) for entry in coeffs_and_monomials]):
+                raise ValueError("Expecting list of tuples, coefficients and monomials.")
+            if not all([len(entry) == 2 for entry in coeffs_and_monomials]):
+                raise ValueError("Expecting list of tuples, coefficients and monomials, with exactly two entries.")
+            if not all([entry[0] in field or entry[0] is None for entry in coeffs_and_monomials if entry[0] != 0]):
+                try:
+                    coeffs_and_monomials = [(field(coeff), monomial) for coeff, monomial in coeffs_and_monomials]
+                except Exception as e:
+                    raise ValueError(f"Expecting coefficients to be in the field {field},"
+                                     f"received {[coeff for coeff, _  in coeffs_and_monomials]}.\n"
+                                     f"Attempted casting to field {field}, got:\n{e}.")
+            if not all([isinstance(entry[1], Monomial) for entry in coeffs_and_monomials]):
+                raise ValueError("Expecting second entries to be monomials.")
         elif coeffs_and_monomials in field:
             coeffs_and_monomials = [(coeffs_and_monomials, Monomial(''))]
         else:
             raise NotImplementedError(f"Received {coeffs_and_monomials} \n of type {type(coeffs_and_monomials)}")
-        self.coeffs_and_monomials = coeffs_and_monomials
         self._field = field
+        self.coeffs_and_monomials = coeffs_and_monomials
 
     def __str__(self, for_repr=False):
-        return "+".join((f"({str(coeff) if not for_repr else repr(coeff)})"
-                         if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
-                         f"{str(coeff)}") +  # if not for_repr else repr(coeff)
-                        (f"{monomial}" if not syngular.FORCECDOTS or str(monomial) == '' else f"{syngular.CDOTCHAR}{monomial}")
-                        for coeff, monomial in self.coeffs_and_monomials).replace("+-", "-")
+        return "+".join(
+            ('' if coeff is None else
+             f"({str(coeff) if not for_repr else repr(coeff)})" if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
+             f"{str(coeff)}") +  # if not for_repr else repr(coeff)
+            (f"{monomial}" if not syngular.FORCECDOTS or str(monomial) == '' else f"{syngular.CDOTCHAR}{monomial}")
+            for coeff, monomial in self.coeffs_and_monomials
+        ).replace("+-", "-")
 
     def __repr__(self):
         return f"Polynomial(\"{self.__str__(for_repr=True)}\", {self.field})"
@@ -60,7 +73,7 @@ class Polynomial(object):
         self._coeffs_and_monomials = [(coeff, monomial) for coeff, monomial in temp_coeffs_and_monomials if coeff != 0]
         self.reduce()
         if self._coeffs_and_monomials == []:  # ensure there is at least an entry
-            self._coeffs_and_monomials = [(0, Monomial(''))]
+            self._coeffs_and_monomials = [(self.field(0), Monomial(''))]
 
     @property
     def field(self):
@@ -88,7 +101,15 @@ class Polynomial(object):
 
     @property
     def variables(self):
-        return set([var for monomial in self.monomials for var in monomial.tolist()])
+        return functools.reduce(operator.or_, [monomial.variables for monomial in self.monomials], set())
+
+    @property
+    def linvs(self):
+        return [monomial.invs for monomial in self.monomials]
+
+    @property
+    def lexps(self):
+        return [monomial.exps for monomial in self.monomials]
 
     def rationalise(self):
         from pyadic.finite_field import vec_chained_FF_rationalize
@@ -114,8 +135,11 @@ class Polynomial(object):
         # print(polynomial)
         while "  " in polynomial:
             polynomial = polynomial.replace("  ", " ")
-        polynomial = polynomial.replace("+-", "-").replace("**", "^")
-        polynomial = re.sub(r"(\+|\-)I\*{0,1}([\d\.e\+\-]+)", r"\1\2j", polynomial)  # format complex nbrs
+        polynomial = polynomial.replace("+-", "-").replace("**", "^").replace(" +", "+").replace("+ ", "+").replace(" -", "-").replace("- ", "-")
+        # format complex nbrs - begin
+        polynomial = re.sub(r"(\+|\-|^)[iI]\*{0,1}([/\d\.e\+\-]+)", r"\1\2j", polynomial)
+        polynomial = re.sub(r"(\+|\-|^)([/\d\.e\+\-]+)\*{0,1}[iI]", r"\1\2j", polynomial)
+        # format complex nbrs - end
         parentheses = [(("(", ), (")", )), (("{", ), ("}", )), (("[", "⟨", "<", ), ("]", "⟩", ">"))]
         lopen_parentheses = [parenthesis[0] for parenthesis in parentheses]
         lclos_parentheses = [parenthesis[1] for parenthesis in parentheses]
@@ -194,6 +218,8 @@ class Polynomial(object):
             raise NotImplementedError(f"Operation: __eq__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
 
     def __truediv__(self, other):
+        if isinstance(other, Monomial):
+            return Polynomial([(coeff, monom / other) for coeff, monom in self.coeffs_and_monomials], self.field)
         return Polynomial([(coeff / other, monom) for coeff, monom in self.coeffs_and_monomials], self.field)
 
     def __add__(self, other):
