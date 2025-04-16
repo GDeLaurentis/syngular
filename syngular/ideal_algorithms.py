@@ -128,7 +128,7 @@ class Ideal_Algorithms:
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 
     def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600,
-                     seminumerical_dim_computation=False,
+                     seminumerical_dim_computation=False, nbr_points=100,
                      iterated_degbound_computation=False, projection_number=None, astuple=False):
         """
         Assumes equidimensionality of input ideal.
@@ -155,7 +155,6 @@ class Ideal_Algorithms:
                 if verbose:
                     print("indepSet and dim computation timedout - will learn semi-numerically.")
             field = Field("finite field", 2 ** 31 - 1, 1)
-            nbr_points = 100
             points = []
             for i in range(nbr_points):
                 if verbose:
