@@ -1,9 +1,9 @@
 import mpmath
 import random
 
-from fractions import Fraction as Q
+from fractions import Fraction
 
-from pyadic import PAdic, ModP
+from pyadic import PAdic, ModP, GaussianRational
 from pyadic.padic import padic_sqrt
 from pyadic.finite_field import finite_field_sqrt
 
@@ -29,21 +29,22 @@ class Field(object):
         self.digits = args[2]
 
     def __str__(self):
-        return "('{}', {}, {})".format(self.name, self.characteristic, self.digits)
+        return f"Field('{self.name}', {self.characteristic}, {self.digits})"
 
-    def __repr__(self):
-        return str(self)
+    __repr__ = __str__
 
-    def __call__(self, other):
+    def __call__(self, *args):
         """Cast to field."""
         if self.name in ["mpc", "C"]:
-            return mpmath.mpc(mpmath.mpmathify(other))
+            return mpmath.mpc(mpmath.mpmathify(args[0]))
         elif self.name in ["padic", "Qp"]:
-            return PAdic(other, self.characteristic, self.digits)
+            return PAdic(args[0], self.characteristic, self.digits)
         elif self.name in ["finite field", "Fp"]:
-            return ModP(other, self.characteristic)
+            return ModP(args[0], self.characteristic)
         elif self.name in ["rational", "Q"]:
-            return Q(other)
+            return Fraction(*args)
+        elif self.name in ["gaussian rational", "Q[i]", "Qi"]:
+            return GaussianRational(*args)
         else:
             raise NotImplementedError
 
@@ -53,8 +54,8 @@ class Field(object):
 
     @name.setter
     def name(self, value):
-        if value not in ['rational', 'Q', 'mpc', 'C', 'gaussian rational', 'finite field', 'Fp', 'padic', 'Qp']:
-            raise Exception("Field must be one of 'mpc', 'gaussian rational', 'finite field', 'padic'.")
+        if value not in ['rational', 'Q', 'mpc', 'C', 'gaussian rational', 'Q[i]', 'Qi', 'finite field', 'Fp', 'padic', 'Qp']:
+            raise Exception("Field must be one of 'mpc', 'gaussian rational', 'finite field', 'padic', or aliases thereof.")
         else:
             self._name = value
 
@@ -150,8 +151,8 @@ class Field(object):
                 p = self.characteristic
                 return ModP(random.randrange(0, p), p)
             elif self.name in ["mpc", 'C']:
-                return mpmath.mpc(str(Q(random.randrange(-100, 101), random.randrange(1, 201))),
-                                  str(Q(random.randrange(-100, 101), random.randrange(1, 201))))
+                return mpmath.mpc(str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))),
+                                  str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))))
             else:
                 raise NotImplementedError
         else:
@@ -203,4 +204,5 @@ class Field(object):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 
-field = Field()
+Q = Field("rational", 0, 0)
+Qi = Field("gaussian rational", 0, 0)
