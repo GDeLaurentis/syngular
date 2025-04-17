@@ -1,6 +1,7 @@
 import pytest
+import re
 
-from syngular import Monomial, Polynomial, Field, Ring, RingPoint
+from syngular import Monomial, Polynomial, Field, Ring, RingPoint, TemporarySetting, Qi
 
 from fractions import Fraction
 
@@ -74,6 +75,10 @@ def test_monomial_instantiation_from_dict_with_float_exponents():
         Monomial({"zb": 1.2, "X": 2.0, "(wb-1)": 3})
 
 
+def test_monomial_instantiation_repeated_entries():
+    assert Monomial(('a', 'b', 'a'), (1, 2, 1)).exps == [2, 2]
+
+
 def test_addition_with_field_element():
     field = Field('padic', 2 ** 31 - 19, 10)
     a, b = field.random(), field.random()
@@ -105,3 +110,19 @@ def test_monomial_eval_vs_ring_point_eval():
     ring = Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp')
     oPoint = RingPoint(ring, Field("padic", 2 ** 31 - 1, 10))
     Monomial("""zb X²(wb-1)(X z zb + 1)(w+z-w·z+X*z·zb)⁴""")(oPoint) == oPoint("zb X²(wb-1)(X z zb + 1)(w+z-w z+X·z·zb)⁴")
+
+
+def test_monomial_power_normalisation():
+    with TemporarySetting("syngular", "NORMALIZE_POWERS_PATTERNS", (re.compile(r"(mt)(\d+)"), )):
+        poly = Polynomial('1/24⟨2|4⟩⟨1|3|4|2⟩⟨3|4|1]+1/4⟨3|2⟩⟨2|4⟩mt2²+1/4⟨3|2⟩⟨2|4⟩mt2tr(3|4)-1/24⟨3|2⟩⟨2|4⟩tr(3|4)²+1/24⟨3|2⟩⟨2|4⟩⟨1|3|1]tr(3|4)-1/24⟨3|2⟩⟨2|4⟩tr(3|4)⟨2|4|2]', Qi)
+        assert "mt2" not in poly.variables
+    poly = Polynomial('1/24⟨2|4⟩⟨1|3|4|2⟩⟨3|4|1]+1/4⟨3|2⟩⟨2|4⟩mt2²+1/4⟨3|2⟩⟨2|4⟩mt2tr(3|4)-1/24⟨3|2⟩⟨2|4⟩tr(3|4)²+1/24⟨3|2⟩⟨2|4⟩⟨1|3|1]tr(3|4)-1/24⟨3|2⟩⟨2|4⟩tr(3|4)⟨2|4|2]', Qi)
+    assert "mt2" in poly.variables
+
+
+def test_monomial_power_normalisation_unbroken_invariant():
+    with TemporarySetting("syngular", "NORMALIZE_POWERS_PATTERNS", (re.compile(r"(mt)(\d+)"), )):
+        monom = Monomial('⟨3|2⟩⟨2|4⟩(s_123-mt2)²')
+        assert monom.variables == {'⟨3|2⟩', '⟨2|4⟩', '(s_123-mt^2)'}
+        monom = Monomial('⟨3|2⟩⟨2|4⟩(s_123²-mt2²)²')
+        assert monom.variables == {'⟨3|2⟩', '⟨2|4⟩', '(s_123^2-mt^4)'}
