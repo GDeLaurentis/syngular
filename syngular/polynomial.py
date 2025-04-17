@@ -133,8 +133,7 @@ class Polynomial(object):
     @staticmethod
     def __rstr__(polynomial, field):
         # print(polynomial)
-        while "  " in polynomial:
-            polynomial = polynomial.replace("  ", " ")
+        polynomial = " ".join(polynomial.split())
         polynomial = polynomial.replace("+-", "-").replace("**", "^").replace(" +", "+").replace("+ ", "+").replace(" -", "-").replace("- ", "-")
         # format complex nbrs - begin
         polynomial = re.sub(r"(\+|\-|^)[iI]\*{0,1}([/\d\.e\+\-]+)", r"\1\2j", polynomial)
@@ -169,7 +168,7 @@ class Polynomial(object):
             monomial = coeff_and_monomial_string.replace(coeff, "", 1)
             coeff = coeff.replace(" ", "")
             coeff = "+1" if coeff == "+" or coeff == "" else "-1" if coeff == "-" else coeff
-            coeff_denom = re.findall(r"/(\d+)", monomial)
+            coeff_denom = re.findall(r"/(\d+)$", monomial)
             if coeff_denom != []:
                 coeff_denom = int(coeff_denom[0])
                 monomial = monomial.replace(f"/{coeff_denom}", "")
@@ -239,6 +238,8 @@ class Polynomial(object):
         return self + (-1 * other)
 
     def __mul__(self, other):
+        if isinstance(other, Monomial):
+            other = Polynomial([(1, other)], self.field)
         if isinstance(other, Polynomial):
             new_coeffs_and_monomials = []
             for coeff1, monomial1 in self.coeffs_and_monomials:

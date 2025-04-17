@@ -56,9 +56,9 @@ class Monomial(FrozenMultiset):
 
     @staticmethod
     def __rstr__(string):
+        # print(string)
         string = non_unicode_powers(string).replace("**", "^")
-        while len(string) > 0 and string[0] == ' ':
-            string = string[1:]
+        string = " ".join(string.split())
         if string == '':
             return dict()
         splitted_string = [entry for entry in re.split(r"(?<![\+\-\(])(?<!tr5)(?<!tr)([⟨\[\(]|(?<![a-zA-Z])[a-zA-ZΔΩΠ])", string) if entry != '']
