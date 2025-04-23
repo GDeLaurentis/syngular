@@ -17,6 +17,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 
+## [0.5.0] - 2025-04-23
+
+### Added
+
+- `RingPoint` represents a point in the chosen ring, can be used to evaluate expressions, generate slices and can be manipulated to be near a variety. Naming may change, e.g. to `Variety`. Analogous to the phase space object `Particles` from lips package in the context of HEP computations, but (quotient) ring agnostic. 
+- `Q` aliases `Field('rational', 0, 0)`,  `Qi` aliases `Field('gaussian rational', 0, 0)`
+- `Ring.univariate_slice` can build an univariate slice in any (quotient) ring, implements arXi:2408.12686 eqs. 3.10 and 3.11.
+- `Ideal.indepSet` and `Ideal.dim` can now be leant semi-numerically by generating a point on the variety. This is untested for ideals of non-uniform dimension, it likely picks a highest dimensional component.
+
+### Changed
+
+- `Ideal.primeTestDLP` (or equivalently `Ideal.test_primality`) now accepts `seminumerical_dim_computation=False`, `nbr_points=100` keyword arguments. The former, when set to True, drastically improves capability of checking primality (uses the semi-numerical learning of the dimension, to avoid complicated Groebner bases).
+- Improved capabilities of ring-agnostic `Monomial` and `Polynomial`, now used as backhands to `Terms` object representing rational functions in the python package antares(-hep on the pypi). New optional settings are: `FORCECDOTS`, to force printing of multiplication symbol, defaults to `False`; `CDOTCHAR`, to choose the multiplication symbol, defaults to `·`. `*` or ` ` (white space) are also supported; `UNICODEPOWERS`, to choose whether powers are written as unicode symbols, defaults to `True`; `NORMALIZE_POWERS_PATTERNS`, will transform variables pulling out powers, e.g. `re.compile(r"(mt)(\d+)")` will force `mt2` to be treated as `mt^2`.
+
+### Fixed
+
+- CD PyPI
+
+
 ## [0.4.1] - 2025-03-7
 
 ### Fixed
@@ -176,7 +195,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Primality test, `Ideal.test_primality`.
 
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.4.0...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/GDeLaurentis/syngular/compare/v0.4.1...v0.5.0
+[0.4.1]: https://github.com/GDeLaurentis/syngular/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/GDeLaurentis/syngular/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/GDeLaurentis/syngular/compare/v0.2.5...v0.3.0
 [0.2.5]: https://github.com/GDeLaurentis/syngular/compare/v0.2.4...v0.2.5
