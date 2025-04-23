@@ -2,7 +2,7 @@
 
 [![CI Lint](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_lint.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_lint.yml)
 [![CI Test](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_test.yml/badge.svg)](https://github.com/GDeLaurentis/syngular/actions/workflows/ci_test.yml)
-[![Coverage](https://img.shields.io/badge/Coverage-86%25-greenyellow?labelColor=2a2f35)](https://github.com/GDeLaurentis/syngular/actions)
+[![Coverage](https://img.shields.io/badge/Coverage-84%25-greenyellow?labelColor=2a2f35)](https://github.com/GDeLaurentis/syngular/actions)
 [![Docs](https://github.com/GDeLaurentis/syngular/actions/workflows/cd_docs.yml/badge.svg?label=Docs)](https://gdelaurentis.github.io/syngular/)
 [![PyPI](https://img.shields.io/pypi/v/syngular.svg?label=PyPI)](https://pypi.org/project/syngular/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/syngular.svg?label=PyPI%20downloads)](https://pypistats.org/packages/syngular)
@@ -18,13 +18,13 @@ Python classes for 'Ideal', 'Ring' and 'QuotientRing'. Several related functions
 
 ## Extension
 
-### Points on varieties over $\mathbb{F}_p$, $\mathbb{Q}_p$ and $\mathbb{C}$.
+### Multivariate solver - i.e. points on varieties over $\mathbb{F}_p$, $\mathbb{Q}_p$ and $\mathbb{C}$.
 
-The function `ideal.point_on_variety` allows to obtain numerical solutions to arbirary systems of polynomial equations in arbitrary polynomial quotient rings, over any of the three above mentioned fields. The system of equations may be underconstrained, i.e. the ideal may have any dimension. The $p$-adic and complex solutions can be requested as not exact. I.e. the point may lie close to but not exactly on the associated variety. This is essential for numerical computations where otherwise division-by-zero erros may occur. The limitation is that Singular must be able to compute an indepednent set for the ideal, in order to reduce it to a zero dimensional sub-variety.
+The function `ideal.point_on_variety` allows to obtain numerical solutions to arbirary systems of polynomial equations in arbitrary polynomial (quotient) rings, over any of the three above mentioned fields. The system of equations may be underconstrained, i.e. the ideal may have any dimension. The $p$-adic and complex solutions can be requested as not exact, meaning the point may lie close to but not exactly on the associated variety. This is essential for numerical computations where otherwise division-by-zero erros may occur when using exact solutions. The limitation is that Singular must be able to compute an indepednent set for the semi-numerical ideals of low dimension.
 
 ### Primality test (lighter than a primary decomposition).
 
-The function `ideal.test_primality` allows to test whether an ideal is prime or not, without performing a full primary decomposition. The algorithm can run also with successively looser degree bounds. It returns True if the idea is prime, False if it is not, or raises an `Inconclusive` exception if it cannot decide. The latter case happens, for instance, if the ideal is not radical, since the algorithm may not be able to find a linear projection. Inconclusive cases include when the ideal is primary but not prime.
+The function `ideal.test_primality` allows to test whether an ideal is prime, primary or neither, without performing a full primary decomposition. The algorithm can run also with successively looser degree bounds. It returns True if the idea is prime, False if it is not, or raises an `Inconclusive` exception if it cannot decide. If `astuple` is `True`, then it will return two booleans: (`is_primary`, `is_prime`). Inconclusive cases should now only happen with a Timeout on the computation.
 
 
 ## Requirements
@@ -34,7 +34,7 @@ numpy, sympy, Singular
 
 
 ## Installation
-```
+```bash
 pip install -e path/to/repo
 ```
 
@@ -47,7 +47,7 @@ pytest --cov syngular/ --cov-report html tests/ --verbose
 ## Quick Start
 
 Define an ideal over a ring in two variables
-```
+```python
 from syngular import Ideal, Ring
 I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
 ```
@@ -56,30 +56,30 @@ You can now inspect `I` to see what methods and attributes are available.
 ## Solving arbitrary systems of polynomial equations
 
 Generate a $p$-adic solution to a system of 2 polynomial equations in 3 variables, controlling the precision to which they are solved.
-```
+```python
 field = Field("padic", 2 ** 31 - 1, 8)
 ring = Ring('0', ('x', 'y', 'z', ), 'dp')
 I = Ideal(ring, ['x*y^2+y^3-z^2', 'x^3+y^3-z^2', ])
 ```
 
 The variety associated to `I` has 3 branches. In other words, the system of equations has 3 types of solutions.
-```
+```python
 (Q1, P1), (Q2, P2), (Q3, P3) = I.primary_decomposition
 ```
 
 Generate a solution on the first branch
-```
+```python
 numerical_point = Q1.point_on_variety(field=field, directions=I.generators, valuations=(1, 1, ), ) 
 ```
 is a dictionary of numerical values for each variable in the ring.
 
 These are small with valuations (1, 1)
-```
+```python
 list(map(lambda string: Polynomial(string, field).subs(numerical_point), Q1.generators))
 ```
 
 while these are O(1) with valuations (0, 0)
-```
+```python
 list(map(lambda string: Polynomial(string, field).subs(numerical_point), Q2.generators))
 ```
 
