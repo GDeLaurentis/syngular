@@ -262,7 +262,7 @@ class Ideal_Algorithms:
                 if seminumerical_dim_computation:
                     valuations = [Polynomial(factor, field).subs(point) for point in points]
                     zero_count = sum(1 for valuation in valuations if valuation == 0)
-                    if verbose:
+                    if verbose and nbr_points != 0:
                         print(f"{zero_count} zeros out of {len(valuations)} points.")
                     if any([valuation == 0 for valuation in valuations]):
                         return False if not astuple else (False, False)
