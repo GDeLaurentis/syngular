@@ -28,7 +28,7 @@ class Polynomial(object):
             coeffs_and_monomials = self.__rstr__(str(coeffs_and_monomials), field)
         elif isinstance(coeffs_and_monomials, Polynomial):
             coeffs_and_monomials = coeffs_and_monomials.coeffs_and_monomials
-        elif isinstance(coeffs_and_monomials, list):
+        elif isinstance(coeffs_and_monomials, (list, tuple)):
             if not all([isinstance(entry, tuple) for entry in coeffs_and_monomials]):
                 raise ValueError("Expecting list of tuples, coefficients and monomials.")
             if not all([len(entry) == 2 for entry in coeffs_and_monomials]):
@@ -48,6 +48,12 @@ class Polynomial(object):
             raise NotImplementedError(f"Received {coeffs_and_monomials} \n of type {type(coeffs_and_monomials)}")
         self._field = field
         self.coeffs_and_monomials = coeffs_and_monomials
+
+    def __getstate__(self):
+        return (tuple(self.coeffs_and_monomials), self.field)
+
+    def __setstate__(self, state):
+        self.__init__(*state)
 
     def __str__(self, for_repr=False):
         return "+".join(

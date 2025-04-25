@@ -1,4 +1,6 @@
 import pytest
+import pickle
+import hashlib
 import re
 
 from syngular import Monomial, Polynomial, Field, Ring, RingPoint, TemporarySetting, Qi
@@ -126,3 +128,20 @@ def test_monomial_power_normalisation_unbroken_invariant():
         assert monom.variables == {'⟨3|2⟩', '⟨2|4⟩', '(s_123-mt^2)'}
         monom = Monomial('⟨3|2⟩⟨2|4⟩(s_123²-mt2²)²')
         assert monom.variables == {'⟨3|2⟩', '⟨2|4⟩', '(s_123^2-mt^4)'}
+
+
+@pytest.mark.parametrize(
+    'original', [
+        Polynomial('1/24⟨2|4⟩⟨1|3|4|2⟩⟨3|4|1]+1/4⟨3|2⟩⟨2|4⟩mt2²+1/4⟨3|2⟩⟨2|4⟩mt2tr(3|4)-1/24⟨3|2⟩⟨2|4⟩tr(3|4)²+1/24⟨3|2⟩⟨2|4⟩⟨1|3|1]tr(3|4)-1/24⟨3|2⟩⟨2|4⟩tr(3|4)⟨2|4|2]', Qi),
+    ]
+)
+def test_serializable_and_hash_stable(original):
+    dumped = pickle.dumps(original)
+    loaded = pickle.loads(dumped)
+
+    assert original == loaded
+
+    hash1 = hashlib.sha256(pickle.dumps(original)).hexdigest()
+    hash2 = hashlib.sha256(pickle.dumps(loaded)).hexdigest()
+
+    assert hash1 == hash2

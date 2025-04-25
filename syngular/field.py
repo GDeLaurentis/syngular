@@ -28,6 +28,15 @@ class Field(object):
         self.characteristic = args[1]
         self.digits = args[2]
 
+    def __getstate__(self):
+        return (self.name, self.characteristic, self.digits)
+
+    def __setstate__(self, state):
+        self.set(*state)
+
+    def __eq__(self, other):
+        return isinstance(other, Field) and self.name == other.name and self.characteristic == other.characteristic and self.digits == other.digits
+
     def __str__(self):
         return f"Field('{self.name}', {self.characteristic}, {self.digits})"
 
