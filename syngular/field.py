@@ -34,6 +34,9 @@ class Field(object):
     def __setstate__(self, state):
         self.set(*state)
 
+    def __hash__(self):
+        return hash(self.__getstate__())
+
     def __eq__(self, other):
         return isinstance(other, Field) and self.name == other.name and self.characteristic == other.characteristic and self.digits == other.digits
 
@@ -107,7 +110,7 @@ class Field(object):
 
     @property
     def tollerance(self):
-        if self.name in ['gaussian rational', 'finite field']:
+        if self.name in ['rational', 'gaussian rational', 'finite field']:
             return 0
         elif self.name in ['mpc', 'C']:
             return mpmath.mpf('10e-{}'.format(int(min([0.95 * mpmath.mp.dps, mpmath.mp.dps - 4]))))
@@ -162,6 +165,11 @@ class Field(object):
             elif self.name in ["mpc", 'C']:
                 return mpmath.mpc(str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))),
                                   str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))))
+            elif self.name in ["rational", 'Q']:
+                return Fraction(random.randrange(-100, 101), random.randrange(1, 201))
+            elif self.name in ["gaussian rational", 'Qi']:
+                return GaussianRational(Fraction(random.randrange(-100, 101), random.randrange(1, 201)),
+                                        Fraction(random.randrange(-100, 101), random.randrange(1, 201)))
             else:
                 raise NotImplementedError
         else:
