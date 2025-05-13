@@ -1,6 +1,8 @@
 import sympy
 import syngular
 
+from .tools import execute_singular_command
+
 
 class Ring(object):
 
@@ -8,6 +10,13 @@ class Ring(object):
         self.field = field
         self.variables = variables
         self.ordering = ordering
+        self.test_valid_ring()
+
+    def test_valid_ring(self):
+        singular_commands = [f"ring r = {Ring.__str__(self)};",
+                             "print(r);"
+                             "$"]
+        execute_singular_command(singular_commands)
 
     def __hash__(self):
         return hash(str(self))
@@ -47,12 +56,12 @@ class Ring(object):
             assert ordering[:2] in ['lp', 'rp', 'dp', 'Dp', 'ls', 'rs', 'ds', 'Ds', 'wp']
             if ordering[1] == 's':
                 print("Warning: chosen ordering is not a well-ordering.")
-        else:
-            ordering = str(ordering).replace("'", "")
+        elif not isinstance(ordering, tuple):
+            raise TypeError(f"Ring ordering has to be either string or tuple, received {ordering} of type {type(ordering)}")
         self._ordering = ordering
 
     def __str__(self):
-        string = ", ".join(map(str, [self.field, self.variables, self.ordering])).replace(",)", ")")
+        string = f"""{self.field}, {str(self.variables).replace(",)", ")")}, {str(self.ordering).replace("'", "")}"""
         if syngular.DEGBOUND != 0:
             string += f";\ndegBound = {syngular.DEGBOUND};\noption()"
         return string

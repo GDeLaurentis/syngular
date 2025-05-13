@@ -12,6 +12,10 @@ def test_instantiation():
     assert not ring0 == ring2
 
 
+def test_trivial_instantiation():
+    Ring('0', ('x', ), 'dp')
+
+
 def test_qring_and_point_in_ring():
     m, D = 6, 7
     η = numpy.diag([1, ] + [-1, ] * (D - 1))

@@ -222,7 +222,7 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         output = execute_singular_command(singular_commands)
         output = [line.replace(",", "") for line in output.split("\n")]
         cls, ring = self.__class__, self.ring
-        ring = Ring(ring.field, ring.variables[:var_range.start] + ring.variables[var_range.stop:], ring.ordering)
+        ring = Ring(ring.field, ring.variables[:var_range.start] + ring.variables[var_range.stop:], ring.ordering if isinstance(ring.ordering, str) else 'dp')
         return cls(ring, output)
 
     def __contains__(self, other):

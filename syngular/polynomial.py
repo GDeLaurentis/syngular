@@ -233,7 +233,10 @@ class Polynomial(object):
         elif isinstance(other, self.field.random().__class__):
             return Polynomial(self.coeffs_and_monomials + [(other, Monomial('')), ], self.field)
         else:
-            return NotImplemented
+            try:
+                return Polynomial(self.coeffs_and_monomials + [(self.field(other), Monomial('')), ], self.field)
+            except ValueError:
+                return NotImplemented
             # for debugging
             # raise NotImplementedError(f"Operation: __add__; self: {self}; self class {self.__class__}; other: {other}; other class {other.__class__}.")
 
