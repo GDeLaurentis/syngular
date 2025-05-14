@@ -111,7 +111,7 @@ class Ring(object):
             equations = []
         ring2 = Ring(field.characteristic, tuple(x for i, x in enumerate(xs) if indepSet[i] == 1), 'dp')
         ideal2 = Ideal(ring2, list(map(str, equations)))
-        point2 = ideal2.point_on_variety(field, seed=seed + 1)
+        point2 = ideal2.point_on_variety(field, seed=None if seed is None else seed + 1)
         point2 = point2partial | point2
         if verbose:
             print("Built shift with line coefficients:")
