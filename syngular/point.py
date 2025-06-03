@@ -42,6 +42,12 @@ class RingPoint(dict):
     def __hash__(self):
         return hash(frozenset(super().items()))
 
-    def singular_variety(self, directions=None, valuations=tuple()):  # to be improved
-        I = Ideal(self.ring, directions)
-        self.update(I.point_on_variety(field=self.field, directions=directions, valuations=valuations))
+    def singular_variety(self, directions_or_ideal=None, valuations=tuple(), seed=None):  # to be improved
+        if isinstance(directions_or_ideal, Ideal):
+            I = directions_or_ideal
+            directions = None
+        else:
+            I = Ideal(self.ring, directions_or_ideal)
+            directions = directions_or_ideal
+        self.update(I.point_on_variety(field=self.field, directions=directions, valuations=valuations, seed=seed))
+        return self

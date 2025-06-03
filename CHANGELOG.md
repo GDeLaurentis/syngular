@@ -17,6 +17,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 
+## [0.5.1] - 2025-06-03
+
+### Added
+
+- Block weighted ordering interface to singular, tuple of 'wp(weight:length)'
+
+### Changed
+
+- Improved support for Gaussian rational field (Q[i])
+- Improves serialization for Field and Polynomial
+
+### Fixed
+
+- An issue with pseudo-randomness of slices
+- An issue with Monomial string parsing
+
+
 ## [0.5.0] - 2025-04-23
 
 ### Added
@@ -195,7 +212,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Primality test, `Ideal.test_primality`.
 
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.5.0...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.5.1...HEAD
+[0.5.0]: https://github.com/GDeLaurentis/syngular/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/GDeLaurentis/syngular/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/GDeLaurentis/syngular/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/GDeLaurentis/syngular/compare/v0.3.0...v0.4.0
