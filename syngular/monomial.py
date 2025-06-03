@@ -72,9 +72,8 @@ class Monomial(FrozenMultiset):
         string = " ".join(string.split())
         if string == '':
             return dict()
-        splitted_string = [entry for entry in re.split(r"(?<![\+\-\(])(?<!tr5)(?<!tr)([⟨\[\(]|(?<![a-zA-ZΔΩΠ_])[a-zA-ZΔΩΠ])", string) if entry != '']
-        splitted_string = [splitted_string[i] + splitted_string[i + 1] if i + 1 < len(splitted_string) else splitted_string[i]
-                           for i in range(len(splitted_string))[::2]]
+        pattern = r"(?<![\+\-\(])(?<!tr5)(?<!tr)(?=[⟨\[\(]|(?<![a-zA-ZΔΩΠ_])[a-zA-ZΔΩΠ])"
+        splitted_string = [entry for entry in re.split(pattern, string) if entry]
         # sqeuentially remerge strings until parenthesis are (minimally) balanced
         splitted_string_partially_remerged = [splitted_string[0]]
         for entry in splitted_string[1:]:

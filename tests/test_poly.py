@@ -81,6 +81,10 @@ def test_monomial_instantiation_repeated_entries():
     assert Monomial(('a', 'b', 'a'), (1, 2, 1)).exps == [2, 2]
 
 
+def test_monomial_instantiation_from_strings():
+    assert Monomial("z(w-1)(wb-1)(wb-zb)") == Monomial("(w-1)z(wb-1)(wb-zb)") == Monomial("z (w-1)(wb-1)(wb-zb)") == Monomial("z*(w-1)(wb-1)(wb-zb)")
+
+
 def test_addition_with_field_element():
     field = Field('padic', 2 ** 31 - 19, 10)
     a, b = field.random(), field.random()
