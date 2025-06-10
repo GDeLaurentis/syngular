@@ -40,14 +40,14 @@ class RingPoint(dict):
         return deepcopy(self)
 
     def __hash__(self):
-        return hash(frozenset(super().items()))
+        return hash((frozenset(super().items()), self.ring, self.field))
 
-    def singular_variety(self, directions_or_ideal=None, valuations=tuple(), seed=None):  # to be improved
+    def singular_variety(self, directions_or_ideal=None, valuations=tuple(), seed=None, verbose=False):
         if isinstance(directions_or_ideal, Ideal):
             I = directions_or_ideal
             directions = None
         else:
             I = Ideal(self.ring, directions_or_ideal)
             directions = directions_or_ideal
-        self.update(I.point_on_variety(field=self.field, directions=directions, valuations=valuations, seed=seed))
+        self.update(I.point_on_variety(field=self.field, directions=directions, valuations=valuations, seed=seed, verbose=verbose))
         return self
