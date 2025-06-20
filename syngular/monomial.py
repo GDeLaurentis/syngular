@@ -25,6 +25,8 @@ def preserve_class_binary_op(func):
     @functools.wraps(func)
     def wrapper(self, other):
         result = func(self, other)
+        if result is NotImplemented:
+            return NotImplemented
         cls = self.__class__ if issubclass(self.__class__, other.__class__) else other.__class__
         return cls(result)
     return wrapper
@@ -114,12 +116,17 @@ class Monomial(FrozenMultiset):
 
     @preserve_class_binary_op
     def __mul__(self, other):
-        assert isinstance(other, Monomial)
-        return FrozenMultiset(self) + FrozenMultiset(other)
+        if isinstance(other, Monomial):
+            return FrozenMultiset(self) + FrozenMultiset(other)
+        else:
+            return NotImplemented
+
+    def __rmul__(self, other):
+        return other * self
 
     @preserve_class_binary_op
     def __truediv__(self, other):
-        if isinstance(other, Monomial) and other <= self:
+        if isinstance(other, Monomial) and other.issubset(self):
             return FrozenMultiset(self) - FrozenMultiset(other)
         else:
             return NotImplemented
@@ -142,3 +149,28 @@ class Monomial(FrozenMultiset):
     @property
     def variables(self):
         return set(self.invs)
+
+    def __lt__(self, other):
+        # Graded reverse lexicographic ordering
+        self_deg = sum(self.values())
+        other_deg = sum(other.values())
+        if self_deg != other_deg:
+            return self_deg > other_deg  # higher total degree comes first
+
+        self_keys = sorted(self.keys(), reverse=True)
+        other_keys = sorted(other.keys(), reverse=True)
+        for k1, k2 in zip(self_keys, other_keys):
+            if k1 != k2:
+                return k1 < k2
+            if self[k1] != other[k2]:
+                return self[k1] < other[k2]
+        return len(self) < len(other)
+
+    def __le__(self, other):
+        return self == other or self < other
+
+    def __gt__(self, other):
+        return not self <= other
+
+    def __ge__(self, other):
+        return not self < other

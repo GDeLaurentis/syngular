@@ -95,13 +95,11 @@ def test_addition_with_field_element():
 def test_polynomial_with_brackets():
     string = "37/24*tr(1+2|3)⟨3|4⟩ ⟨2|3|1] + 19/24 (s_12-s_34)⟨1|2⟩·[1|2]⟨3|4⟩-23 [1|2]  ⟨2|4⟩⟨3|1+2|3|2⟩/24"
     poly = Polynomial(string, Field("rational", 0, 0))
-    assert [(coeff, list(monomial.items())) for coeff, monomial in poly.coeffs_and_monomials] == [
-        (Fraction(37, 24),
-         [('tr(1+2|3)', 1), ('⟨3|4⟩', 1), ('⟨2|3|1]', 1)]),
-        (Fraction(19, 24),
-         [('(s_12-s_34)', 1), ('⟨1|2⟩', 1), ('[1|2]', 1), ('⟨3|4⟩', 1)]),
-        (Fraction(-23, 24),
-         [('[1|2]', 1), ('⟨2|4⟩', 1), ('⟨3|1+2|3|2⟩', 1)])]
+    poly_explicit = Polynomial([
+        (Fraction(37, 24), Monomial([('tr(1+2|3)', 1), ('⟨3|4⟩', 1), ('⟨2|3|1]', 1)])),
+        (Fraction(19, 24), Monomial([('(s_12-s_34)', 1), ('⟨1|2⟩', 1), ('[1|2]', 1), ('⟨3|4⟩', 1)])),
+        (Fraction(-23, 24), Monomial([('[1|2]', 1), ('⟨2|4⟩', 1), ('⟨3|1+2|3|2⟩', 1)]))], Field("rational", 0, 0))
+    assert poly == poly_explicit
     assert poly == Polynomial(str(poly), Field("rational", 0, 0))
 
 

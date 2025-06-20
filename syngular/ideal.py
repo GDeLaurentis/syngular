@@ -4,6 +4,7 @@ import sympy
 import numpy
 import inspect
 import random
+import warnings
 
 from .tools import execute_singular_command
 from .ring import Ring
@@ -54,8 +55,16 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
     def __eq__(self, other):
         return self.groebner_basis == other.groebner_basis
 
-    def squoosh(self):
+    def squash(self):
         self.generators = self.minbase
+
+    def squoosh(self):
+        warnings.warn(
+            "The 'squoosh' method is deprecated, please use 'squash' instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        return self.squash()
 
     @property
     def dim(self):

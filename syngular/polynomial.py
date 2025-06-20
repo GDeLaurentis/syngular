@@ -78,6 +78,7 @@ class Polynomial(object):
     def coeffs_and_monomials(self, temp_coeffs_and_monomials):
         self._coeffs_and_monomials = [(coeff, monomial) for coeff, monomial in temp_coeffs_and_monomials if coeff != 0]
         self.reduce()
+        self._coeffs_and_monomials.sort(key=lambda pair: pair[1])
         if self._coeffs_and_monomials == []:  # ensure there is at least an entry
             self._coeffs_and_monomials = [(self.field(0), Monomial(''))]
 
@@ -104,6 +105,14 @@ class Polynomial(object):
     @property
     def monomials(self):
         return [monomial for _, monomial in self.coeffs_and_monomials]
+
+    @property
+    def lead_monomial(self):
+        return self.monomials[0]
+
+    @property
+    def lead_term(self):
+        return Polynomial(self.coeffs_and_monomials[:1], self.field)
 
     @property
     def variables(self):
@@ -168,10 +177,21 @@ class Polynomial(object):
         # print(coeffs_and_monomials_strings)
         coeffs_and_monomials = []
         for coeff_and_monomial_string in coeffs_and_monomials_strings:
-            coeff = re.findall(r"^[+-]?[\ \%\+\-\(\)\.j\d/e]*", coeff_and_monomial_string)[0]
+            coeff_pattern = re.compile(r"""
+                (?:[\d\(\)\.\s%/+^-]+        # Common characters
+                    | (?<=\d) j               # 'j' if preceeded by digit
+                    | e (?=[+-]?\d)           # scientific notation
+                    | \* (?=\d)               # '*' if followed by digit
+                    | O (?=\(\d)              # O(...) padic term
+                    | \^ \d+                  # exponent
+                )*
+            """, re.VERBOSE)
+            # coeff = re.findall(r"^[+-]?[\ \%\+\-\(\)\.j\d/e]*", coeff_and_monomial_string)[0]
+            coeff = coeff_pattern.findall(coeff_and_monomial_string)[0]
             while len(coeff) > 0 and coeff[-1] == "(":
                 coeff = coeff[:-1]
             monomial = coeff_and_monomial_string.replace(coeff, "", 1)
+            # print(f"coeff: {coeff}\nmonom: {monomial}")
             coeff = coeff.replace(" ", "")
             coeff = "+1" if coeff == "+" or coeff == "" else "-1" if coeff == "-" else coeff
             coeff_denom = re.findall(r"/(\d+)$", monomial)
@@ -184,6 +204,8 @@ class Polynomial(object):
                 monomial = monomial[1:]
             if coeff[:2] == "+(" and coeff[-1:] == ")":
                 coeff = coeff[2:-1]
+            if coeff[:1] == "(" and coeff[-1:] == ")":
+                coeff = coeff[1:-1]
             # print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
             coeffs_and_monomials += [(field(coeff) / coeff_denom, Monomial(monomial))]
         return coeffs_and_monomials
@@ -225,7 +247,44 @@ class Polynomial(object):
     def __truediv__(self, other):
         if isinstance(other, Monomial):
             return Polynomial([(coeff, monom / other) for coeff, monom in self.coeffs_and_monomials], self.field)
+        if isinstance(other, Polynomial):
+            if len(self) == len(other) == 1 and other.monomials[0].issubset(self.monomials[0]):  # trivial div e.g. between lead_terms
+                return Polynomial([(self_coeff / other_coeff, self_monom / other_monom) for (self_coeff, self_monom), (other_coeff, other_monom)
+                                   in zip(self.coeffs_and_monomials, other.coeffs_and_monomials)], self.field)
+            else:
+                quotient, remainder = divmod(self, other)
+                if remainder == 0:
+                    return quotient
+                return NotImplemented
         return Polynomial([(coeff / other, monom) for coeff, monom in self.coeffs_and_monomials], self.field)
+
+    def __divmod__(self, other):
+        if not isinstance(other, Polynomial):
+            return NotImplemented
+
+        dividend = deepcopy(self)
+        divisor = deepcopy(other)
+        quotients = []
+
+        while dividend != 0:
+            if not divisor.lead_monomial.issubset(dividend.lead_monomial):
+                break  # divisor does not divide dividend, stop
+            quotient = dividend.lead_term / divisor.lead_term
+            quotients.append(quotient)
+            dividend -= quotient * divisor
+
+        quotient = sum(quotients, Polynomial('0', self.field))
+        remainder = dividend
+
+        return quotient, remainder
+
+    def __floordiv__(self, other):
+        quotient, _ = divmod(self, other)
+        return quotient
+
+    def __mod__(self, other):
+        _, remainder = divmod(self, other)
+        return remainder
 
     def __add__(self, other):
         if isinstance(other, Polynomial):
