@@ -147,3 +147,13 @@ def test_serializable_and_hash_stable(original):
     hash2 = hashlib.sha256(pickle.dumps(loaded)).hexdigest()
 
     assert hash1 == hash2
+
+
+def test_poly_rationalise():
+    Qp = Field("padic", 2 ** 31 - 1, 4)
+    poly = Polynomial("(1 + 0*2147483647 + 0*2147483647^2 + 0*2147483647^3 + O(2147483647^4))\
+                       + (1431655761 + 1431655764*2147483647 + 1431655764*2147483647^2 + 1431655764*2147483647^3 + O(2147483647^4))*ep^1\
+                       + (4 + 0*2147483647 + 0*2147483647^2 + 0*2147483647^3 + O(2147483647^4))*ep^2\
+                       + (715827881 + 715827882*2147483647 + 715827882*2147483647^2 + 715827882*2147483647^3 + O(2147483647^4))*ep^3", Qp)
+    poly /= poly.coeffs[0]
+    assert poly.rationalise() == Polynomial("1ep³-3ep²+11/4ep-3/4", Field("rational", 0, 0))

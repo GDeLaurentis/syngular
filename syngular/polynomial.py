@@ -128,7 +128,8 @@ class Polynomial(object):
 
     def rationalise(self):
         from pyadic.finite_field import vec_chained_FF_rationalize
-        rat_coeffs = vec_chained_FF_rationalize([numpy.array(self.coeffs).astype(int), ], [self.field.characteristic, ]).tolist()
+        rat_coeffs = vec_chained_FF_rationalize([numpy.vectorize(int, otypes='O')(numpy.array(self.coeffs)), ],
+                                                [self.field.characteristic ** self.field.digits, ]).tolist()
         rat_poly = deepcopy(self)
         rat_poly.coeffs = rat_coeffs
         rat_poly.field = Q
@@ -160,6 +161,7 @@ class Polynomial(object):
         parentheses_balance = [0 for _ in parentheses]
         next_match = ""
         coeffs_and_monomials_strings = []
+        # print(polynomial)
         for char in polynomial:
             if (char == "+" or char == "-") and all([parenthesis_balance == 0 for parenthesis_balance in parentheses_balance]):
                 if next_match != "":
@@ -172,7 +174,8 @@ class Polynomial(object):
                     parentheses_balance[[char in clos_parentheses for clos_parentheses in lclos_parentheses].index(True)] -= 1
                 next_match += char
         else:
-            assert all([parenthesis_balance == 0 for parenthesis_balance in parentheses_balance])
+            if not all([parenthesis_balance == 0 for parenthesis_balance in parentheses_balance]):
+                raise AssertionError(f"Unbalanced parentheses: {parentheses_balance}")
             coeffs_and_monomials_strings += [next_match]
         # print(coeffs_and_monomials_strings)
         coeffs_and_monomials = []
