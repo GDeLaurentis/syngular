@@ -274,7 +274,10 @@ class Polynomial(object):
                 break  # divisor does not divide dividend, stop
             quotient = dividend.lead_term / divisor.lead_term
             quotients.append(quotient)
+            previous_dividend = deepcopy(dividend)
             dividend -= quotient * divisor
+            if dividend == previous_dividend:
+                raise Exception(f"Failed to compute __divmod__ between\n{self}\nand\n{other}\nPerhaps coefficients are O(p^ν)?")
 
         quotient = sum(quotients, Polynomial('0', self.field))
         remainder = dividend
