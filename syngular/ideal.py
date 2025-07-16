@@ -326,6 +326,31 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
             res = res & arg
         return res
 
+    def saturation(self, other):
+        """Saturation of ideals (self : other^∞), returns both saturation ideal and saturation index."""
+        singular_commands = ["LIB \"elim.lib\";"
+                             f"ring r = {self.ring};",
+                             f"ideal i = {self};",
+                             f"ideal j = {other};",
+                             "list k_and_s = sat(i, j);",
+                             "print(k_and_s[1]);",
+                             "print(\"sat index\"); print(k_and_s[2]);",
+                             "$"]
+        output = execute_singular_command(singular_commands)
+        cls, ring = self.__class__, self.ring
+        return (cls(ring, [entry.replace(',', '') for entry in output.split("sat index\n")[0].split("\n") if entry]),
+                int(output.split("sat index\n")[1]))
+
+    def __floordiv__(self, other):
+        """Saturation of ideals (self : other^∞), returns only the ideal."""
+        sat_ideal, _ = self.saturation(other)
+        return sat_ideal
+
+    def saturation_index(self, other):
+        """Saturation of ideals (self : other^∞), returns only the saturation index."""
+        _, sat_index = self.saturation(other)
+        return sat_index
+
     def __truediv__(self, other):
         """Quotient of ideals."""
         singular_commands = [f"ring r = {self.ring};",

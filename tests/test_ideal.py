@@ -163,3 +163,12 @@ def test_monomial_to_exponents_Singular_notation():
     r = Ring('0', ('x', 'y', 'z'), 'dp')
     monomial = 'x*y4*z123'
     assert numpy.all(monomial_to_exponents(r.variables, monomial) == numpy.array([1, 4, 123]))
+
+
+def test_ideal_saturation():
+    r = Ring('0', ('x', 'y', ), 'dp')
+    I = Ideal(r, ('x^5', 'y'))
+    J = Ideal(r, ('x', ))
+    assert not (I / J).is_unit_ideal
+    assert (I // J).is_unit_ideal
+    assert I.saturation_index(J) == 5
