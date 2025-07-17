@@ -162,3 +162,15 @@ def test_poly_rationalise():
                        + (715827881 + 715827882*2147483647 + 715827882*2147483647^2 + 715827882*2147483647^3 + O(2147483647^4))*ep^3", Qp)
     poly /= poly.coeffs[0]
     assert poly.rationalise() == Polynomial("1ep³-3ep²+11/4ep-3/4", Field("rational", 0, 0))
+
+
+def test_poly_instantiation_with_unknown_coeffs():
+    poly = Polynomial("?tr(1+2|3)⟨3|4⟩⟨2|3|1]+?(s_12-s_34)⟨1|2⟩[1|2]⟨3|4⟩-?[1|2]⟨2|4⟩⟨3|1+2|3|2⟩", Field("rational", 0, 0))
+    assert all(coeff == None for coeff in poly.coeffs)
+
+
+def test_poly_boolean_mask():
+    poly = Polynomial("?zb²*wb*X²+?zb*w*wb*X-?zb²*X²-?zb*wb*X²+?zb*wb*X+?zb*X²-?w*wb+?wb", Field("rational", 0, 0))
+    assert poly[True, False, False, False, False, False, False, True] == Polynomial("?zb²wb·X²+?wb", Field('rational', 0, 0))
+    with pytest.raises(IndexError):
+        poly[True, False, False, False, False, False, False, ]

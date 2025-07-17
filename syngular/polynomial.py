@@ -1,9 +1,12 @@
+import numbers
 import numpy
 import re
 import sympy
 import syngular
 import functools
 import operator
+
+from collections.abc import Sequence
 
 from fractions import Fraction as Q
 from copy import deepcopy
@@ -57,7 +60,7 @@ class Polynomial(object):
 
     def __str__(self, for_repr=False):
         return "+".join(
-            ('' if coeff is None else
+            ('?' if coeff is None else
              f"({str(coeff) if not for_repr else repr(coeff)})" if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
              f"{str(coeff)}") +  # if not for_repr else repr(coeff)
             (f"{monomial}" if not syngular.FORCECDOTS or str(monomial) == '' else f"{syngular.CDOTCHAR}{monomial}")
@@ -67,8 +70,27 @@ class Polynomial(object):
     def __repr__(self):
         return f"Polynomial(\"{self.__str__(for_repr=True)}\", {self.field})"
 
-    def __getitem__(self, index):
-        return self.coeffs_and_monomials[index]
+    def __getitem__(self, item):
+        # Single index or Python slice object
+        if isinstance(item, (numbers.Integral, slice)):
+            return self.coeffs_and_monomials[item]
+        # NumPy boolean mask
+        elif (
+            (isinstance(item, numpy.ndarray) and item.dtype == bool) or
+            (isinstance(item, Sequence) and all(isinstance(i, bool) for i in item))
+        ):
+            mask = numpy.array(item)
+            if mask.shape[0] != len(self):
+                raise IndexError(f"Boolean mask length {mask.shape[0]} does not match Polynomial length {len(self)}")
+            selected = [x for x, keep in zip(self.coeffs_and_monomials, mask) if keep]
+        # NumPy integer array or Python list of integers or list of lists
+        elif isinstance(item, (numpy.ndarray, Sequence)) and all(isinstance(i, numbers.Integral) for i in item):
+            selected = [self.coeffs_and_monomials[i] for i in item]
+        else:
+            raise NotImplementedError(f"Unsupported indexing type: {type(item)}")
+        # For all non-single-Term results: return a new Terms object with metadata copied
+        result = Polynomial(selected, self.field)
+        return result
 
     @property
     def coeffs_and_monomials(self):
@@ -96,11 +118,11 @@ class Polynomial(object):
 
     @property
     def coeffs(self):
-        return [coeff for coeff, monomial in self.coeffs_and_monomials]
+        return [coeff for coeff, _ in self.coeffs_and_monomials]
 
     @coeffs.setter
     def coeffs(self, temp_coeffs):
-        self.coeffs_and_monomials = [(temp_coeff, monomial) for temp_coeff, (coeff, monomial) in zip(temp_coeffs, self.coeffs_and_monomials)]
+        self.coeffs_and_monomials = [(self.field(temp_coeff), monomial) for temp_coeff, (coeff, monomial) in zip(temp_coeffs, self.coeffs_and_monomials)]
 
     @property
     def monomials(self):
@@ -131,8 +153,8 @@ class Polynomial(object):
         rat_coeffs = vec_chained_FF_rationalize([numpy.vectorize(int, otypes='O')(numpy.array(self.coeffs)), ],
                                                 [self.field.characteristic ** self.field.digits, ]).tolist()
         rat_poly = deepcopy(self)
+        rat_poly._field = Q
         rat_poly.coeffs = rat_coeffs
-        rat_poly.field = Q
         return rat_poly
 
     def reduce(self):
@@ -181,7 +203,7 @@ class Polynomial(object):
         coeffs_and_monomials = []
         for coeff_and_monomial_string in coeffs_and_monomials_strings:
             coeff_pattern = re.compile(r"""
-                (?:[\d\(\)\.\s%/+^-]+        # Common characters
+                (?:[?\d\(\)\.\s%/+^-]+        # Common characters
                     | (?<=\d) j               # 'j' if preceeded by digit
                     | e (?=[+-]?\d)           # scientific notation
                     | \* (?=\d)               # '*' if followed by digit
@@ -210,7 +232,7 @@ class Polynomial(object):
             if coeff[:1] == "(" and coeff[-1:] == ")":
                 coeff = coeff[1:-1]
             # print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
-            coeffs_and_monomials += [(field(coeff) / coeff_denom, Monomial(monomial))]
+            coeffs_and_monomials += [(field(coeff) / coeff_denom if coeff not in ('?', '+?', '-?') else None, Monomial(monomial))]
         return coeffs_and_monomials
 
     def subs(self, base_point, field=None):
@@ -318,7 +340,7 @@ class Polynomial(object):
             new_coeffs_and_monomials = []
             for coeff1, monomial1 in self.coeffs_and_monomials:
                 for coeff2, monomial2 in other.coeffs_and_monomials:
-                    new_coeffs_and_monomials += [(coeff1 * coeff2, monomial1 * monomial2)]
+                    new_coeffs_and_monomials += [(None if coeff1 is None or coeff2 is None else coeff1 * coeff2, monomial1 * monomial2)]
             return Polynomial(new_coeffs_and_monomials, self.field)
         elif isinstance(other, (int, Q)) or other in self.field:
             new_coeffs_and_monomials = [(other * coeff, monomial) for coeff, monomial in self.coeffs_and_monomials]

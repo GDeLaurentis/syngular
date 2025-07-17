@@ -106,12 +106,13 @@ class Ring(object):
             equations = [entry for entry in flatten([sympy.poly(eq, t).all_coeffs() for eq in equations]) if entry != 0]
             if verbose:
                 print("Built q-ring equations:")
-                print("\n".join(map(str, equations)))
+                print("[" + ",\n ".join(map(str, equations)) + "]")
         else:
             equations = []
         ring2 = Ring(field.characteristic, tuple(x for i, x in enumerate(xs) if indepSet[i] == 1), 'dp')
         ideal2 = Ideal(ring2, list(map(str, equations)))
         point2 = ideal2.point_on_variety(field, seed=None if seed is None else seed + 1)
+        # Should check whether the ideal is the origin
         point2 = point2partial | point2
         if verbose:
             print("Built shift with line coefficients:")

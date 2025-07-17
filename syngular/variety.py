@@ -174,7 +174,7 @@ class Variety_of_Ideal:
             print("Chosen indepSet:", chose_indepSet)
             print("indepSymbols:", indepSymbols)
             print("depSymbols:", depSymbols)
-            print(f"{'Guessing codim' if indepSet == 'guess' and self._dim is None else 'Codim'} {len(depSymbols)} variety in {len(chose_indepSet)}-dim space")
+            print(f"{'Guessing dim' if indepSet == 'guess' and self._dim is None else 'Codim'} {len(depSymbols)} variety in {len(chose_indepSet)}-dim space")
 
         # handle the base point, i.e. the values of the independent variables
         if base_point == {}:
@@ -333,8 +333,8 @@ class Variety_of_Ideal:
         elif field.name == "padic":
             for i, generator in enumerate(generators):
                 generators[i] = generator / field.characteristic ** iteration
-                generators[i].coeffs = [coeff.as_tuple_from_zero[0] for coeff in generators[i].coeffs]
                 generators[i]._field = Field("finite field", field.characteristic, 1)
+                generators[i].coeffs = [coeff.as_tuple_from_zero[0] for coeff in generators[i].coeffs]
             generators = list(filter(lambda x: x != 0, generators))
 
         oZeroDimIdeal = Ideal(Ring(field.singular_notation, depSymbols, "lp"), generators)
