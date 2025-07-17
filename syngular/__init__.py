@@ -16,3 +16,4 @@ from .field import Field, Q, Qi  # noqa
 from .polynomial import Polynomial, Monomial  # noqa
 from .settings import TemporarySetting  # noqa
 from .point import RingPoint  # noqa
+from .points import RingPoints  # noqa

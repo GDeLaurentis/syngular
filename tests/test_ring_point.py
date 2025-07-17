@@ -14,6 +14,12 @@ def test_Fp_ring_point():
     assert isinstance(oPoint('z*zb+X'), ModP)
 
 
+def test_ring_point_parser():
+    ring = Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp')
+    oPoint = RingPoint(ring, Fp)
+    assert oPoint('(w²+w·X·zb+X·z·zb(X·zb+1))') == oPoint('(w**2+w*X*zb+X*z*zb*(X*zb+1))')
+
+
 def test_Qp_ring_point():
     ring = Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp')
     oPoint = RingPoint(ring, Qp)

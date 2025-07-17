@@ -1,3 +1,4 @@
+import numpy
 import sympy
 import re
 
@@ -23,6 +24,7 @@ class RingPoint(dict):
         string = string.replace(" + ", "+").replace(" - ", "-").replace("^", "**")
         string = string.replace(' ', '*').replace('·', '*').replace(")(", ")*(")
         string = re.sub(r'(\d)([a-zA-Z\(])', r'\1*\2', string)
+        string = re.sub(r'([a-zA-Z])(\()', r'\1*\2', string)
         return string
 
     def __call__(self, string):
