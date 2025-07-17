@@ -166,7 +166,7 @@ def test_poly_rationalise():
 
 def test_poly_instantiation_with_unknown_coeffs():
     poly = Polynomial("?tr(1+2|3)⟨3|4⟩⟨2|3|1]+?(s_12-s_34)⟨1|2⟩[1|2]⟨3|4⟩-?[1|2]⟨2|4⟩⟨3|1+2|3|2⟩", Field("rational", 0, 0))
-    assert all(coeff == None for coeff in poly.coeffs)
+    assert all(coeff is None for coeff in poly.coeffs)
 
 
 def test_poly_boolean_mask():
