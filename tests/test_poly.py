@@ -85,6 +85,11 @@ def test_monomial_instantiation_from_strings():
     assert Monomial("z(w-1)(wb-1)(wb-zb)") == Monomial("(w-1)z(wb-1)(wb-zb)") == Monomial("z (w-1)(wb-1)(wb-zb)") == Monomial("z*(w-1)(wb-1)(wb-zb)")
 
 
+def test_monomial_instantiation_purely_numeric():
+    with pytest.warns(UserWarning, match="Monomial contains a numeric term '1'"):
+        Monomial("1")
+
+
 def test_addition_with_field_element():
     field = Field('padic', 2 ** 31 - 19, 10)
     a, b = field.random(), field.random()

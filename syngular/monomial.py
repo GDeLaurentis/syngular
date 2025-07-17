@@ -2,7 +2,9 @@ import functools
 import operator
 import re
 import syngular
+import warnings
 
+from fractions import Fraction
 from multiset import FrozenMultiset
 
 unicode_powers_dict = {"0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
@@ -65,6 +67,18 @@ class Monomial(FrozenMultiset):
                     (pattern_full_match.findall(inv)[0][0], int(pattern_full_match.findall(inv)[0][1]) * exp)
                     for inv, exp in FrozenMultiset(data).items()]
             data = [inv for inv, exp in data for _ in range(exp)]
+        # Check for purely numeric vars in monomial
+        for inv in data:
+            if isinstance(inv, str):
+                try:
+                    Fraction(inv)
+                    warnings.warn(
+                        f"Monomial contains a numeric term '{inv}', which is likely unintended. "
+                        "Did you mean to use the empty Monomial()?",
+                        stacklevel=2
+                    )
+                except ValueError:
+                    pass
         super(Monomial, self).__init__(data)
 
     @staticmethod
