@@ -58,14 +58,34 @@ class Polynomial(object):
     def __setstate__(self, state):
         self.__init__(*state)
 
-    def __str__(self, for_repr=False):
-        return "+".join(
-            ('?' if coeff is None else
-             f"({str(coeff) if not for_repr else repr(coeff)})" if hasattr(self.field, "name") and self.field.name in ["padic", "finite field", ] else
-             f"{str(coeff)}") +  # if not for_repr else repr(coeff)
-            (f"{monomial}" if not syngular.FORCECDOTS or str(monomial) == '' else f"{syngular.CDOTCHAR}{monomial}")
-            for coeff, monomial in self.coeffs_and_monomials
-        ).replace("+-", "-")
+    def __str__(self, for_repr=None):
+        if for_repr is None:
+            for_repr = not syngular.USE_ELLIPSIS_FOR_PRINT
+
+        def atom_str(coeff_and_monomial, for_repr=False):
+            coeff, monomial = coeff_and_monomial
+            if coeff is None:
+                coeff_bit = "?"
+            elif hasattr(self.field, "name") and self.field.name in {"padic", "finite field"}:
+                coeff_bit = f"({repr(coeff) if for_repr else str(coeff)})"
+            else:
+                coeff_bit = str(coeff)
+            if not syngular.FORCECDOTS or str(monomial) == '':
+                monom_bit = f"{monomial}"
+            else:
+                monom_bit = f"{syngular.CDOTCHAR}{monomial}"
+            return coeff_bit + monom_bit
+
+        terms = self.coeffs_and_monomials
+        n = len(terms)
+
+        if for_repr or n <= 3:
+            output = "+".join(map(functools.partial(atom_str, for_repr=for_repr), terms))
+        else:
+            ellipsis = f"...⟪{len(self)-2} terms⟫..."
+            output = "+".join([atom_str(self.coeffs_and_monomials[0]), ellipsis, atom_str(self.coeffs_and_monomials[-1])])
+
+        return output.replace("+-", "-")
 
     def __repr__(self):
         return f"Polynomial(\"{self.__str__(for_repr=True)}\", {self.field})"

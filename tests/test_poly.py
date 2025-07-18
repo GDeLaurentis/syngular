@@ -174,3 +174,9 @@ def test_poly_boolean_mask():
     assert poly[True, False, False, False, False, False, False, True] == Polynomial("?zb²wb·X²+?wb", Field('rational', 0, 0))
     with pytest.raises(IndexError):
         poly[True, False, False, False, False, False, False, ]
+
+
+def test_poly_ellipsis_print():
+    poly = Polynomial("?zb²*wb*X²+?zb*w*wb*X-?zb²*X²-?zb*wb*X²+?zb*wb*X+?zb*X²-?w*wb+?wb", Field("rational", 0, 0))
+    with TemporarySetting("syngular", "USE_ELLIPSIS_FOR_PRINT", True):
+        assert "...⟪6 terms⟫..." in str(poly)

@@ -3,24 +3,25 @@ import functools
 
 
 class TemporarySetting:
-    def __init__(self, module_name, setting_name, new_value):
-        self.module_name = module_name
+    def __init__(self, module_or_module_name, setting_name, new_value):
+        if isinstance(module_or_module_name, str):
+            self.module = importlib.import_module(module_or_module_name)
+        else:
+            self.module = module_or_module_name
         self.setting_name = setting_name
         self.new_value = new_value
         self.old_value = None
 
     def __enter__(self):
-        module = importlib.import_module(self.module_name)
-        if hasattr(module, self.setting_name):
-            self.old_value = getattr(module, self.setting_name)
-            setattr(module, self.setting_name, self.new_value)
+        if hasattr(self.module, self.setting_name):
+            self.old_value = getattr(self.module, self.setting_name)
+            setattr(self.module, self.setting_name, self.new_value)
         else:
-            raise AttributeError(f"Setting '{self.setting_name}' does not exist in module '{self.module_name}'")
+            raise AttributeError(f"Setting '{self.setting_name}' does not exist in module '{self.module.__name__}'")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        module = importlib.import_module(self.module_name)
-        if hasattr(module, self.setting_name):
-            setattr(module, self.setting_name, self.old_value)
+        if hasattr(self.module, self.setting_name):
+            setattr(self.module, self.setting_name, self.old_value)
 
 
 def with_cm(cm):
