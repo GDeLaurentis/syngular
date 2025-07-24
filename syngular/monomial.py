@@ -3,6 +3,7 @@ import operator
 import re
 import syngular
 import warnings
+import numpy
 
 from fractions import Fraction
 from multiset import FrozenMultiset
@@ -121,11 +122,12 @@ class Monomial(FrozenMultiset):
         return list(self.keys())
 
     def subs(self, values_dict):
-        return functools.reduce(operator.mul, [values_dict[key] ** val for key, val in self.items()], 1)
+        return functools.reduce(operator.mul, [values_dict[key] ** val for key, val in self.items()],
+                                values_dict['1'] if '1' in values_dict.keys() else 1)
 
     def __call__(self, other):
         if callable(other):
-            return self.subs({key: other(key) for key in self.keys()})
+            return self.subs({key: other(key) for key in list(self.keys()) + ['1']})
         return self.subs(other)
 
     @preserve_class_binary_op
@@ -163,6 +165,14 @@ class Monomial(FrozenMultiset):
     @property
     def variables(self):
         return set(self.invs)
+
+    def as_exps_list(self, ring):
+        """Converts the monomial into an array of exponents w.r.t. variables in ring."""
+        exps = numpy.zeros(len(ring.variables), dtype=int)
+        variables = tuple(map(str, ring.variables))
+        for inv, exp in zip(self.invs, self.exps):
+            exps[variables.index(inv)] = exp
+        return exps
 
     def __lt__(self, other):
         # Graded reverse lexicographic ordering

@@ -2,8 +2,9 @@ import pytest
 import pickle
 import hashlib
 import re
+import numpy
 
-from syngular import Monomial, Polynomial, Field, Ring, RingPoint, TemporarySetting, Qi
+from syngular import Monomial, Polynomial, Field, Ring, RingPoint, RingPoints, TemporarySetting, Q, Qi
 
 from fractions import Fraction
 
@@ -180,3 +181,14 @@ def test_poly_ellipsis_print():
     poly = Polynomial("?zb²*wb*X²+?zb*w*wb*X-?zb²*X²-?zb*wb*X²+?zb*wb*X+?zb*X²-?w*wb+?wb", Field("rational", 0, 0))
     with TemporarySetting("syngular", "USE_ELLIPSIS_FOR_PRINT", True):
         assert "...⟪6 terms⟫..." in str(poly)
+
+
+def test_monomial_eval_respects_shape():
+    ring = Ring('0', ('x', 'y', 'z'), 'dp')
+    ring_points = RingPoints([RingPoint(ring, Q, seed) for seed in range(5)])
+    assert Monomial("")(ring_points).shape == Monomial("x y z")(ring_points).shape == (5, )
+
+
+def test_monomial_as_list_of_exps_in_ring():
+    ring = Ring('0', ('x', 'y', 'z', 'w'), 'dp')
+    assert Monomial("x y^2 z").as_exps_list(ring).tolist() == Monomial("x y y z").as_exps_list(ring).tolist() == numpy.array([1, 2, 1, 0]).tolist()

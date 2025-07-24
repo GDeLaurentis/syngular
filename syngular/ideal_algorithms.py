@@ -138,6 +138,7 @@ class Ideal_Algorithms:
         Experimental new feature with iterated_degbound_computation=True,
         may help when ideal is primary and deg-unbounded computation fails.
         """
+        # todo: rename projection_number to reflect that it can accept directly an indepSet tuple
         import syngular
         if seminumerical_dim_computation and iterated_degbound_computation:
             raise Exception("Semi-numerical test and iterated degbound test are exclusive.")
@@ -145,8 +146,6 @@ class Ideal_Algorithms:
         self = deepcopy(self)
         self.to_full_ring()
         # first step: find zero dimensional projections which are linear in the dependent variables, i.e. are a single point.
-        if projection_number is not None:
-            self.indepSets = self.indepSets[projection_number:projection_number + 1]
         if seminumerical_dim_computation:
             try:
                 self.indepSets
@@ -160,6 +159,11 @@ class Ideal_Algorithms:
                 if verbose:
                     print(f"\rGenerating point #{i}        ", end="")
                 points += [self.point_on_variety(field, indepSet='force guess', seed=i)]
+        if projection_number is not None:
+            if isinstance(projection_number, int):
+                self.indepSets = self.indepSets[projection_number:projection_number + 1]
+            elif isinstance(projection_number, tuple):
+                self.indepSets = [projection_number]
         lowest_degree_projection_indepSets = []
         lowest_degree = 9999999
         for i, indepSet in enumerate(self.indepSets):
@@ -245,6 +249,8 @@ class Ideal_Algorithms:
                 # return False if not astuple else (False, False)  # statistical statement, may return false negatives
         else:
             radical = True
+        if verbose:
+            print(f"The ideal is radical: {radical}")
         if smallest_fpoly_factors == ['- TIMEDOUT - probably very very long ' * 8000]:
             raise Inconclusive("Timedout on fpoly factors gathering.")
         smallest_fpoly_factors = sorted(smallest_fpoly_factors, key=lambda x: len(x))

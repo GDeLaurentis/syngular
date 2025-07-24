@@ -52,10 +52,10 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         self._generators = generators
 
     def __hash__(self):
-        return hash(", ".join(self.groebner_basis)) + hash(self.ring)
+        return hash(", ".join(self.reduced_groebner_basis)) + hash(self.ring)
 
     def __eq__(self, other):
-        return self.groebner_basis == other.groebner_basis
+        return self.reduced_groebner_basis == other.reduced_groebner_basis
 
     def squash(self):
         self.generators = self.minbase
@@ -142,19 +142,27 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
     def indepSets(self, val):
         self._indepSets = val
 
-    @functools.cached_property
-    def groebner_basis(self):
-        singular_commands = ["option(redSB);",
-                             f"ring r = {self.ring};",
+    def get_groebner_basis(self, reduced=False, algorithm=['groebner', 'slimgb'][1]):
+        singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",
-                             "ideal gb = groebner(i);",
+                             f"ideal gb = {algorithm}(i);",
                              "short=0;",
                              "print(gb);",
                              "$"]
+        if reduced:
+            singular_commands = ["option(redSB);"] + singular_commands
         singular_command = "\n".join(singular_commands)
         output = execute_singular_command(singular_command)
         output = [line.replace(",", "") for line in output.split("\n")]
         return output
+
+    @functools.cached_property
+    def groebner_basis(self):
+        return self.get_groebner_basis(reduced=True, algorithm='groebner')
+
+    @functools.cached_property
+    def reduced_groebner_basis(self):
+        return self.get_groebner_basis(reduced=True, algorithm='groebner')
 
     @functools.cached_property
     def leadGBmonomials(self):
