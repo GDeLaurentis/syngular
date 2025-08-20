@@ -190,7 +190,7 @@ class Polynomial(object):
 
     @staticmethod
     def __rstr__(polynomial, field):
-        # print(polynomial)
+        # print("Polynomial.__rstr__", polynomial)
         polynomial = " ".join(polynomial.split())
         polynomial = polynomial.replace("+-", "-").replace("**", "^").replace(" +", "+").replace("+ ", "+").replace(" -", "-").replace("- ", "-")
         # format complex nbrs - begin
@@ -217,7 +217,8 @@ class Polynomial(object):
                 next_match += char
         else:
             if not all([parenthesis_balance == 0 for parenthesis_balance in parentheses_balance]):
-                raise AssertionError(f"Unbalanced parentheses: {parentheses_balance}")
+                raise AssertionError(f"Unbalanced parentheses: {parentheses_balance}.\n"
+                                     f"Match so far: {coeffs_and_monomials_strings}, next one would have been {next_match}")
             coeffs_and_monomials_strings += [next_match]
         # print(coeffs_and_monomials_strings)
         coeffs_and_monomials = []

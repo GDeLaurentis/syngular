@@ -84,7 +84,7 @@ class Monomial(FrozenMultiset):
 
     @staticmethod
     def __rstr__(string):
-        # print(string)
+        # print("Monomial.__rstr__", string)
         string = non_unicode_powers(string).replace("**", "^")
         string = " ".join(string.split())
         if string == '':
