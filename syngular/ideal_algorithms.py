@@ -129,7 +129,8 @@ class Ideal_Algorithms:
 
     def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600,
                      seminumerical_dim_computation=False, nbr_points=100,
-                     iterated_degbound_computation=False, projection_number=None, astuple=False):
+                     iterated_degbound_computation=False, projection_number=None,
+                     fpoly_number=None, astuple=False):
         """
         Assumes equidimensionality of input ideal.
         Returns True if the ideal is prime, False if it is not.
@@ -263,6 +264,8 @@ class Ideal_Algorithms:
             if verbose:
                 print(f"Original ideal has codim {self.codim}")
             for i, factor in enumerate(smallest_fpoly_factors):
+                if fpoly_number is not None and i < fpoly_number:
+                    continue
                 if verbose:
                     print(f"\r at factor {i}: {factor}.", end="                                       \n")
                 if seminumerical_dim_computation:
@@ -281,7 +284,8 @@ class Ideal_Algorithms:
                 # Experimental - Assumes codim w/ deg bound <= true codim.
                 # Helps termiante the prime test early, IF the result is True.
                 if factor != '1' and seminumerical_dim_computation:
-                    X.point_on_variety(field)  # learn the dimension of X numerically
+                    X.codim_upper_bound = self.codim + 1
+                    X.point_on_variety(field, verbose=False)  # learn the dimension of X numerically - possible improvement: verbosity level
                     assert hasattr(X, '_dim') and isinstance(X._dim, int)
                     if verbose:
                         print(f"Learnt codim of Ideal with f-poly factor, {X.codim}")

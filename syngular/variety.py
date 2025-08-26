@@ -89,7 +89,8 @@ class Variety_of_Ideal:
         """Generate a representative point on or close to the variety associated to this ideal.
         The point is 'valuations' away from the exact variety, in the directions specified by 'directions'.
         If 'directions' are not provided, pick the first n=codim simplest generators from 'self'.
-        If the ideal is not prime, an irreducible branch will be picked at random."""
+        If the ideal is not prime, an irreducible branch will be picked at random.
+        If independent sets are too hard to compute, they will be guessed, you can provide codim_upper_bound to help."""
 
         from .ideal import Ideal
         from .qring import QuotientRing
@@ -174,7 +175,7 @@ class Variety_of_Ideal:
             print("Chosen indepSet:", chose_indepSet)
             print("indepSymbols:", indepSymbols)
             print("depSymbols:", depSymbols)
-            print(f"{'Guessing dim' if indepSet == 'guess' and self._dim is None else 'Codim'} {len(depSymbols)} variety in {len(chose_indepSet)}-dim space")
+            print(f"{'Guessing codim' if indepSet == 'guess' and self._dim is None else 'Codim'} {len(depSymbols)} variety in {len(chose_indepSet)}-dim space")
 
         # handle the base point, i.e. the values of the independent variables
         if base_point == {}:

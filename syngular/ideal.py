@@ -99,11 +99,12 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         return {zeroIdeal_dim - dim for dim in self.dims}
 
     def guess_indep_set(self):
+        """Guesses an independent set, you can provide codim_upper_bound attribute to help."""
         equations = self.generators
         if isinstance(self.ring, QuotientRing):
             equations += self.ring.ideal.generators
         n = len(self.ring.variables)
-        m = self.dim if self._dim is not None else (n - len(equations))
+        m = self.dim if self._dim is not None else (n - self.codim_upper_bound) if hasattr(self, 'codim_upper_bound') else (n - len(equations))
         lst = [0] * (n - m) + [1] * m
         equations_variables = [Polynomial(equation, field=Field("rational", 0, 0)).variables for equation in equations]
         for _ in range(1000):  # discard obviously wrong indep sets: all equations must have at least 1 dependent variable
