@@ -86,6 +86,10 @@ def test_monomial_instantiation_from_strings():
     assert Monomial("z(w-1)(wb-1)(wb-zb)") == Monomial("(w-1)z(wb-1)(wb-zb)") == Monomial("z (w-1)(wb-1)(wb-zb)") == Monomial("z*(w-1)(wb-1)(wb-zb)")
 
 
+def test_monomial_parser_with_ge_le_brackets():
+    assert tuple(Monomial("<12><23>^2")) == ('<12>', '<23>', '<23>')
+
+
 def test_monomial_instantiation_purely_numeric():
     with pytest.warns(UserWarning, match="Monomial contains a numeric term '1'"):
         Monomial("1")
