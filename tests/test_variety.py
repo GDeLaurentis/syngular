@@ -1,9 +1,10 @@
 import numpy
 import sympy
+import pytest
 
 from copy import copy
 
-from syngular import Field, Ring, QRing, Ideal, Polynomial
+from syngular import Field, Ring, QRing, Ideal, Polynomial, RingPoint
 
 
 def test_finite_field_variety_point():
@@ -97,3 +98,28 @@ def test_padic_variety_point_in_qring_hard_groebner_basis():
     assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0] == 0 for direction in directions[:3]])
     # the ideal is not radical on the branch "⟨1|", if that branch is (randomly) chosen then the valuation of the second poly will be 2
     assert all([Polynomial(direction.expand(), Field("rational", 0, 0))(point, Qp).coeffs[0].n >= 1 for direction in directions[3:]])
+
+
+def test_variety_point_directions_and_valuations_errors():
+    field = Field("padic", 2 ** 31 - 19, 5)
+    ring = Ring('0', ('x', 'y', 'z'), 'dp')
+    I = Ideal(ring, ('x+y+z', 'x^2+y^2'))
+
+    point = I.point_on_variety(field, directions=('x+y+z', 'x^2+y^2', ), valuations=(1, 1), seed=0)
+    oPoint = RingPoint(ring, field)
+    oPoint.update(point)
+    assert oPoint('x+y+z').n == 1 and oPoint('x^2+y^2').n == 1
+
+    point = I.point_on_variety(field, directions=('x+y+z', 'x^2+y^2', ), valuations=(1, 2), seed=0)
+    oPoint = RingPoint(ring, field)
+    oPoint.update(point)
+    assert oPoint('x+y+z').n == 1 and oPoint('x^2+y^2').n == 2
+
+    with pytest.raises(ValueError, match="Too few valuation"):
+        I.point_on_variety(field, directions=('x+y+z', 'x^2+y^2', ), valuations=(1, ), seed=0)
+
+    with pytest.raises(Exception, match="Numerical membership check failed."):
+        I.point_on_variety(field, directions=('x+y-z', 'x^2+y^2', ), valuations=(1, 1), seed=0)
+
+    with pytest.raises(Exception, match="Analytical membership check failed."):
+        I.point_on_variety(field, directions=('x+y-z', 'x^2+y^2', ), valuations=(1, 1), seed=0, directions_analytic_check=True)

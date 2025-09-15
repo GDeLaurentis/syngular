@@ -31,7 +31,7 @@ def retry_to_find_root(max_tries=100):
     def retry_to_find_root_decorator(func):
         @functools.wraps(func)
         def wrapper(self, field, base_point={}, directions=None, valuations=tuple(), indepSetNbr=None, indepSet='guess',
-                    seed=None, verbose=False):
+                    seed=None, verbose=False, directions_analytic_check=False):
 
             if indepSetNbr is not None and indepSet == 'guess':
                 indepSet = indepSetNbr
@@ -57,12 +57,12 @@ def retry_to_find_root(max_tries=100):
 
             if base_point != {} and indepSet not in [None, 'guess']:
                 return func(self, field, base_point=base_point, directions=directions, valuations=valuations,
-                            indepSet=indepSet, seed=seed, verbose=verbose)
+                            indepSet=indepSet, seed=seed, verbose=verbose, directions_analytic_check=directions_analytic_check)
             else:
                 for try_nbr in range(max_tries):
                     try:
                         res = func(self, field, base_point=base_point, directions=directions, valuations=valuations,
-                                   indepSet=indepSet, seed=seed, verbose=verbose)
+                                   indepSet=indepSet, seed=seed, verbose=verbose, directions_analytic_check=directions_analytic_check)
                         break
                     except (RootNotInFieldError, RootPrecisionError, NoConvergence, AssertionError,
                             *((TimeoutError, ) if indepSet == "guess" else ())) as e:
@@ -124,24 +124,31 @@ class Variety_of_Ideal:
             # if this is not triggered, then the check is perfomed numerically later. The analytic check can be expensive.
             for direction in directions:
                 if Polynomial(direction, Field("rational", 0, 0)) not in self:
-                    raise Exception(f"Invalid direction, {direction} was not in {self}.")
+                    raise Exception(f"Invalid direction, {direction} was not in {self}. Analytical membership check failed.")
         # make sure provided directions are expanded strings
         for i, direction in enumerate(directions):
             if isinstance(direction, sympy.core.Basic):
                 directions[i] = str(sympy.expand(direction))
-        # extra directions in qring
-        if isinstance(self.ring, QuotientRing) and field.name not in ['finite field', 'Fp']:
-            directions += self.ring.ideal.generators
 
         # handle valuations - if valuations == tuple() return a point exactly on the variety
         if field.name == "padic":
             prime, iterations = field.characteristic, field.digits
             if valuations == tuple():
                 valuations = tuple(field.digits for _ in directions)
+            else:
+                if len(valuations) != len(directions):
+                    raise ValueError(
+                        f"Too {'few' if len(valuations) < len(directions) else 'many'} valuations are specified,"
+                        f" {len(valuations)} valuations with {len(directions)} for polynomials"
+                    )
         elif field.name == "finite field":
             prime, iterations = field.characteristic, 1
         elif field.name == "mpc":
             prime, iterations = None, 1 if valuations == tuple() else 2
+
+        # extra directions in qring
+        if isinstance(self.ring, QuotientRing) and field.name not in ['finite field', 'Fp']:
+            directions += self.ring.ideal.generators
         # extra valuations in qring
         if isinstance(self.ring, QuotientRing) and field.name == "padic":
             valuations = valuations + (field.digits, ) * len(self.ring.ideal.generators)
