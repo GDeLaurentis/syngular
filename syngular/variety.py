@@ -165,6 +165,10 @@ class Variety_of_Ideal:
 
         # handle independent set
         if indepSet == 'guess':
+            if not hasattr(self, "codim_upper_bound") and directions is not None and directions != []:
+                if verbose:
+                    print(f"Bounding codim to {len(directions)}, given the orthogonal directions.")
+                self.codim_upper_bound = len(directions)
             chose_indepSet = self.guess_indep_set()
         elif indepSet is None or isinstance(indepSet, int):
             indepSets = self.indepSets
