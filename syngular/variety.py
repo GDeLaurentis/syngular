@@ -172,10 +172,14 @@ class Variety_of_Ideal:
             chose_indepSet = self.guess_indep_set()
         elif indepSet is None or isinstance(indepSet, int):
             indepSets = self.indepSets
+            codims = set(indepSet.count(0) for indepSet in indepSets)
+            mincodim_indepSets = [indepSet for indepSet in indepSets if indepSet.count(0) == min(codims)]
             if verbose:
-                print("Codimensions:", set(indepSet.count(0) for indepSet in indepSets))
-                print("Number of indepSets:", len(indepSets))
-            chose_indepSet = indepSets[random.randint(0, len(indepSets) - 1) if indepSet is None else indepSet]
+                print("Codimensions:", codims)
+                print("Number of indepSets:", len(indepSets), end=" " if len(codims) > 1 else "\n")
+                if len(codims) > 1:
+                    print(f"of which {len(mincodim_indepSets)} have minimal codimension.")
+            chose_indepSet = mincodim_indepSets[random.randint(0, len(mincodim_indepSets) - 1) if indepSet is None else indepSet]
         elif isinstance(indepSet, tuple):
             chose_indepSet = indepSet
         else:
