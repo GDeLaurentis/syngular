@@ -16,6 +16,16 @@ def test_invalid_ideal_instantiation():
         Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x*y'])
 
 
+def test_invalid_ideal_instantiation_2():
+    with pytest.raises(SingularException, match="not defined"):
+        Ideal(Ring(0, ('x', 'y'), 'dp'), ['s_45-s_67', 's_67-s_89', '⟨3|6+7+8+9|4+5|3⟩'])
+
+
+def test_invalid_ideal_instantiation_3():
+    with pytest.raises(SingularException, match="can not convert"):
+        Ideal(Ring(0, ('x', 'y'), 'dp'), ['s_123', '-1/2⟨2|4⟩²[2|4]²-1⟨2|4⟩⟨2|5⟩[2|4][2|5]'])
+
+
 def test_ideal_quotient():
     I = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1*x2'])
     J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2*x2'])

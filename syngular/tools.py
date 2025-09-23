@@ -43,11 +43,12 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         output = output[:-1]
     if 'halt' in output or (stderr is not None and 'timeout' in stderr):
         raise TimeoutError(f"{timeout} s")
-    if 'error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output:
-        raise SingularException(f"{output}\n\n\nError occured while executing:\n{singular_command}")
     if '   ? `Q` is undefined' in output:
         output = output.replace("   ? `Q` is undefined", "")
         print("Singular Error: Q is undefined")
+    if (('error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output) or
+       'is not defined' in output or 'INVALID' in output or 'can not convert' in output):
+        raise SingularException(f"{output}\n\n\nError occured while executing:\n{singular_command}")
     if '//options: redSB degBound redefine usage prompt\n' in output:
         output = output.replace("//options: redSB degBound redefine usage prompt\n", "")
         print("Singular Warning: redSB degBound redefine usage prompt")
