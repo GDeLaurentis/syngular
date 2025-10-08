@@ -8,11 +8,11 @@ class RingPoints(list):
 
     def __getattr__(self, name):
         def method(*args, **kwargs):
-            return RingPoints([getattr(oPs, name)(*args, **kwargs) for oPs in self])
+            return RingPoints([getattr(point, name)(*args, **kwargs) for point in self])
         return method
 
     def __call__(self, string_expr):
-        return numpy.array([oPs(string_expr) for oPs in self])
+        return numpy.array([point(string_expr) for point in self])
 
     def __getitem__(self, some_slice):
         if isinstance(some_slice, int):
@@ -23,3 +23,6 @@ class RingPoints(list):
     @property
     def field(self):
         return self[0].field
+
+    def __hash__(self):
+        return hash(tuple(self))

@@ -241,7 +241,8 @@ class Ideal_Algorithms:
                 if len(zeroDim_prim_dec) == 1:
                     Q, P = zeroDim_prim_dec[0]
                     radical = True if Q == P else False
-                    print("\rWas irreducible at the chosen point. Continuing test.", end="                    ")
+                    if verbose:
+                        print("\rWas irreducible at the chosen point. Continuing test.", end="                    ")
                     break  # conclusive
                 elif verbose:
                     print(f"\rWas reducible at the chosen points, checking again. At try {i}.", end="")
