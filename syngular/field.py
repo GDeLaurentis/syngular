@@ -47,6 +47,8 @@ class Field(object):
 
     def __call__(self, *args):
         """Cast to field."""
+        if len(args) == 1 and args[0] is None:
+            return None  # undeterminate value
         if self.name in ["mpc", "C"]:
             return mpmath.mpc(mpmath.mpmathify(args[0]))
         elif self.name in ["padic", "Qp"]:

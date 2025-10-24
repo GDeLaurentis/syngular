@@ -68,7 +68,7 @@ def retry_to_find_root(max_tries=100):
                             *((TimeoutError, ) if indepSet == "guess" else ())) as e:
                         if try_nbr != max_tries - 1:
                             if verbose:
-                                print(f"Caught {type(e).__name__} at try number {try_nbr}, retrying...")
+                                print(f"Caught {type(e).__name__}({e}) at try number {try_nbr}, retrying...")
                             if seed is not None:  # maintain pseudo-randomness, but change seed, else retring has no effect.
                                 random.seed(seed)
                                 seed += random.randint(10 ** 5, 10**6)
@@ -119,6 +119,8 @@ class Variety_of_Ideal:
                     if len(directions) == self.codim:
                         break
                 assert Ideal(self.ring, directions).codim == self.codim
+                if verbose:
+                    print("Selected directions: {directions}")
         elif directions_analytic_check:
             # make sure the provided directions make sense, given the ideal (they need to belong to it)
             # if this is not triggered, then the check is perfomed numerically later. The analytic check can be expensive.
@@ -238,7 +240,7 @@ class Variety_of_Ideal:
                 if oSemiNumericalIdeal.dim > 0 and indepSet == 'guess':
                     if verbose:
                         print(f"Determined the actual dimension to be {self.dim}")
-                raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero.")
+                raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero: no solutions exist.")
 
             root_dicts = lex_groebner_solve(oSemiNumericalIdeal.groebner_basis, prime=prime)
             check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, field)  # they may be stricter then wanted for mpc.

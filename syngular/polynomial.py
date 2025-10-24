@@ -18,7 +18,7 @@ from .monomial import Monomial
 class Polynomial(object):
     """Generalization of the concept of Multiset where multiplicities are in an arbitrary Field and the elements are Monomials."""
 
-    # This allows the intantiation step to return an element of the udnerlying field.
+    # This allows the intantiation step to return an element of the underlying field.
     # def __new__(cls, coeffs_and_monomials, field):
     #     self = super(Polynomial, cls).__new__(cls)
     #     self.__init__(coeffs_and_monomials, field)
