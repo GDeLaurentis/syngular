@@ -120,7 +120,7 @@ class Variety_of_Ideal:
                         break
                 assert Ideal(self.ring, directions).codim == self.codim
                 if verbose:
-                    print("Selected directions: {directions}")
+                    print(f"Selected directions: {directions}")
         elif directions_analytic_check:
             # make sure the provided directions make sense, given the ideal (they need to belong to it)
             # if this is not triggered, then the check is perfomed numerically later. The analytic check can be expensive.

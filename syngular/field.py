@@ -49,7 +49,9 @@ class Field(object):
         """Cast to field."""
         if len(args) == 1 and args[0] is None:
             return None  # undeterminate value
-        if self.name in ["mpc", "C"]:
+        if self.name in ["mpf", "R"]:
+            return mpmath.mpf(mpmath.mpmathify(args[0]))
+        elif self.name in ["mpc", "C"]:
             return mpmath.mpc(mpmath.mpmathify(args[0]))
         elif self.name in ["padic", "Qp"]:
             return PAdic(args[0], self.characteristic, self.digits)
@@ -68,8 +70,8 @@ class Field(object):
 
     @name.setter
     def name(self, value):
-        if value not in ['rational', 'Q', 'mpc', 'C', 'gaussian rational', 'Q[i]', 'Qi', 'finite field', 'Fp', 'padic', 'Qp']:
-            raise Exception("Field must be one of 'mpc', 'gaussian rational', 'finite field', 'padic', or aliases thereof.")
+        if value not in ['rational', 'Q', 'mpf', 'R', 'mpc', 'C', 'gaussian rational', 'Q[i]', 'Qi', 'finite field', 'Fp', 'padic', 'Qp']:
+            raise Exception("Field must be one of 'mpf', 'mpc', 'gaussian rational', 'finite field', 'padic', or aliases thereof.")
         else:
             self._name = value
 
@@ -86,7 +88,7 @@ class Field(object):
 
     @property
     def digits(self):
-        if self.name in ['mpc', 'C']:
+        if self.name in ['mpf', 'R', 'mpc', 'C']:
             return mpmath.mp.dps
         else:
             return self._digits
@@ -95,7 +97,7 @@ class Field(object):
     def digits(self, value):
         if value < 0:
             raise Exception("Digits must be positive.")
-        elif self.name in ['mpc', 'C']:
+        elif self.name in ['mpf', 'R', 'mpc', 'C']:
             mpmath.mp.dps = value
         else:
             self._digits = value
@@ -114,7 +116,7 @@ class Field(object):
     def tollerance(self):
         if self.name in ['rational', 'gaussian rational', 'finite field']:
             return 0
-        elif self.name in ['mpc', 'C']:
+        elif self.name in ['mpf', 'R', 'mpc', 'C']:
             return mpmath.mpf('10e-{}'.format(int(min([0.95 * mpmath.mp.dps, mpmath.mp.dps - 4]))))
         elif self.name in ['padic', 'Qp']:
             return PAdic(0, self.characteristic, 0, self.digits)
@@ -137,7 +139,7 @@ class Field(object):
             if not isinstance(val, PAdic):
                 val = self(val)
             return padic_sqrt(val)
-        elif self.name in ["mpc", 'C']:
+        elif self.name in ['mpf', 'R', 'mpc', 'C']:
             return mpmath.sqrt(val)
         else:
             raise Exception(f"Field not understood: {self.field.name}")
@@ -164,6 +166,8 @@ class Field(object):
             elif self.name in ["finite field", 'Fp']:
                 p = self.characteristic
                 return ModP(random.randrange(0, p), p)
+            elif self.name in ['mpf', 'R']:
+                return mpmath.mpf(str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))))
             elif self.name in ["mpc", 'C']:
                 return mpmath.mpc(str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))),
                                   str(Fraction(random.randrange(-100, 101), random.randrange(1, 201))))
@@ -201,7 +205,7 @@ class Field(object):
                     self._ε = self.characteristic
                 elif self.name == "finite field":
                     raise ValueError("Finite field infinitesimal does not exist.")
-                elif self.name == "mpc":
+                elif self.name in ['mpf', 'R', 'mpc', 'C']:
                     self._ε = mpmath.mpf('1e-30')
                 else:
                     raise NotImplementedError
