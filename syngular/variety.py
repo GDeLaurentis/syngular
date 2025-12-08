@@ -23,8 +23,8 @@ if version.parse(sympy.__version__) < version.parse('1.14'):
     # See sympy issue #23861, fixed in sympy pull request #27650
     # this fixes a weird bug where sympy does not respect precision even if mpmath.mp.dps precision is set
     # (sympy seems to use mpmath as backhand)
-    equation = sympy.sympify(f"x - 1.{'0' * 290}1")
-    sympy.nroots(equation, n=300, maxsteps=500)
+    equation = sympy.sympify(f"x - 1.{'0' * (mpmath.mp.dps - 10)}1")
+    sympy.nroots(equation, n=mpmath.mp.dps, maxsteps=500)
 
 
 def retry_to_find_root(max_tries=100):
@@ -95,7 +95,7 @@ class Variety_of_Ideal:
         from .ideal import Ideal
         from .qring import QuotientRing
 
-        assert all([isinstance(valuation, str) or valuation >= 0 for valuation in valuations])
+        assert all([isinstance(valuation, str) or abs(valuation) >= 0 for valuation in valuations])
         original_self = self
         self = deepcopy(self)   # don't modify self within this fuanction
 

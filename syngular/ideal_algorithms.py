@@ -156,10 +156,14 @@ class Ideal_Algorithms:
                     print("indepSet and dim computation timedout - will learn semi-numerically.")
             field = Field("finite field", 2 ** 31 - 1, 1)
             points = []
-            for i in range(nbr_points):
-                if verbose:
-                    print(f"\rGenerating point #{i}        ", end="")
-                points += [self.point_on_variety(field, indepSet='force guess', seed=i)]
+            if False:
+                from antares.core.tools import mapThreads
+                points = mapThreads(lambda seed: self.point_on_variety(field, indepSet='force guess', seed=seed), range(nbr_points))
+            else:
+                for i in range(nbr_points):
+                    if verbose:
+                        print(f"\rGenerating point #{i}        ", end="")
+                    points += [self.point_on_variety(field, indepSet='force guess', seed=i)]
         if projection_number is not None:
             if isinstance(projection_number, int):
                 self.indepSets = self.indepSets[projection_number:projection_number + 1]

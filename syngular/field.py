@@ -88,19 +88,16 @@ class Field(object):
 
     @property
     def digits(self):
-        if self.name in ['mpf', 'R', 'mpc', 'C']:
-            return mpmath.mp.dps
-        else:
-            return self._digits
+        return self._digits
 
     @digits.setter
     def digits(self, value):
         if value < 0:
             raise Exception("Digits must be positive.")
-        elif self.name in ['mpf', 'R', 'mpc', 'C']:
-            mpmath.mp.dps = value
         else:
             self._digits = value
+        if self.name in ['mpf', 'R', 'mpc', 'C']:
+            mpmath.mp.dps = value
 
     def __contains__(self, other):
         return isinstance(other, self(1).__class__)
