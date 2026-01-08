@@ -20,6 +20,7 @@ class RingPoint(dict):
     def _parse(string):
         string = non_unicode_powers(string)
         string = ' '.join(string.split())
+        string = re.sub(r'(\() ([a-zA-Z0-9\-\+])', r'\1\2', string)  # not all white spaces are products, e.g. in '( a'
         string = string.replace(" + ", "+").replace(" - ", "-").replace("^", "**")
         string = string.replace(' ', '*').replace('·', '*').replace(")(", ")*(")
         string = re.sub(r'(\d)([a-zA-Z\(])', r'\1*\2', string)
@@ -32,10 +33,12 @@ class RingPoint(dict):
     def univariate_slice(self, indepSet=None, seed=None, verbose=False):
         t = sympy.symbols('t')
         self.update(self.ring.univariate_slice(self.field, indepSet=indepSet, seed=seed, verbose=verbose)(t))
+        return self
 
     def subs(self, myDict):
         for key, val in self.items():
             self[key] = self.field(val.subs(myDict))
+        return self
 
     def copy(self):
         return deepcopy(self)

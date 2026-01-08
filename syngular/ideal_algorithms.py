@@ -4,12 +4,12 @@ import re
 from random import randint
 from copy import deepcopy
 from packaging.version import Version
+from pycoretools import mapThreads, TemporarySetting, default_cores
 
 from .tools import execute_singular_command, Singular_version
 from .ring import Ring
 from .field import Field
 from .polynomial import Polynomial
-from .settings import TemporarySetting
 
 
 class Ideal_Algorithms:
@@ -130,7 +130,7 @@ class Ideal_Algorithms:
     def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600,
                      seminumerical_dim_computation=False, nbr_points=100,
                      iterated_degbound_computation=False, projection_number=None,
-                     fpoly_number=None, astuple=False):
+                     fpoly_number=None, astuple=False, cores=default_cores()):
         """
         Assumes equidimensionality of input ideal.
         Returns True if the ideal is prime, False if it is not.
@@ -155,15 +155,12 @@ class Ideal_Algorithms:
                 if verbose:
                     print("indepSet and dim computation timedout - will learn semi-numerically.")
             field = Field("finite field", 2 ** 31 - 1, 1)
-            points = []
-            if False:
-                from antares.core.tools import mapThreads
-                points = mapThreads(lambda seed: self.point_on_variety(field, indepSet='force guess', seed=seed), range(nbr_points))
-            else:
-                for i in range(nbr_points):
-                    if verbose:
-                        print(f"\rGenerating point #{i}        ", end="")
-                    points += [self.point_on_variety(field, indepSet='force guess', seed=i)]
+
+            def generate_point(seed):
+                return self.point_on_variety(field, indepSet='force guess', seed=seed)
+
+            points = mapThreads(generate_point, range(nbr_points), Cores=cores, UseParallelisation=(cores > 1))
+
         if projection_number is not None:
             if isinstance(projection_number, int):
                 self.indepSets = self.indepSets[projection_number:projection_number + 1]

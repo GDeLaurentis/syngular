@@ -1,6 +1,8 @@
 import sympy
 import syngular
 
+from pycoretools import flatten
+
 from .tools import execute_singular_command
 
 
@@ -92,7 +94,6 @@ class Ring(object):
         from .polynomial import Polynomial
         from .ideal import Ideal
         from .qring import QRing
-        from .tools import flatten
         if indepSet is None:
             indepSet = (1, ) * len(ring.variables)
         point1 = ring.random_point(field, seed=seed)

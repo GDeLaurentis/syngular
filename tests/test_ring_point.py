@@ -20,6 +20,12 @@ def test_ring_point_parser():
     assert oPoint('(w²+w·X·zb+X·z·zb(X·zb+1))') == oPoint('(w**2+w*X*zb+X*z*zb*(X*zb+1))')
 
 
+def test_ring_point_parser_white_spaces():
+    ring = Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp')
+    oPoint = RingPoint(ring, Fp)
+    assert oPoint("-( 6 ( -1 + w) ( +1 + z) ( wb - zb + wb zb - X z zb))") == oPoint("-(6*(-1+w)*(+1+z)*(wb-zb+wb*zb-X*z*zb))")
+
+
 def test_Qp_ring_point():
     ring = Ring('0', ('z', 'zb', 'w', 'wb', 'X'), 'dp')
     oPoint = RingPoint(ring, Qp)
