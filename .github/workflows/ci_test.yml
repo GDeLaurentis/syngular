@@ -43,6 +43,12 @@ jobs:
       with:
         path: syngular
 
+    - name: Checkout another Repo (pycoretools)
+      uses: actions/checkout@v4
+      with:
+        repository: GDeLaurentis/pycoretools
+        path: pycoretools
+
     - name: Checkout another Repo (pyadic)
       uses: actions/checkout@v4
       with:
@@ -53,6 +59,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pytest pytest-cov
+        pip install -e pycoretools/
         pip install -e syngular/
         pip install -e pyadic/
 

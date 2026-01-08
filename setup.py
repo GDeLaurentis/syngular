@@ -29,6 +29,7 @@ setup(
     install_requires=[
         'numpy',
         'sympy',
+        'pycoretools',
         'pyadic',
         'multiset'
     ],
