@@ -237,17 +237,23 @@ class Variety_of_Ideal:
                     original_self.indepSets += [chose_indepSet]
 
             if not oSemiNumericalIdeal.dim == 0:
-                if oSemiNumericalIdeal.dim > 0 and indepSet == 'guess':
+                if oSemiNumericalIdeal.dim > 0 and 'guess' in indepSet:
                     if verbose:
                         print(f"Determined the actual dimension to be {self.dim}")
-                raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero: no solutions exist.")
+                if oSemiNumericalIdeal.dim > 0:
+                    raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero: the solution is not a set of points.")
+                else:
+                    raise AssertionError(f"The dimension of the semi-numerical ideal was {oSemiNumericalIdeal.dim} instead of zero: no solutions exist.")
 
             root_dicts = lex_groebner_solve(oSemiNumericalIdeal.groebner_basis, prime=prime)
+            if verbose:
+                print(f"Found {len(root_dicts)} roots: {root_dicts}")
             check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, field)  # they may be stricter then wanted for mpc.
 
             try:
-                root_dict = root_dicts[0]
-            except IndexError:
+                # root_dict = root_dicts[0]
+                root_dict = random.sample(root_dicts, 1)[0]
+            except (IndexError, ValueError):
                 if not field.is_algebraically_closed:
                     raise RootNotInFieldError(f"Got root_dicts: {root_dicts}, for lex Groebner basis:\n{oSemiNumericalIdeal.groebner_basis}.")
                 else:
