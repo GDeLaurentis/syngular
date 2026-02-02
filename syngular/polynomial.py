@@ -41,7 +41,7 @@ class Polynomial(object):
                     coeffs_and_monomials = [(field(coeff), monomial) for coeff, monomial in coeffs_and_monomials]
                 except Exception as e:
                     raise ValueError(f"Expecting coefficients to be in the field {field},"
-                                     f"received {[coeff for coeff, _  in coeffs_and_monomials]}.\n"
+                                     f"received {[coeff for coeff, _ in coeffs_and_monomials]}.\n"
                                      f"Attempted casting to field {field}, got:\n{e}.")
             if not all([isinstance(entry[1], Monomial) for entry in coeffs_and_monomials]):
                 raise ValueError("Expecting second entries to be monomials.")
@@ -82,7 +82,7 @@ class Polynomial(object):
         if for_repr or n <= 3:
             output = "+".join(map(functools.partial(atom_str, for_repr=for_repr), terms))
         else:
-            ellipsis = f"...⟪{len(self)-2} terms⟫..."
+            ellipsis = f"...⟪{len(self) - 2} terms⟫..."
             output = "+".join([atom_str(self.coeffs_and_monomials[0]), ellipsis, atom_str(self.coeffs_and_monomials[-1])])
 
         return output.replace("+-", "-")

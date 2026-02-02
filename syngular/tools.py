@@ -52,6 +52,9 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
     if '//options: redSB degBound redefine usage prompt\n' in output:
         output = output.replace("//options: redSB degBound redefine usage prompt\n", "")
         print("Singular Warning: redSB degBound redefine usage prompt")
+    if '//options: degBound redTail redThrough redefine usage prompt\n' in output:
+        output = output.replace("//options: degBound redTail redThrough redefine usage prompt\n", "")
+        print("Singular Warning: degBound redTail redThrough redefine usage prompt")
     output = output.replace('// ** minbase applies only to the local or homogeneous case over coefficient fields\n', '')
     output = output.replace('//options: redSB degBound redTail redThrough intStrategy redefine usage prompt\n', '')
     output = output.replace('//options: degBound redTail redThrough intStrategy redefine usage prompt\n', '')

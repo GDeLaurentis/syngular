@@ -2,8 +2,11 @@ import pytest
 import sympy
 import numpy
 
+import syngular
 from syngular import Ideal, Ring, SingularException
 from syngular.ideal import monomial_to_exponents, reduce
+
+from pycoretools import TemporarySetting
 
 
 def test_ideal_instantiation():
@@ -182,3 +185,12 @@ def test_ideal_saturation():
     assert not (I / J).is_unit_ideal
     assert (I // J).is_unit_ideal
     assert I.saturation_index(J) == 5
+
+
+def test_ideal_operation_with_degbound_no_crash():
+    with TemporarySetting(syngular, 'DEGBOUND', 10):
+        t1, t2 = sympy.symbols('t1, t2')
+        ring = Ring(2147483647, (t1, t2), 'dp')
+        a = Ideal(ring, [-832384713 * t1 ** 4 * t2 ** 4, ])
+        b = Ideal(ring, [-832384713 * t1 ** 4 * t2 ** 4, ])
+        a * b
