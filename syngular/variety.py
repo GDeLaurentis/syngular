@@ -251,8 +251,10 @@ class Variety_of_Ideal:
             check_solutions(oSemiNumericalIdeal.groebner_basis, root_dicts, field)  # they may be stricter then wanted for mpc.
 
             try:
-                # root_dict = root_dicts[0]
-                root_dict = random.sample(root_dicts, 1)[0]
+                if not syngular.POINT_ON_VARIETY_RANDOM_SOLUTION:
+                    root_dict = root_dicts[0]
+                else:
+                    root_dict = random.sample(root_dicts, 1)[0]
             except (IndexError, ValueError):
                 if not field.is_algebraically_closed:
                     raise RootNotInFieldError(f"Got root_dicts: {root_dicts}, for lex Groebner basis:\n{oSemiNumericalIdeal.groebner_basis}.")
