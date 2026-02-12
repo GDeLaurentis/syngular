@@ -106,7 +106,7 @@ class Ring(object):
             valuations=(1, ) * len(extra_approximate_constraints)
         )
         point1 = RingPoint(ring, field, val=p)
-        #print('approx gens:', [point1(gen) for gen in extra_approximate_constraints])
+        # print('approx gens:', [point1(gen) for gen in extra_approximate_constraints])
         xs = tuple(sympy.symbols([f"x{var}" for var in ring.variables]))
         t = sympy.symbols('t')
         point2partial = {str(x): 0 for i, x in enumerate(xs) if indepSet[i] == 0}
@@ -125,13 +125,13 @@ class Ring(object):
             sympy.poly(constraint).subs({var: var + t * x for var, x in zip(ring.variables, xs)}).subs(point1).subs(point2partial).expand(),
             modulus=field.characteristic ** field.digits) for constraint in extra_approximate_constraints
         ]
-        #print(equations_approximate)
+        # print(equations_approximate)
         equations_approximate = [entry for entry in flatten([sympy.poly(eq, t).all_coeffs() for eq in equations_approximate]) if entry != 0]
-        #print(equations_approximate)
+        # print(equations_approximate)
 
         ring2 = Ring(field.characteristic, tuple(x for i, x in enumerate(xs) if indepSet[i] == 1), 'dp')
         ideal2 = Ideal(ring2, list(map(str, equations + equations_approximate)))
-        #print(ideal2, ideal2.dim)
+        # print(ideal2, ideal2.dim)
         point2 = ideal2.point_on_variety(field, directions=(), seed=None if seed is None else seed + 1, verbose=verbose)
         # Should check whether the ideal is the origin
         point2 = point2partial | point2
