@@ -189,7 +189,7 @@ def test_poly_ellipsis_print():
 
 def test_monomial_eval_respects_shape():
     ring = Ring('0', ('x', 'y', 'z'), 'dp')
-    ring_points = RingPoints([RingPoint(ring, Q, seed) for seed in range(5)])
+    ring_points = RingPoints([RingPoint(ring, Q, seed=seed) for seed in range(5)])
     assert Monomial("")(ring_points).shape == Monomial("x y z")(ring_points).shape == (5, )
 
 

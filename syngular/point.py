@@ -12,8 +12,11 @@ class RingPoint(dict):
     Generalizes the idea of a phase space point from particle physics.
     """
 
-    def __init__(self, ring, field, seed=None):
-        super().__init__(ring.random_point(field, seed=seed))
+    def __init__(self, ring, field, seed=None, val=None, ):
+        if val is None:
+            super().__init__(ring.random_point(field, seed=seed))
+        else:
+            super().__init__(val)
         self.ring, self.field = ring, field
 
     @staticmethod
@@ -30,9 +33,10 @@ class RingPoint(dict):
     def __call__(self, string):
         return eval(self._parse(string), {}, self)
 
-    def univariate_slice(self, indepSet=None, seed=None, verbose=False):
+    def univariate_slice(self, extra_approximate_constraints=(), indepSet=None, seed=None, verbose=False):
         t = sympy.symbols('t')
-        self.update(self.ring.univariate_slice(self.field, indepSet=indepSet, seed=seed, verbose=verbose)(t))
+        self.update(self.ring.univariate_slice(self.field, extra_approximate_constraints=extra_approximate_constraints,
+                                               indepSet=indepSet, seed=seed, verbose=verbose)(t))
         return self
 
     def subs(self, myDict):

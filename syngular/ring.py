@@ -87,16 +87,26 @@ class Ring(object):
 
     def random_point(self, field, seed=None):
         """Returns a random numerical point in the given field on the zero ideal of the ring."""
+        from .point import RingPoint
         j = self.zero_ideal()
-        return j.point_on_variety(field=field, seed=seed)
+        point_val = j.point_on_variety(field=field, seed=seed)
+        return RingPoint(self, field, val=point_val)
 
-    def univariate_slice(ring, field, indepSet=None, seed=None, verbose=False):
+    def univariate_slice(ring, field, extra_approximate_constraints=(), indepSet=None, seed=None, verbose=False):
         from .polynomial import Polynomial
+        from .point import RingPoint
         from .ideal import Ideal
         from .qring import QRing
         if indepSet is None:
             indepSet = (1, ) * len(ring.variables)
-        point1 = ring.random_point(field, seed=seed)
+        j = Ideal(ring, extra_approximate_constraints)
+        p = j.point_on_variety(
+            field=field, seed=seed,
+            directions=extra_approximate_constraints,
+            valuations=(1, ) * len(extra_approximate_constraints)
+        )
+        point1 = RingPoint(ring, field, val=p)
+        #print('approx gens:', [point1(gen) for gen in extra_approximate_constraints])
         xs = tuple(sympy.symbols([f"x{var}" for var in ring.variables]))
         t = sympy.symbols('t')
         point2partial = {str(x): 0 for i, x in enumerate(xs) if indepSet[i] == 0}
@@ -110,9 +120,19 @@ class Ring(object):
                 print("[" + ",\n ".join(map(str, equations)) + "]")
         else:
             equations = []
+
+        equations_approximate = [sympy.poly(
+            sympy.poly(constraint).subs({var: var + t * x for var, x in zip(ring.variables, xs)}).subs(point1).subs(point2partial).expand(),
+            modulus=field.characteristic ** field.digits) for constraint in extra_approximate_constraints
+        ]
+        #print(equations_approximate)
+        equations_approximate = [entry for entry in flatten([sympy.poly(eq, t).all_coeffs() for eq in equations_approximate]) if entry != 0]
+        #print(equations_approximate)
+
         ring2 = Ring(field.characteristic, tuple(x for i, x in enumerate(xs) if indepSet[i] == 1), 'dp')
-        ideal2 = Ideal(ring2, list(map(str, equations)))
-        point2 = ideal2.point_on_variety(field, seed=None if seed is None else seed + 1)
+        ideal2 = Ideal(ring2, list(map(str, equations + equations_approximate)))
+        #print(ideal2, ideal2.dim)
+        point2 = ideal2.point_on_variety(field, directions=(), seed=None if seed is None else seed + 1, verbose=verbose)
         # Should check whether the ideal is the origin
         point2 = point2partial | point2
         if verbose:
