@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>syngular &mdash; syngular 0.5.1 documentation</title>
+  <title>syngular &mdash; syngular 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b9afe91b"></script>
+      <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -138,6 +138,7 @@
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.eliminate"><code class="docutils literal notranslate"><span class="pre">Ideal.eliminate()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.generators"><code class="docutils literal notranslate"><span class="pre">Ideal.generators</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.generators_eval"><code class="docutils literal notranslate"><span class="pre">Ideal.generators_eval()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.get_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.get_groebner_basis()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.groebner_basis</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.guess_indep_set"><code class="docutils literal notranslate"><span class="pre">Ideal.guess_indep_set()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.indepSet"><code class="docutils literal notranslate"><span class="pre">Ideal.indepSet</span></code></a></li>
@@ -149,6 +150,10 @@
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.primary_decomposition"><code class="docutils literal notranslate"><span class="pre">Ideal.primary_decomposition</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.radical"><code class="docutils literal notranslate"><span class="pre">Ideal.radical</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.reduce"><code class="docutils literal notranslate"><span class="pre">Ideal.reduce()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.reduced_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.reduced_groebner_basis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.saturation"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.saturation_index"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.squash"><code class="docutils literal notranslate"><span class="pre">Ideal.squash()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.squoosh"><code class="docutils literal notranslate"><span class="pre">Ideal.squoosh()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.test_valid_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.test_valid_ideal()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.to_full_ring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_full_ring()</span></code></a></li>
@@ -159,7 +164,114 @@
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.ideal.reduce"><code class="docutils literal notranslate"><span class="pre">reduce()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="syngular.html#module-syngular">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="syngular.html#module-syngular">Module contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Field"><code class="docutils literal notranslate"><span class="pre">Field</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.I"><code class="docutils literal notranslate"><span class="pre">Field.I</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.characteristic"><code class="docutils literal notranslate"><span class="pre">Field.characteristic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.digits"><code class="docutils literal notranslate"><span class="pre">Field.digits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.epsilon"><code class="docutils literal notranslate"><span class="pre">Field.epsilon()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.i"><code class="docutils literal notranslate"><span class="pre">Field.i</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.is_algebraically_closed"><code class="docutils literal notranslate"><span class="pre">Field.is_algebraically_closed</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.j"><code class="docutils literal notranslate"><span class="pre">Field.j</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.name"><code class="docutils literal notranslate"><span class="pre">Field.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.one"><code class="docutils literal notranslate"><span class="pre">Field.one</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.random"><code class="docutils literal notranslate"><span class="pre">Field.random()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.random_element"><code class="docutils literal notranslate"><span class="pre">Field.random_element()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.random_square"><code class="docutils literal notranslate"><span class="pre">Field.random_square()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.set"><code class="docutils literal notranslate"><span class="pre">Field.set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.singular_notation"><code class="docutils literal notranslate"><span class="pre">Field.singular_notation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.sqrt"><code class="docutils literal notranslate"><span class="pre">Field.sqrt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.tollerance"><code class="docutils literal notranslate"><span class="pre">Field.tollerance</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.zero"><code class="docutils literal notranslate"><span class="pre">Field.zero</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field."><code class="docutils literal notranslate"><span class="pre">Field.ε</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Ideal"><code class="docutils literal notranslate"><span class="pre">Ideal</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.codim"><code class="docutils literal notranslate"><span class="pre">Ideal.codim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.codims"><code class="docutils literal notranslate"><span class="pre">Ideal.codims</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.delete_cached_properties"><code class="docutils literal notranslate"><span class="pre">Ideal.delete_cached_properties()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.dim"><code class="docutils literal notranslate"><span class="pre">Ideal.dim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.dims"><code class="docutils literal notranslate"><span class="pre">Ideal.dims</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.eliminate"><code class="docutils literal notranslate"><span class="pre">Ideal.eliminate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.generators"><code class="docutils literal notranslate"><span class="pre">Ideal.generators</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.generators_eval"><code class="docutils literal notranslate"><span class="pre">Ideal.generators_eval()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.get_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.get_groebner_basis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.groebner_basis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.guess_indep_set"><code class="docutils literal notranslate"><span class="pre">Ideal.guess_indep_set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.indepSet"><code class="docutils literal notranslate"><span class="pre">Ideal.indepSet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.indepSets"><code class="docutils literal notranslate"><span class="pre">Ideal.indepSets</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.intersection"><code class="docutils literal notranslate"><span class="pre">Ideal.intersection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.is_unit_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.is_unit_ideal</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.leadGBmonomials"><code class="docutils literal notranslate"><span class="pre">Ideal.leadGBmonomials</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.minbase"><code class="docutils literal notranslate"><span class="pre">Ideal.minbase</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.primary_decomposition"><code class="docutils literal notranslate"><span class="pre">Ideal.primary_decomposition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.radical"><code class="docutils literal notranslate"><span class="pre">Ideal.radical</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.reduce"><code class="docutils literal notranslate"><span class="pre">Ideal.reduce()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.reduced_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.reduced_groebner_basis</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.saturation"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.saturation_index"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.squash"><code class="docutils literal notranslate"><span class="pre">Ideal.squash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.squoosh"><code class="docutils literal notranslate"><span class="pre">Ideal.squoosh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.test_valid_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.test_valid_ideal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.to_full_ring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_full_ring()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.to_qring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_qring()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Monomial"><code class="docutils literal notranslate"><span class="pre">Monomial</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.as_exps_list"><code class="docutils literal notranslate"><span class="pre">Monomial.as_exps_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.exps"><code class="docutils literal notranslate"><span class="pre">Monomial.exps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.invs"><code class="docutils literal notranslate"><span class="pre">Monomial.invs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.subs"><code class="docutils literal notranslate"><span class="pre">Monomial.subs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.tolist"><code class="docutils literal notranslate"><span class="pre">Monomial.tolist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.variables"><code class="docutils literal notranslate"><span class="pre">Monomial.variables</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Polynomial"><code class="docutils literal notranslate"><span class="pre">Polynomial</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.coeffs"><code class="docutils literal notranslate"><span class="pre">Polynomial.coeffs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.coeffs_and_monomials"><code class="docutils literal notranslate"><span class="pre">Polynomial.coeffs_and_monomials</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.field"><code class="docutils literal notranslate"><span class="pre">Polynomial.field</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.lead_monomial"><code class="docutils literal notranslate"><span class="pre">Polynomial.lead_monomial</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.lead_term"><code class="docutils literal notranslate"><span class="pre">Polynomial.lead_term</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.lexps"><code class="docutils literal notranslate"><span class="pre">Polynomial.lexps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.linvs"><code class="docutils literal notranslate"><span class="pre">Polynomial.linvs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.monomials"><code class="docutils literal notranslate"><span class="pre">Polynomial.monomials</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.rationalise"><code class="docutils literal notranslate"><span class="pre">Polynomial.rationalise()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.reduce"><code class="docutils literal notranslate"><span class="pre">Polynomial.reduce()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.subs"><code class="docutils literal notranslate"><span class="pre">Polynomial.subs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Polynomial.variables"><code class="docutils literal notranslate"><span class="pre">Polynomial.variables</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.QRing"><code class="docutils literal notranslate"><span class="pre">QRing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.QuotientRing"><code class="docutils literal notranslate"><span class="pre">QuotientRing</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.test_valid_qring"><code class="docutils literal notranslate"><span class="pre">QuotientRing.test_valid_qring()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Ring"><code class="docutils literal notranslate"><span class="pre">Ring</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.field"><code class="docutils literal notranslate"><span class="pre">Ring.field</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.ordering"><code class="docutils literal notranslate"><span class="pre">Ring.ordering</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.random_point"><code class="docutils literal notranslate"><span class="pre">Ring.random_point()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.test_valid_ring"><code class="docutils literal notranslate"><span class="pre">Ring.test_valid_ring()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.unit_ideal"><code class="docutils literal notranslate"><span class="pre">Ring.unit_ideal()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.univariate_slice"><code class="docutils literal notranslate"><span class="pre">Ring.univariate_slice()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.variables"><code class="docutils literal notranslate"><span class="pre">Ring.variables</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.zero_ideal"><code class="docutils literal notranslate"><span class="pre">Ring.zero_ideal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.RingPoint"><code class="docutils literal notranslate"><span class="pre">RingPoint</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.RingPoint.copy"><code class="docutils literal notranslate"><span class="pre">RingPoint.copy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.RingPoint.singular_variety"><code class="docutils literal notranslate"><span class="pre">RingPoint.singular_variety()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.RingPoint.subs"><code class="docutils literal notranslate"><span class="pre">RingPoint.subs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.RingPoint.univariate_slice"><code class="docutils literal notranslate"><span class="pre">RingPoint.univariate_slice()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.RingPoints"><code class="docutils literal notranslate"><span class="pre">RingPoints</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.RingPoints.field"><code class="docutils literal notranslate"><span class="pre">RingPoints.field</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.SingularException"><code class="docutils literal notranslate"><span class="pre">SingularException</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.TemporarySetting"><code class="docutils literal notranslate"><span class="pre">TemporarySetting</span></code></a></li>
+</ul>
+</li>
 </ul>
 </div>
 </section>

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>syngular.field &mdash; syngular 0.5.1 documentation</title>
+  <title>syngular.field &mdash; syngular 0.6.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b9afe91b"></script>
+      <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -100,6 +100,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.eliminate"><code class="docutils literal notranslate"><span class="pre">Ideal.eliminate()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.generators"><code class="docutils literal notranslate"><span class="pre">Ideal.generators</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.generators_eval"><code class="docutils literal notranslate"><span class="pre">Ideal.generators_eval()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.get_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.get_groebner_basis()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.groebner_basis</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.guess_indep_set"><code class="docutils literal notranslate"><span class="pre">Ideal.guess_indep_set()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.indepSet"><code class="docutils literal notranslate"><span class="pre">Ideal.indepSet</span></code></a></li>
@@ -111,6 +112,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.primary_decomposition"><code class="docutils literal notranslate"><span class="pre">Ideal.primary_decomposition</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.radical"><code class="docutils literal notranslate"><span class="pre">Ideal.radical</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.reduce"><code class="docutils literal notranslate"><span class="pre">Ideal.reduce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.reduced_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.reduced_groebner_basis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.saturation"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.saturation_index"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.squash"><code class="docutils literal notranslate"><span class="pre">Ideal.squash()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.squoosh"><code class="docutils literal notranslate"><span class="pre">Ideal.squoosh()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.test_valid_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.test_valid_ideal()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.ideal.Ideal.to_full_ring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_full_ring()</span></code></a></li>
@@ -121,7 +126,114 @@
 <li class="toctree-l3"><a class="reference internal" href="#syngular.ideal.reduce"><code class="docutils literal notranslate"><span class="pre">reduce()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-syngular">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-syngular">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.Field"><code class="docutils literal notranslate"><span class="pre">Field</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.I"><code class="docutils literal notranslate"><span class="pre">Field.I</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.characteristic"><code class="docutils literal notranslate"><span class="pre">Field.characteristic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.digits"><code class="docutils literal notranslate"><span class="pre">Field.digits</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.epsilon"><code class="docutils literal notranslate"><span class="pre">Field.epsilon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.i"><code class="docutils literal notranslate"><span class="pre">Field.i</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.is_algebraically_closed"><code class="docutils literal notranslate"><span class="pre">Field.is_algebraically_closed</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.j"><code class="docutils literal notranslate"><span class="pre">Field.j</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.name"><code class="docutils literal notranslate"><span class="pre">Field.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.one"><code class="docutils literal notranslate"><span class="pre">Field.one</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.random"><code class="docutils literal notranslate"><span class="pre">Field.random()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.random_element"><code class="docutils literal notranslate"><span class="pre">Field.random_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.random_square"><code class="docutils literal notranslate"><span class="pre">Field.random_square()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.set"><code class="docutils literal notranslate"><span class="pre">Field.set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.singular_notation"><code class="docutils literal notranslate"><span class="pre">Field.singular_notation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.sqrt"><code class="docutils literal notranslate"><span class="pre">Field.sqrt()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.tollerance"><code class="docutils literal notranslate"><span class="pre">Field.tollerance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field.zero"><code class="docutils literal notranslate"><span class="pre">Field.zero</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Field."><code class="docutils literal notranslate"><span class="pre">Field.ε</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.Ideal"><code class="docutils literal notranslate"><span class="pre">Ideal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.codim"><code class="docutils literal notranslate"><span class="pre">Ideal.codim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.codims"><code class="docutils literal notranslate"><span class="pre">Ideal.codims</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.delete_cached_properties"><code class="docutils literal notranslate"><span class="pre">Ideal.delete_cached_properties()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.dim"><code class="docutils literal notranslate"><span class="pre">Ideal.dim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.dims"><code class="docutils literal notranslate"><span class="pre">Ideal.dims</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.eliminate"><code class="docutils literal notranslate"><span class="pre">Ideal.eliminate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.generators"><code class="docutils literal notranslate"><span class="pre">Ideal.generators</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.generators_eval"><code class="docutils literal notranslate"><span class="pre">Ideal.generators_eval()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.get_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.get_groebner_basis()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.groebner_basis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.guess_indep_set"><code class="docutils literal notranslate"><span class="pre">Ideal.guess_indep_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.indepSet"><code class="docutils literal notranslate"><span class="pre">Ideal.indepSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.indepSets"><code class="docutils literal notranslate"><span class="pre">Ideal.indepSets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.intersection"><code class="docutils literal notranslate"><span class="pre">Ideal.intersection()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.is_unit_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.is_unit_ideal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.leadGBmonomials"><code class="docutils literal notranslate"><span class="pre">Ideal.leadGBmonomials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.minbase"><code class="docutils literal notranslate"><span class="pre">Ideal.minbase</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.primary_decomposition"><code class="docutils literal notranslate"><span class="pre">Ideal.primary_decomposition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.radical"><code class="docutils literal notranslate"><span class="pre">Ideal.radical</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.reduce"><code class="docutils literal notranslate"><span class="pre">Ideal.reduce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.reduced_groebner_basis"><code class="docutils literal notranslate"><span class="pre">Ideal.reduced_groebner_basis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.saturation"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.saturation_index"><code class="docutils literal notranslate"><span class="pre">Ideal.saturation_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.squash"><code class="docutils literal notranslate"><span class="pre">Ideal.squash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.squoosh"><code class="docutils literal notranslate"><span class="pre">Ideal.squoosh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.test_valid_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.test_valid_ideal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.to_full_ring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_full_ring()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ideal.to_qring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_qring()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.Monomial"><code class="docutils literal notranslate"><span class="pre">Monomial</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Monomial.as_exps_list"><code class="docutils literal notranslate"><span class="pre">Monomial.as_exps_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Monomial.exps"><code class="docutils literal notranslate"><span class="pre">Monomial.exps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Monomial.invs"><code class="docutils literal notranslate"><span class="pre">Monomial.invs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Monomial.subs"><code class="docutils literal notranslate"><span class="pre">Monomial.subs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Monomial.tolist"><code class="docutils literal notranslate"><span class="pre">Monomial.tolist()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Monomial.variables"><code class="docutils literal notranslate"><span class="pre">Monomial.variables</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.Polynomial"><code class="docutils literal notranslate"><span class="pre">Polynomial</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.coeffs"><code class="docutils literal notranslate"><span class="pre">Polynomial.coeffs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.coeffs_and_monomials"><code class="docutils literal notranslate"><span class="pre">Polynomial.coeffs_and_monomials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.field"><code class="docutils literal notranslate"><span class="pre">Polynomial.field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.lead_monomial"><code class="docutils literal notranslate"><span class="pre">Polynomial.lead_monomial</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.lead_term"><code class="docutils literal notranslate"><span class="pre">Polynomial.lead_term</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.lexps"><code class="docutils literal notranslate"><span class="pre">Polynomial.lexps</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.linvs"><code class="docutils literal notranslate"><span class="pre">Polynomial.linvs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.monomials"><code class="docutils literal notranslate"><span class="pre">Polynomial.monomials</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.rationalise"><code class="docutils literal notranslate"><span class="pre">Polynomial.rationalise()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.reduce"><code class="docutils literal notranslate"><span class="pre">Polynomial.reduce()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.subs"><code class="docutils literal notranslate"><span class="pre">Polynomial.subs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Polynomial.variables"><code class="docutils literal notranslate"><span class="pre">Polynomial.variables</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.QRing"><code class="docutils literal notranslate"><span class="pre">QRing</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.QuotientRing"><code class="docutils literal notranslate"><span class="pre">QuotientRing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.QuotientRing.test_valid_qring"><code class="docutils literal notranslate"><span class="pre">QuotientRing.test_valid_qring()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.Ring"><code class="docutils literal notranslate"><span class="pre">Ring</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.field"><code class="docutils literal notranslate"><span class="pre">Ring.field</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.ordering"><code class="docutils literal notranslate"><span class="pre">Ring.ordering</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.random_point"><code class="docutils literal notranslate"><span class="pre">Ring.random_point()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.test_valid_ring"><code class="docutils literal notranslate"><span class="pre">Ring.test_valid_ring()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.unit_ideal"><code class="docutils literal notranslate"><span class="pre">Ring.unit_ideal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.univariate_slice"><code class="docutils literal notranslate"><span class="pre">Ring.univariate_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.variables"><code class="docutils literal notranslate"><span class="pre">Ring.variables</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.Ring.zero_ideal"><code class="docutils literal notranslate"><span class="pre">Ring.zero_ideal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.RingPoint"><code class="docutils literal notranslate"><span class="pre">RingPoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.RingPoint.copy"><code class="docutils literal notranslate"><span class="pre">RingPoint.copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.RingPoint.singular_variety"><code class="docutils literal notranslate"><span class="pre">RingPoint.singular_variety()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.RingPoint.subs"><code class="docutils literal notranslate"><span class="pre">RingPoint.subs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.RingPoint.univariate_slice"><code class="docutils literal notranslate"><span class="pre">RingPoint.univariate_slice()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.RingPoints"><code class="docutils literal notranslate"><span class="pre">RingPoints</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.RingPoints.field"><code class="docutils literal notranslate"><span class="pre">RingPoints.field</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.SingularException"><code class="docutils literal notranslate"><span class="pre">SingularException</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.TemporarySetting"><code class="docutils literal notranslate"><span class="pre">TemporarySetting</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -286,7 +398,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="syngular.ring.Ring.univariate_slice">
-<span class="sig-name descname"><span class="pre">univariate_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indepSet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ring.Ring.univariate_slice" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">univariate_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_approximate_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indepSet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ring.Ring.univariate_slice" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py property">
@@ -367,6 +479,11 @@
 <span class="sig-name descname"><span class="pre">generators_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.generators_eval" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.ideal.Ideal.get_groebner_basis">
+<span class="sig-name descname"><span class="pre">get_groebner_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slimgb'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.get_groebner_basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="syngular.ideal.Ideal.groebner_basis">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">groebner_basis</span></span><a class="headerlink" href="#syngular.ideal.Ideal.groebner_basis" title="Link to this definition"></a></dt>
@@ -375,7 +492,8 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="syngular.ideal.Ideal.guess_indep_set">
 <span class="sig-name descname"><span class="pre">guess_indep_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.guess_indep_set" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Guesses an independent set, you can provide codim_upper_bound attribute to help.</p>
+</dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="syngular.ideal.Ideal.indepSet">
@@ -426,6 +544,28 @@
 <dd><p>Remainder of division, i.e. reduction.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.ideal.Ideal.reduced_groebner_basis">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reduced_groebner_basis</span></span><a class="headerlink" href="#syngular.ideal.Ideal.reduced_groebner_basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.ideal.Ideal.saturation">
+<span class="sig-name descname"><span class="pre">saturation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.saturation" title="Link to this definition"></a></dt>
+<dd><p>Saturation of ideals (self : other^∞), returns both saturation ideal and saturation index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.ideal.Ideal.saturation_index">
+<span class="sig-name descname"><span class="pre">saturation_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.saturation_index" title="Link to this definition"></a></dt>
+<dd><p>Saturation of ideals (self : other^∞), returns only the saturation index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.ideal.Ideal.squash">
+<span class="sig-name descname"><span class="pre">squash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.squash" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="syngular.ideal.Ideal.squoosh">
 <span class="sig-name descname"><span class="pre">squoosh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.Ideal.squoosh" title="Link to this definition"></a></dt>
@@ -462,6 +602,471 @@
 </section>
 <section id="module-syngular">
 <span id="module-contents"></span><h1>Module contents<a class="headerlink" href="#module-syngular" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.Field">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">Field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field" title="Link to this definition"></a></dt>
+<dd><p>A class representing number fields.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.I">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">I</span></span><a class="headerlink" href="#syngular.Field.I" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.characteristic">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">characteristic</span></span><a class="headerlink" href="#syngular.Field.characteristic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.digits">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">digits</span></span><a class="headerlink" href="#syngular.Field.digits" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Field.epsilon">
+<span class="sig-name descname"><span class="pre">epsilon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field.epsilon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.i">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">i</span></span><a class="headerlink" href="#syngular.Field.i" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.is_algebraically_closed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_algebraically_closed</span></span><a class="headerlink" href="#syngular.Field.is_algebraically_closed" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.j">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">j</span></span><a class="headerlink" href="#syngular.Field.j" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#syngular.Field.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.one">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">one</span></span><a class="headerlink" href="#syngular.Field.one" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Field.random">
+<span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1,)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field.random" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Field.random_element">
+<span class="sig-name descname"><span class="pre">random_element</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field.random_element" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Field.random_square">
+<span class="sig-name descname"><span class="pre">random_square</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field.random_square" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Field.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field.set" title="Link to this definition"></a></dt>
+<dd><p>(name, characteristic, digits)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.singular_notation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">singular_notation</span></span><a class="headerlink" href="#syngular.Field.singular_notation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Field.sqrt">
+<span class="sig-name descname"><span class="pre">sqrt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Field.sqrt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.tollerance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tollerance</span></span><a class="headerlink" href="#syngular.Field.tollerance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.zero">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zero</span></span><a class="headerlink" href="#syngular.Field.zero" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Field.">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ε</span></span><a class="headerlink" href="#syngular.Field." title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.Ideal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">Ideal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ring</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generators</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal" title="Link to this definition"></a></dt>
+<dd><dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.codim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">codim</span></span><a class="headerlink" href="#syngular.Ideal.codim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.codims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">codims</span></span><a class="headerlink" href="#syngular.Ideal.codims" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.delete_cached_properties">
+<span class="sig-name descname"><span class="pre">delete_cached_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.delete_cached_properties" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#syngular.Ideal.dim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.dims">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dims</span></span><a class="headerlink" href="#syngular.Ideal.dims" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.eliminate">
+<span class="sig-name descname"><span class="pre">eliminate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var_range</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.eliminate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.generators">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generators</span></span><a class="headerlink" href="#syngular.Ideal.generators" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.generators_eval">
+<span class="sig-name descname"><span class="pre">generators_eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.generators_eval" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.get_groebner_basis">
+<span class="sig-name descname"><span class="pre">get_groebner_basis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slimgb'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.get_groebner_basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.groebner_basis">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">groebner_basis</span></span><a class="headerlink" href="#syngular.Ideal.groebner_basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.guess_indep_set">
+<span class="sig-name descname"><span class="pre">guess_indep_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.guess_indep_set" title="Link to this definition"></a></dt>
+<dd><p>Guesses an independent set, you can provide codim_upper_bound attribute to help.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.indepSet">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">indepSet</span></span><a class="headerlink" href="#syngular.Ideal.indepSet" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.indepSets">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">indepSets</span></span><a class="headerlink" href="#syngular.Ideal.indepSets" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.intersection">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.intersection" title="Link to this definition"></a></dt>
+<dd><p>Intersection of Ideals - wrapper around &amp; operator for chained intersection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.is_unit_ideal">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_unit_ideal</span></span><a class="headerlink" href="#syngular.Ideal.is_unit_ideal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.leadGBmonomials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">leadGBmonomials</span></span><a class="headerlink" href="#syngular.Ideal.leadGBmonomials" title="Link to this definition"></a></dt>
+<dd><p>Gives the leading monomials of the Groebner basis polynomials.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.minbase">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minbase</span></span><a class="headerlink" href="#syngular.Ideal.minbase" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.primary_decomposition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">primary_decomposition</span></span><a class="headerlink" href="#syngular.Ideal.primary_decomposition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.radical">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">radical</span></span><a class="headerlink" href="#syngular.Ideal.radical" title="Link to this definition"></a></dt>
+<dd><p>Returns the radical of the ideal.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.reduce" title="Link to this definition"></a></dt>
+<dd><p>Remainder of division, i.e. reduction.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ideal.reduced_groebner_basis">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reduced_groebner_basis</span></span><a class="headerlink" href="#syngular.Ideal.reduced_groebner_basis" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.saturation">
+<span class="sig-name descname"><span class="pre">saturation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.saturation" title="Link to this definition"></a></dt>
+<dd><p>Saturation of ideals (self : other^∞), returns both saturation ideal and saturation index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.saturation_index">
+<span class="sig-name descname"><span class="pre">saturation_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.saturation_index" title="Link to this definition"></a></dt>
+<dd><p>Saturation of ideals (self : other^∞), returns only the saturation index.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.squash">
+<span class="sig-name descname"><span class="pre">squash</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.squash" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.squoosh">
+<span class="sig-name descname"><span class="pre">squoosh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.squoosh" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.test_valid_ideal">
+<span class="sig-name descname"><span class="pre">test_valid_ideal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.test_valid_ideal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.to_full_ring">
+<span class="sig-name descname"><span class="pre">to_full_ring</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.to_full_ring" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ideal.to_qring">
+<span class="sig-name descname"><span class="pre">to_qring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ideal.to_qring" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.Monomial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">Monomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Monomial" title="Link to this definition"></a></dt>
+<dd><p>A FrozenMultiset representation of a Monomial. Positive integer multiplicities represent powers.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Monomial.as_exps_list">
+<span class="sig-name descname"><span class="pre">as_exps_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Monomial.as_exps_list" title="Link to this definition"></a></dt>
+<dd><p>Converts the monomial into an array of exponents w.r.t. variables in ring.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Monomial.exps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exps</span></span><a class="headerlink" href="#syngular.Monomial.exps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Monomial.invs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">invs</span></span><a class="headerlink" href="#syngular.Monomial.invs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Monomial.subs">
+<span class="sig-name descname"><span class="pre">subs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Monomial.subs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Monomial.tolist">
+<span class="sig-name descname"><span class="pre">tolist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Monomial.tolist" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Monomial.variables">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#syngular.Monomial.variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.Polynomial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">Polynomial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coeffs_and_monomials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Polynomial" title="Link to this definition"></a></dt>
+<dd><p>Generalization of the concept of Multiset where multiplicities are in an arbitrary Field and the elements are Monomials.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.coeffs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coeffs</span></span><a class="headerlink" href="#syngular.Polynomial.coeffs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.coeffs_and_monomials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coeffs_and_monomials</span></span><a class="headerlink" href="#syngular.Polynomial.coeffs_and_monomials" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.field">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">field</span></span><a class="headerlink" href="#syngular.Polynomial.field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.lead_monomial">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lead_monomial</span></span><a class="headerlink" href="#syngular.Polynomial.lead_monomial" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.lead_term">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lead_term</span></span><a class="headerlink" href="#syngular.Polynomial.lead_term" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.lexps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lexps</span></span><a class="headerlink" href="#syngular.Polynomial.lexps" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.linvs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">linvs</span></span><a class="headerlink" href="#syngular.Polynomial.linvs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.monomials">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">monomials</span></span><a class="headerlink" href="#syngular.Polynomial.monomials" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Polynomial.rationalise">
+<span class="sig-name descname"><span class="pre">rationalise</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Polynomial.rationalise" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Polynomial.reduce">
+<span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Polynomial.reduce" title="Link to this definition"></a></dt>
+<dd><p>Merges equal monomials</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Polynomial.subs">
+<span class="sig-name descname"><span class="pre">subs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Polynomial.subs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Polynomial.variables">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#syngular.Polynomial.variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="syngular.QRing">
+<span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">QRing</span></span><a class="headerlink" href="#syngular.QRing" title="Link to this definition"></a></dt>
+<dd><p>alias of <a class="reference internal" href="#syngular.qring.QuotientRing" title="syngular.qring.QuotientRing"><code class="xref py py-class docutils literal notranslate"><span class="pre">QuotientRing</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.QuotientRing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">QuotientRing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ring</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ideal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.QuotientRing" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="syngular.QuotientRing.test_valid_qring">
+<span class="sig-name descname"><span class="pre">test_valid_qring</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.QuotientRing.test_valid_qring" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.Ring">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">Ring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordering</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ring" title="Link to this definition"></a></dt>
+<dd><dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ring.field">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">field</span></span><a class="headerlink" href="#syngular.Ring.field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ring.ordering">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ordering</span></span><a class="headerlink" href="#syngular.Ring.ordering" title="Link to this definition"></a></dt>
+<dd><p>Monomial ordering</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ring.random_point">
+<span class="sig-name descname"><span class="pre">random_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ring.random_point" title="Link to this definition"></a></dt>
+<dd><p>Returns a random numerical point in the given field on the zero ideal of the ring.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ring.test_valid_ring">
+<span class="sig-name descname"><span class="pre">test_valid_ring</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ring.test_valid_ring" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ring.unit_ideal">
+<span class="sig-name descname"><span class="pre">unit_ideal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ring.unit_ideal" title="Link to this definition"></a></dt>
+<dd><p>Returns the unit ideal ⟨1⟩ in the ring.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ring.univariate_slice">
+<span class="sig-name descname"><span class="pre">univariate_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_approximate_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indepSet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ring.univariate_slice" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="syngular.Ring.variables">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#syngular.Ring.variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.Ring.zero_ideal">
+<span class="sig-name descname"><span class="pre">zero_ideal</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#syngular.Ring.zero_ideal" title="Link to this definition"></a></dt>
+<dd><p>Returns the zero ideal ⟨0⟩ in the ring.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.RingPoint">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">RingPoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ring</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.RingPoint" title="Link to this definition"></a></dt>
+<dd><p>Represents a numerical or semi-numerical point on a variety within the space defiend by the ring.
+Generalizes the idea of a phase space point from particle physics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.RingPoint.copy">
+<span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">a</span> <span class="pre">shallow</span> <span class="pre">copy</span> <span class="pre">of</span> <span class="pre">D</span></span></span><a class="headerlink" href="#syngular.RingPoint.copy" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.RingPoint.singular_variety">
+<span class="sig-name descname"><span class="pre">singular_variety</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directions_or_ideal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valuations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.RingPoint.singular_variety" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.RingPoint.subs">
+<span class="sig-name descname"><span class="pre">subs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">myDict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.RingPoint.subs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="syngular.RingPoint.univariate_slice">
+<span class="sig-name descname"><span class="pre">univariate_slice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extra_approximate_constraints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indepSet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.RingPoint.univariate_slice" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.RingPoints">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">RingPoints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.RingPoints" title="Link to this definition"></a></dt>
+<dd><dl class="py property">
+<dt class="sig sig-object py" id="syngular.RingPoints.field">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">field</span></span><a class="headerlink" href="#syngular.RingPoints.field" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="syngular.SingularException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">SingularException</span></span><a class="headerlink" href="#syngular.SingularException" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.TemporarySetting">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">TemporarySetting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_or_module_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setting_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.TemporarySetting" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
 
 
