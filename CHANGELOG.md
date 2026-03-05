@@ -17,6 +17,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 
+## [0.6.0] - 2026-03-05
+
+### Added
+
+- Ideal saturation, `Ideal.saturation` and `Ideal.saturation_index`
+- `RingPoints` vectorizes `RingPoint`, but also `Particles` from lips
+- `USE_ELLIPSIS_FOR_PRINT` displays first and last monomial, with others showns as `⟪n-2 terms⟫`
+- Monomial can be converted to list of exponents in a given ring, `as_exps_list(self, ring)`
+- Monomial evaluation respects shape of RingPoints, even for trivial, empty monomial
+- `fpoly_number` allows resuming primality test where it was interrupted
+- `codim_upper_bound` helps `guess_indep_set`, massively improves the primality test when running semi-numerically.
+- implemented univariate slice subject to approximate constraints (i.e. univariate slice over padics near given poles)
+- implemented lead term / monom attributes for poly
+- implemented poly division
+
+### Changed
+
+- Polynomials support unknown coefficients marked as `?`
+- Some support for using different Groebner bases, e.g. `slimgb`
+- prime test projection_number accepts an indep set
+- prime test with verbose on says if the ideal is radical
+- fixed print statement in point_on_variety which incorrectly said dim instead of codim
+- some parallelisation with `mapThreads` from `pycoretools`
+- `field.digits` for R and C is now independent of `mpmath.mp.dps`
+- RingPoint can be provided with a values dict at instantiation time
+- fixes spelling of ideal squash function
+
+### Fixed
+
+- Rationalization of polynomial with p-adic coefficients
+- Fixed issue with `sat` and `sat_with_exp` in different versions of Singular
+- Fixed issue with some ideal operation under degbound
+- Fixed missing <> as alterantive to ⟨⟩ brackets
+
+### Deprecated
+
+- `TemporarySetting` and `flatten` should be imported from `pycoretools` now
+
+
 ## [0.5.1] - 2025-06-03
 
 ### Added
@@ -213,7 +252,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 [unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.5.1...HEAD
-[0.5.0]: https://github.com/GDeLaurentis/syngular/compare/v0.5.0...v0.5.1
+[0.5.1]: https://github.com/GDeLaurentis/syngular/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/GDeLaurentis/syngular/compare/v0.4.1...v0.5.0
 [0.4.1]: https://github.com/GDeLaurentis/syngular/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/GDeLaurentis/syngular/compare/v0.3.0...v0.4.0
