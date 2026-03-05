@@ -139,7 +139,7 @@ class Field(object):
         elif self.name in ['mpf', 'R', 'mpc', 'C']:
             return mpmath.sqrt(val)
         else:
-            raise Exception(f"Field not understood: {self.field.name}")
+            raise Exception(f"Field sqrt not implemented: {self.name}")
 
     @property
     def one(self):
