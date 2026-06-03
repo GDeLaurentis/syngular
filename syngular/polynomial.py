@@ -223,6 +223,14 @@ class Polynomial(object):
         # print(coeffs_and_monomials_strings)
         coeffs_and_monomials = []
         for coeff_and_monomial_string in coeffs_and_monomials_strings:
+            # remove numerical denominator if present
+            coeff_denom = re.findall(r"/(\d+)$", coeff_and_monomial_string)
+            if coeff_denom != []:
+                coeff_denom = int(coeff_denom[0])
+                coeff_and_monomial_string = coeff_and_monomial_string.replace(f"/{coeff_denom}", "")
+            else:
+                coeff_denom = 1
+            coeff_and_monomial_string = remove_outer_parentheses_if_product_like(coeff_and_monomial_string)
             coeff_pattern = re.compile(r"""
                 (?:[?\d\(\)\.\s%/+^-]+        # Common characters
                     | (?<=\d) j               # 'j' if preceeded by digit
@@ -240,19 +248,13 @@ class Polynomial(object):
             # print(f"coeff: {coeff}\nmonom: {monomial}")
             coeff = coeff.replace(" ", "")
             coeff = "+1" if coeff == "+" or coeff == "" else "-1" if coeff == "-" else coeff
-            coeff_denom = re.findall(r"/(\d+)$", monomial)
-            if coeff_denom != []:
-                coeff_denom = int(coeff_denom[0])
-                monomial = monomial.replace(f"/{coeff_denom}", "")
-            else:
-                coeff_denom = 1
             if len(monomial) > 0 and monomial[0] == "*":
                 monomial = monomial[1:]
             if coeff[:2] == "+(" and coeff[-1:] == ")":
                 coeff = coeff[2:-1]
             if coeff[:1] == "(" and coeff[-1:] == ")":
                 coeff = coeff[1:-1]
-            # print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
+            print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
             coeffs_and_monomials += [(field(coeff) / coeff_denom if coeff not in ('?', '+?', '-?') else None, Monomial(monomial))]
         return coeffs_and_monomials
 
@@ -386,3 +388,19 @@ class Polynomial(object):
             return root_2_res * root_2_res
         else:
             return self * (self ** (n - 1))
+
+
+def remove_outer_parentheses_if_product_like(s, allowed_sign_predecessors=",[(<⟨"):
+    m = re.fullmatch(r"\s*([+-]?)\(([^()]*)\)\s*", s)
+    if m is None:
+        return s
+
+    sign, inner = m.groups()
+
+    chars = re.escape(allowed_sign_predecessors)
+    test = re.sub(rf"(?<=[{chars}])[+-]", "", inner)
+
+    if re.search(r"[+-]", test):
+        return s
+
+    return sign + inner

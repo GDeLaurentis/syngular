@@ -196,3 +196,13 @@ def test_monomial_eval_respects_shape():
 def test_monomial_as_list_of_exps_in_ring():
     ring = Ring('0', ('x', 'y', 'z', 'w'), 'dp')
     assert Monomial("x y^2 z").as_exps_list(ring).tolist() == Monomial("x y y z").as_exps_list(ring).tolist() == numpy.array([1, 2, 1, 0]).tolist()
+
+
+def test_monomial_with_variable_involving_list():
+    assert len(Monomial('topo1[0,0,1,0,0,1,1,0,1,0,0,0,0]').items()) == 1
+
+
+def test_monomials_with_outer_parentheses():
+    a = Polynomial('-1/8*topo1[1,1,0,1,0,-3,1,1,1,0,0,0,0]+(3*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,-1])/8-(3*s16*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,0])/8', Q)
+    b = Polynomial('-1/8*topo1[1,1,0,1,0,-3,1,1,1,0,0,0,0]+3*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,-1]/8-3*s16*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,0]/8', Q)
+    assert a == b

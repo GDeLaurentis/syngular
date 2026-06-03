@@ -27,6 +27,14 @@ syngular.ideal
     :undoc-members:
 
 
+syngular.variety
+---------------------
+
+.. automodule:: syngular.variety
+    :members:
+    :undoc-members:
+
+
 Module contents
 ---------------
 

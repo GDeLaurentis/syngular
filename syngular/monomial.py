@@ -98,6 +98,16 @@ class Monomial(FrozenMultiset):
                 splitted_string_partially_remerged[-1] += entry
             else:
                 splitted_string_partially_remerged += [entry]
+        # remerge integer lists, e.g. topo1 + [0,1,-2,...] -> topo1[0,1,-2,...]
+        integer_list_pattern = re.compile(r"^\[\s*-?\d+(?:\s*,\s*-?\d+)*\s*\]$")
+        _splitted_string_partially_remerged = [splitted_string_partially_remerged[0]]
+        for entry in splitted_string_partially_remerged[1:]:
+            if integer_list_pattern.fullmatch(entry):
+                _splitted_string_partially_remerged[-1] += entry
+            else:
+                _splitted_string_partially_remerged.append(entry)
+        splitted_string_partially_remerged = _splitted_string_partially_remerged
+        # remove trailing products
         splitted_string_partially_remerged = [inv_and_exp[:-1] if inv_and_exp[-1] in ['*', '·', ' '] else inv_and_exp
                                               for inv_and_exp in splitted_string_partially_remerged]
         # print(splitted_string_partially_remerged)
