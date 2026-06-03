@@ -231,6 +231,7 @@ class Polynomial(object):
             else:
                 coeff_denom = 1
             coeff_and_monomial_string = remove_outer_parentheses_if_product_like(coeff_and_monomial_string)
+            coeff_and_monomial_string = coeff_and_monomial_string.replace("+-", "-").replace("-+", "-").replace("++", "+").replace("--", "+")
             coeff_pattern = re.compile(r"""
                 (?:[?\d\(\)\.\s%/+^-]+        # Common characters
                     | (?<=\d) j               # 'j' if preceeded by digit
@@ -398,7 +399,10 @@ def remove_outer_parentheses_if_product_like(s, allowed_sign_predecessors=",[(<â
     sign, inner = m.groups()
 
     chars = re.escape(allowed_sign_predecessors)
-    test = re.sub(rf"(?<=[{chars}])[+-]", "", inner)
+
+    # Allow signs at the beginning of inner, or after selected predecessor characters.
+    test = re.sub(r"^[+-]", "", inner)
+    test = re.sub(rf"(?<=[{chars}])[+-]", "", test)
 
     if re.search(r"[+-]", test):
         return s
