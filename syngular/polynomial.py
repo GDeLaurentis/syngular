@@ -255,7 +255,7 @@ class Polynomial(object):
                 coeff = coeff[2:-1]
             if coeff[:1] == "(" and coeff[-1:] == ")":
                 coeff = coeff[1:-1]
-            print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
+            # print("string:", coeff_and_monomial_string, "\ncoeff:", coeff, "\ncoeff denom:", coeff_denom, "\nmonomial:", monomial)
             coeffs_and_monomials += [(field(coeff) / coeff_denom if coeff not in ('?', '+?', '-?') else None, Monomial(monomial))]
         return coeffs_and_monomials
 
