@@ -264,12 +264,30 @@ class Polynomial(object):
     def subs(self, base_point, field=None):
         if field is None:
             field = self.field
+
         base_point = {str(key): val for key, val in base_point.items()}
-        new_coeffs_and_monomials = []
+        new_poly = Polynomial(0, field)
+
         for coeff, monomial in self.coeffs_and_monomials:
-            poly = Polynomial(coeff * monomial.subs(base_point), field)
-            new_coeffs_and_monomials += [*(poly.coeffs_and_monomials)]
-        new_poly = Polynomial(new_coeffs_and_monomials, field)
+            term = Polynomial([(coeff, Monomial(""))], field)
+
+            for key, exp in monomial.items():
+                if key in base_point:
+                    value = base_point[key] ** exp
+
+                    if isinstance(value, Polynomial):
+                        factor = value
+                    elif isinstance(value, Monomial):
+                        factor = Polynomial([(1, value)], field)
+                    else:
+                        factor = Polynomial(value, field)
+                else:
+                    factor = Polynomial([(1, Monomial({key: exp}))], field)
+
+                term *= factor
+
+            new_poly += term
+
         new_poly.reduce()
         return new_poly
 

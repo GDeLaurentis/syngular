@@ -262,14 +262,15 @@ class Variety_of_Ideal:
                     raise IndexError(f"Got root_dicts: {root_dicts}, for lex Groebner basis:\n{oSemiNumericalIdeal.groebner_basis}.")
             # root_dict = {key: root_dict[key] for key in root_dict.keys() if key not in indepSymbols}
 
-            if iteration < iterations - 1:
-                for key in root_dict.keys():
-                    if field.name == "padic":
-                        root_as_poly = Polynomial(root_dict[key], Field("finite field", field.characteristic, 1))
-                        root_as_poly.field = field
-                    else:
-                        root_as_poly = Polynomial(root_dict[key], field)
-                    root_dict[key] = root_as_poly + Polynomial(f"{(prime if prime is not None else 1)} * {key}", field)
+            for key in root_dict.keys():
+                if field.name == "padic":
+                    root_as_poly = Polynomial(root_dict[key], Field("finite field", field.characteristic, 1))
+                    root_as_poly.field = field
+                else:
+                    root_as_poly = Polynomial(root_dict[key], field)
+                if iteration < iterations - 1:
+                    root_as_poly = root_as_poly + Polynomial(f"{(prime if prime is not None else 1)} * {key}", field)
+                root_dict[key] = root_as_poly
 
             update_point_dict(base_point, root_dict, field)
             # print("updated point:", base_point)

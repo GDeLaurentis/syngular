@@ -148,7 +148,7 @@ class Monomial(FrozenMultiset):
             return NotImplemented
 
     def __rmul__(self, other):
-        return other * self
+        return NotImplemented
 
     @preserve_class_binary_op
     def __truediv__(self, other):
@@ -163,6 +163,13 @@ class Monomial(FrozenMultiset):
 
     def __sub__(self, other):
         raise Exception("Monomial subtraction not implement. Do you mean this to be a Polynomial?")
+
+    def __pow__(self, n):
+        assert isinstance(n, int) or n.is_integer()
+        n = int(n)
+        if n < 0:
+            raise Exception("Monomial to negative power is a Rational Function.")
+        return Monomial({key: val * n for key, val in self.items()})
 
     @property
     def invs(self):

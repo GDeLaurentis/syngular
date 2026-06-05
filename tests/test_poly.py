@@ -206,3 +206,18 @@ def test_monomials_with_outer_parentheses():
     a = Polynomial('-1/8*topo1[1,1,0,1,0,-3,1,1,1,0,0,0,0]+(-3*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,-1])/8-(3*s16*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,0])/8', Q)
     b = Polynomial('-1/8*topo1[1,1,0,1,0,-3,1,1,1,0,0,0,0]-3*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,-1]/8-3*s16*topo1[1,1,0,1,0,-2,1,1,1,0,0,0,0]/8', Q)
     assert a == b
+
+
+def test_poly_subs_full_dict():
+    assert Polynomial('2 x y', Q).subs({'x': Polynomial('2z+1a', Q), 'y': Polynomial('y', Q)}) == Polynomial("2a·y+4z·y", Field('rational', 0, 0))
+
+
+def test_poly_subs_partial_dict():
+    assert Polynomial('2 x y', Q).subs({'x': Polynomial('2z+1a', Q)}) == Polynomial("2a·y+4z·y", Field('rational', 0, 0))
+    assert Polynomial('2 x y', Q).subs({'x': 1, }) == Polynomial("2y", Field('rational', 0, 0))
+
+
+def test_monom_power():
+    assert Monomial("x y^2 z") ** 3 == Monomial("x^3 y^6 z^3")
+    with pytest.raises(Exception, match="Monomial to negative power is a Rational Function."):
+        Monomial("x y^2 z") ** -1
