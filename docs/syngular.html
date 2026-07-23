@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>syngular.field &mdash; syngular 0.6.0 documentation</title>
+  <title>syngular.field &mdash; syngular 0.6.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=8fa8b3e9"></script>
+      <script src="_static/documentation_options.js?v=2bd037f0"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -126,6 +126,20 @@
 <li class="toctree-l3"><a class="reference internal" href="#syngular.ideal.reduce"><code class="docutils literal notranslate"><span class="pre">reduce()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#module-syngular.variety">syngular.variety</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.Variety_of_Ideal"><code class="docutils literal notranslate"><span class="pre">Variety_of_Ideal</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#syngular.variety.Variety_of_Ideal.point_on_variety"><code class="docutils literal notranslate"><span class="pre">Variety_of_Ideal.point_on_variety()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.check_solutions"><code class="docutils literal notranslate"><span class="pre">check_solutions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.lex_groebner_solve"><code class="docutils literal notranslate"><span class="pre">lex_groebner_solve()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.retry_to_find_root"><code class="docutils literal notranslate"><span class="pre">retry_to_find_root()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.univariate_finite_field_solver"><code class="docutils literal notranslate"><span class="pre">univariate_finite_field_solver()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.univariate_floating_point_solver"><code class="docutils literal notranslate"><span class="pre">univariate_floating_point_solver()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.update_point_dict"><code class="docutils literal notranslate"><span class="pre">update_point_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.variety.update_root_dict"><code class="docutils literal notranslate"><span class="pre">update_root_dict()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-syngular">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#syngular.Field"><code class="docutils literal notranslate"><span class="pre">Field</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#syngular.Field.I"><code class="docutils literal notranslate"><span class="pre">Field.I</span></code></a></li>
@@ -232,6 +246,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#syngular.SingularException"><code class="docutils literal notranslate"><span class="pre">SingularException</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#syngular.TemporarySetting"><code class="docutils literal notranslate"><span class="pre">TemporarySetting</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syngular.get_singular_version"><code class="docutils literal notranslate"><span class="pre">get_singular_version()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -598,6 +613,66 @@
 <dt class="sig sig-object py" id="syngular.ideal.reduce">
 <span class="sig-prename descclassname"><span class="pre">syngular.ideal.</span></span><span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">poly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ideal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.ideal.reduce" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</section>
+<section id="module-syngular.variety">
+<span id="syngular-variety"></span><h1>syngular.variety<a class="headerlink" href="#module-syngular.variety" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="syngular.variety.Variety_of_Ideal">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">Variety_of_Ideal</span></span><a class="headerlink" href="#syngular.variety.Variety_of_Ideal" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="syngular.variety.Variety_of_Ideal.point_on_variety">
+<span class="sig-name descname"><span class="pre">point_on_variety</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valuations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indepSet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'guess'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directions_analytic_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.Variety_of_Ideal.point_on_variety" title="Link to this definition"></a></dt>
+<dd><p>Generate a representative point on or close to the variety associated to this ideal.
+The point is ‘valuations’ away from the exact variety, in the directions specified by ‘directions’.
+If ‘directions’ are not provided, pick the first n=codim simplest generators from ‘self’.
+If the ideal is not prime, an irreducible branch will be picked at random.
+If independent sets are too hard to compute, they will be guessed, you can provide codim_upper_bound to help.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.check_solutions">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">check_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">equations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.check_solutions" title="Link to this definition"></a></dt>
+<dd><p>Checks that all solutions in root_dicts solve the equations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.lex_groebner_solve">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">lex_groebner_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">equations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.lex_groebner_solve" title="Link to this definition"></a></dt>
+<dd><p>Returns the variety corresponding to a given zero dimensional ideal in lexicographic groebner basis form.
+The variety take the form of a list of dictionaries for the possible values of the variables.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.retry_to_find_root">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">retry_to_find_root</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_tries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.retry_to_find_root" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.univariate_finite_field_solver">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">univariate_finite_field_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">equation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.univariate_finite_field_solver" title="Link to this definition"></a></dt>
+<dd><p>Returns all possible solutions of ‘equation’ over a finite field of cardinality ‘prime’.
+If already satisfied returns True, if no solution exists returns False.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.univariate_floating_point_solver">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">univariate_floating_point_solver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">equation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.univariate_floating_point_solver" title="Link to this definition"></a></dt>
+<dd><p>Returns all possible solutions of ‘equation’ over arbitrary precision complex numbers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.update_point_dict">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">update_point_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_point_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_vals_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.update_point_dict" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.variety.update_root_dict">
+<span class="sig-prename descclassname"><span class="pre">syngular.variety.</span></span><span class="sig-name descname"><span class="pre">update_root_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.variety.update_root_dict" title="Link to this definition"></a></dt>
+<dd><p>Given solutions and root_dict returns updated root_dicts.</p>
+</dd></dl>
 
 </section>
 <section id="module-syngular">
@@ -1065,6 +1140,11 @@ Generalizes the idea of a phase space point from particle physics.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="syngular.TemporarySetting">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">TemporarySetting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_or_module_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">setting_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.TemporarySetting" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="syngular.get_singular_version">
+<span class="sig-prename descclassname"><span class="pre">syngular.</span></span><span class="sig-name descname"><span class="pre">get_singular_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#syngular.get_singular_version" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 </section>
