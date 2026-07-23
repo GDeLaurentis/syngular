@@ -17,6 +17,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 
+## [0.6.1] - 2026-07-23
+
+### Added
+
+- `Monomial` exponentiation
+- `get_singular_version` for lazy Singular version detection
+
+### Changed
+
+- Improved polynomial parsing, including indexed variables and redundant outer parentheses
+- `Polynomial.subs` supports partial substitutions
+- Numeric polynomial inputs no longer pass through string parsing
+
+### Fixed
+
+- Spurious Singular availability and version warnings when Singular functionality is not used
+- Infinite recursion in unsupported right multiplication of monomials
+- p-adic variety construction now consistently converts finite-field roots before substitution
+
+### Deprecated
+
+- `Singular_version`; use `get_singular_version()` instead
+
+
 ## [0.6.0] - 2026-03-05
 
 ### Added
@@ -251,7 +275,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Primality test, `Ideal.test_primality`.
 
 
-[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.6.0...HEAD
+[unreleased]: https://github.com/GDeLaurentis/syngular/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/GDeLaurentis/syngular/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/GDeLaurentis/syngular/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/GDeLaurentis/syngular/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/GDeLaurentis/syngular/compare/v0.4.1...v0.5.0
