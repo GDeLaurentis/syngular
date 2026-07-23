@@ -8,7 +8,7 @@ import warnings
 
 from packaging.version import Version
 
-from .tools import execute_singular_command, Singular_version
+from .tools import execute_singular_command, get_singular_version
 from .ring import Ring
 from .qring import QuotientRing
 from .ideal_algorithms import Ideal_Algorithms
@@ -339,11 +339,12 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
 
     def saturation(self, other):
         """Saturation of ideals (self : other^∞), returns both saturation ideal and saturation index."""
+        singular_version = get_singular_version()
         singular_commands = ["LIB \"elim.lib\";"
                              f"ring r = {self.ring};",
                              f"ideal i = {self};",
                              f"ideal j = {other};",
-                             f"list k_and_s = {'sat' if Singular_version <= Version('4.3.1') else 'sat_with_exp'}(i, j);",
+                             f"list k_and_s = {'sat' if singular_version <= Version('4.3.1') else 'sat_with_exp'}(i, j);",
                              "print(k_and_s[1]);",
                              "print(\"sat index\"); print(k_and_s[2]);",
                              "$"]

@@ -3,12 +3,15 @@ import subprocess
 import syngular
 import random
 import warnings
+import shutil
+import functools
 
 from pathlib import Path
 from packaging.version import Version, InvalidVersion
 
 
 def execute_singular_command(singular_command, timeout='default', verbose=False):
+    _check_singular_available()
     if timeout == 'default':
         timeout = syngular.TIMEOUT
     if isinstance(singular_command, list):
@@ -83,15 +86,38 @@ class RootPrecisionError(Exception):
     pass
 
 
-try:
-    test = subprocess.Popen(["timeout", "5", "Singular", "--dump-versiontuple"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    output = test.communicate()[0]
-    output = output.decode("utf-8").replace("\n", "")
+def _check_singular_available(raise_error=True):
+    if shutil.which("Singular") is not None:
+        return True
+    message = "Singular is required for this operation but was not found in PATH."
+    if raise_error:
+        raise FileNotFoundError(message)
+    warnings.warn(message, stacklevel=2)
+    return False
+
+
+@functools.cache
+def get_singular_version(raise_error=True):
+    if not _check_singular_available(raise_error=raise_error):
+        return None
     try:
-        Singular_version = Version(output)
-    except InvalidVersion:
-        warnings.warn("Could not determine Singular version. Are you sure Singular is installed?", stacklevel=2)
-        Singular_version = None
-except FileNotFoundError as e:
-    warnings.warn(f"\nAre you sure timeout is installed for use in the command line?\n{e}\nCould not determine Singular version.", stacklevel=2)
-    Singular_version = None
+        result = subprocess.run(["Singular", "--dump-versiontuple"], capture_output=True, text=True, timeout=5, check=True, )
+        return Version(result.stdout.strip())
+    except (subprocess.SubprocessError, InvalidVersion) as exception:
+        if raise_error:
+            raise
+        warnings.warn(f"Could not determine Singular version, despite Singular being available: {exception}", stacklevel=2)
+        return None
+
+
+def __getattr__(name):
+    if name == "Singular_version":
+        warnings.warn(
+            "Singular_version is deprecated; use get_singular_version() instead. "
+            "Pass raise_error=False to retain the previous non-raising behaviour.",
+            DeprecationWarning, stacklevel=2,
+        )
+        value = get_singular_version(raise_error=False)
+        globals()[name] = value
+        return value
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

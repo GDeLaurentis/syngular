@@ -6,7 +6,7 @@ from copy import deepcopy
 from packaging.version import Version
 from pycoretools import mapThreads, TemporarySetting, default_cores
 
-from .tools import execute_singular_command, Singular_version
+from .tools import execute_singular_command, get_singular_version
 from .ring import Ring
 from .field import Field
 from .polynomial import Polynomial
@@ -121,9 +121,10 @@ class Ideal_Algorithms:
             r2 = Ring((sympy.symbols('0'), ) + U, XqU, 'dp')
         else:
             raise ValueError
+        singular_version = get_singular_version()
         string = execute_singular_command(self.singular_commands_EXTCONT2.format(**{
             "extended_ideal": self.extension(U, ordering), "f_polys_factors": ','.join(self.extension_contraction_fpoly(U, ordering)),
-            "r": r, "r2": r2, "sat": "sat" if Singular_version <= Version('4.3.1') else 'sat_with_exp'}))
+            "r": r, "r2": r2, "sat": "sat" if singular_version <= Version('4.3.1') else 'sat_with_exp'}))
         Ideal = self.__class__
         return int(string.split("\n")[1]), Ideal(r, [entry.replace(",", "") for entry in string.split("\n")[3:]])
 

@@ -2,7 +2,7 @@ from .version import __version__
 from .ideal import Ideal
 from .ring import Ring
 from .qring import QuotientRing, QRing
-from .tools import SingularException, Singular_version
+from .tools import SingularException, get_singular_version
 from .field import Field, Q, Qi
 from .polynomial import Polynomial, Monomial
 from .point import RingPoint
@@ -28,6 +28,7 @@ __all__ = [
     "QRing",
     "SingularException",
     "Singular_version",
+    "get_singular_version",
     "Field",
     "Q",
     "Qi",
@@ -45,7 +46,11 @@ import warnings  # noqa
 
 
 def __getattr__(name):
-    if name in {"flatten", }:
+    if name == "Singular_version":
+        from .tools import Singular_version
+        globals()[name] = Singular_version
+        return Singular_version
+    elif name in {"flatten", }:
         warnings.warn(
             f"syngular.{name} is deprecated and will be removed in a future release; "
             f"use pycoretools.iterables.{name} (or: from pycoretools import {name}).",
