@@ -131,7 +131,8 @@ class Ideal_Algorithms:
     def primeTestDLP(self, verbose=False, timeout_fpoly=10, timeout_dim=600,
                      seminumerical_dim_computation=False, nbr_points=100,
                      iterated_degbound_computation=False, projection_number=None,
-                     fpoly_number=None, astuple=False, cores=default_cores()):
+                     fpoly_number=None, astuple=False, required_primary_confirmations=2,
+                     cores=default_cores()):
         """
         Assumes equidimensionality of input ideal.
         Returns True if the ideal is prime, False if it is not.
@@ -142,6 +143,8 @@ class Ideal_Algorithms:
         """
         # todo: rename projection_number to reflect that it can accept directly an indepSet tuple
         import syngular
+        if required_primary_confirmations < 1:
+            raise ValueError("required_primary_confirmations must be at least 1.")
         if seminumerical_dim_computation and iterated_degbound_computation:
             raise Exception("Semi-numerical test and iterated degbound test are exclusive.")
         # algorithm works over rings, if in a qring convert to the full ring.
@@ -176,22 +179,31 @@ class Ideal_Algorithms:
             U = tuple(var for is_indep, var in zip(indepSet, X) if is_indep)   # independent variables: U
             XqU = tuple(entry for entry in X if entry not in U)                # dependent variables X / U
             prime = 536870909  # largest prime below 2 ** 29
-            projection = {entry: randint(1, prime) for entry in U}             # random values for U
-            zeroDimSelf = deepcopy(self)
-            zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=prime).as_expr())
-                                      for entry in sympy.sympify(zeroDimSelf.generators)]
-            zeroDimSelf.ring = Ring(str(prime), XqU, 'lp')
-            zeroDimSelf.delete_cached_properties()
-            degrees = list(map(int, re.findall(r"\^(\d)", "".join(zeroDimSelf.groebner_basis))))
-            if degrees == []:
-                max_degree = 1
+            required_degree_confirmations = required_primary_confirmations
+            previously_found_degree = None
+            for degree_confirmation in range(required_degree_confirmations):
+                projection = {entry: randint(1, prime) for entry in U}             # random values for U
+                zeroDimSelf = deepcopy(self)
+                zeroDimSelf.generators = [str(sympy.poly(entry.subs(projection), modulus=prime).as_expr())
+                                          for entry in sympy.sympify(zeroDimSelf.generators)]
+                zeroDimSelf.ring = Ring(str(prime), XqU, 'lp')
+                zeroDimSelf.delete_cached_properties()
+                degrees = list(map(int, re.findall(r"\^(\d+)", "".join(zeroDimSelf.groebner_basis))))
+                if degrees == []:
+                    max_degree = 1
+                else:
+                    max_degree = max(degrees)
+                if degree_confirmation == 0:
+                    previously_found_degree = max_degree
+                elif max_degree != previously_found_degree:
+                    break  # could not confirm degree for this indepSet, try another indepSet
             else:
-                max_degree = max(degrees)
-            if max_degree < lowest_degree:
-                lowest_degree = max_degree
-                lowest_degree_projection_indepSets = []
-            if max_degree == lowest_degree:
-                lowest_degree_projection_indepSets += [indepSet]
+                max_degree = previously_found_degree
+                if max_degree < lowest_degree:
+                    lowest_degree = max_degree
+                    lowest_degree_projection_indepSets = [indepSet]
+                elif max_degree == lowest_degree:
+                    lowest_degree_projection_indepSets += [indepSet]
             if verbose:
                 print(f"\r@{i}/{len(self.indepSets)} projections found: {len(lowest_degree_projection_indepSets)} of degree {lowest_degree}     ", end="")
         if verbose:
@@ -225,7 +237,9 @@ class Ideal_Algorithms:
             print(f"\neasiest projection is {easiest_projection_indepSet_index}: {easiest_projection_indepSet} of degree {lowest_degree}")
         smallest_fpoly_factors = f_polys_factors[max_lengths.index(min(max_lengths))]
         if lowest_degree > 1:
-            tries_for_irreducibility = 100
+            tries_for_irreducibility = max(100, required_primary_confirmations)
+            primary_confirmations = 0
+            radical = None
             for i in range(tries_for_irreducibility):
                 # Warning repeated code from above, use _semi_numerical_slice?
                 indepSet = easiest_projection_indepSet
@@ -242,14 +256,24 @@ class Ideal_Algorithms:
                 zeroDim_prim_dec = zeroDimSelf.primary_decomposition
                 if len(zeroDim_prim_dec) == 1:
                     Q, P = zeroDim_prim_dec[0]
-                    radical = True if Q == P else False
+                    if radical is None:
+                        radical = Q == P
+                    elif radical != (Q == P):
+                        raise Inconclusive("Primary zero dim extensions disagree on radicality.")
+                    primary_confirmations += 1
                     if verbose:
-                        print("\rWas irreducible at the chosen point. Continuing test.", end="                    ")
-                    break  # conclusive
+                        print(f"\rWas primary at the chosen point. Confirmation {primary_confirmations}/{required_primary_confirmations}.",
+                              end="                    ")
+                    if primary_confirmations >= required_primary_confirmations:
+                        break  # conclusive (statistically)
                 elif verbose:
-                    print(f"\rWas reducible at the chosen points, checking again. At try {i}.", end="")
+                    print(f"\rWas not primary at the chosen point, checking again. At try {i}.", end="")
             else:
-                raise Inconclusive(f"Likely reducible, since it was reducible on {tries_for_irreducibility} zero dim extensions.")
+                if primary_confirmations == 0:
+                    raise Inconclusive(f"Likely not primary, since it was reducible on all {tries_for_irreducibility} zero dim extensions.")
+                elif primary_confirmations < required_primary_confirmations:
+                    raise Inconclusive(f"Failed to confirm primary, since only {primary_confirmations} out of {required_primary_confirmations}"
+                                       f" primary zero dim extensions were found in {tries_for_irreducibility} tries.")
                 # return False if not astuple else (False, False)  # statistical statement, may return false negatives
         else:
             radical = True
