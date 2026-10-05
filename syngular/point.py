@@ -30,10 +30,12 @@ class RingPoint(dict):
         string = re.sub(r'([a-zA-Z])(\()', r'\1*\2', string)
         return string
 
-    def __call__(self, string):
-        if isinstance(string, sympy.Basic):
-            string = str(string)
-        return eval(self._parse(string), {}, self)
+    def __call__(self, expression):
+        if isinstance(expression, sympy.Add):
+            return sum(map(self, expression.args), self.field(0))
+        if isinstance(expression, sympy.Basic):
+            expression = str(expression)
+        return eval(self._parse(expression), {}, self)
 
     def univariate_slice(self, extra_approximate_constraints=(), indepSet=None, seed=None, verbose=False):
         t = sympy.symbols('t')
