@@ -4,6 +4,7 @@ import re
 import sympy
 
 from .field import Field, Q, Fp
+from .ring import Ring
 
 
 class QuotientRingFactorization:
@@ -37,7 +38,7 @@ class QuotientRingFactorization:
         if verbose > 1:
             print("factorizing...")
         start = time.perf_counter()
-        factorization = self.poly_ring.factorize(numerator, timeout=timeout)
+        factorization = Ring.factorize(self.poly_ring, numerator, timeout=timeout)
         timings["factorize"] = time.perf_counter() - start
 
         start = time.perf_counter()

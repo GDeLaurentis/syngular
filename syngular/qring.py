@@ -12,7 +12,6 @@ class QuotientRing(QuotientRingFactorization, Ring):
             raise ValueError("The quotient-ring ambient ring and the ideal ring must agree.")
         super().__init__(ring.field, ring.variables, ring.ordering)
         self.ideal = ideal
-        self._localization = None
         self.test_valid_qring()
 
     @property
@@ -48,7 +47,7 @@ class QuotientRing(QuotientRingFactorization, Ring):
 
     @property
     def localization(self):
-        return self._localization
+        return getattr(self, "_localization", None)
 
 
 QRing = QuotientRing
