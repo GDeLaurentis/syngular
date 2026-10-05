@@ -4,10 +4,9 @@ import hashlib
 import re
 import numpy
 
-from syngular import Monomial, Polynomial, Field, Ring, RingPoint, RingPoints, TemporarySetting, Q, Qi
-
 from fractions import Fraction
-
+from pycoretools import TemporarySetting
+from syngular import Monomial, Polynomial, Field, Ring, RingPoint, RingPoints, Q, Qi
 from pyadic import ModP
 
 

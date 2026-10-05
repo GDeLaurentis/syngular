@@ -11,22 +11,65 @@ from .ring import Ring
 from .field import Field
 from .polynomial import Polynomial
 
+singular_commands_EXT = r"""
+// option(redSB);
+ring r = {r};
+ideal i = {ideal};
+// Block Order X \ U > U in F[X]
+ring r1 = {r1};
+ideal j = imap(r, i);
+ideal gr = groebner(j);
+// to F(U)[X \ U]
+ring r2 = {r2};
+ideal G = imap(r1, gr);
+print(G);
+"""
+
+singular_commands_EXTCONT1 = r"""
+LIB "polylib.lib";
+// K(U)[X \ U]
+ring r2 = {r2};
+ideal G = {extended_ideal};
+// List of leadcoefficients
+list l;
+for (int i=1; i<=size(G); i=i+1)
+{{
+    l = insert(l, leadcoef(G[i]));
+}}
+ring r = {r};
+list l = imap(r2, l);
+// f-polynomial
+list factors;
+for (i=1; i<=size(l); i=i+1)
+{{
+    factors = insert(factors, factorize(l[i], 1));
+}}
+print("factors:"); print(factors);
+$
+"""
+
+singular_commands_EXTCONT2 = r"""
+LIB "polylib.lib";
+// option(redSB);
+ring r2 = {r2};
+ideal G = {extended_ideal};
+ring r = {r};
+ideal Iec = imap(r2, G);
+list factors = {f_polys_factors};
+list Iec_and_s;
+int s = 0;
+for (int i_=1; i_<=size(factors); i_=i_+1)
+{{
+    Iec_and_s = {sat}(Iec, ideal(factors[i_]));
+    Iec = Iec_and_s[1];
+    s = max(s, Iec_and_s[2]);
+}}
+print("saturation index:"); print(s);
+print("extended-contracted ideal:"); print(minbase(Iec));
+"""
+
 
 class Ideal_Algorithms:
-
-    singular_commands_EXT = r"""
-        // option(redSB);
-        ring r = {r};
-        ideal i = {ideal};
-        // Block Order X \ U > U in F[X]
-        ring r1 = {r1};
-        ideal j = imap(r, i);
-        ideal gr = groebner(j);
-        // to F(U)[X \ U]
-        ring r2 = {r2};
-        ideal G = imap(r1, gr);
-        print(G);
-    """
 
     def extension(self, U, ordering="lp"):
         r"""Extension to K(U)[X \ U]"""
@@ -41,34 +84,11 @@ class Ideal_Algorithms:
             r2 = Ring((sympy.symbols('0'), ) + U, XqU, 'dp')
         else:
             raise ValueError
-        string = execute_singular_command(self.singular_commands_EXT.format(**{"ideal": self, "r": r, "r1": r1, "r2": r2}))
+        string = execute_singular_command(singular_commands_EXT.format(**{"ideal": self, "r": r, "r1": r1, "r2": r2}))
         generators = string.split(",\n")
         Ideal = self.__class__
         I_extended = Ideal(r2, generators)
         return I_extended
-
-    singular_commands_EXTCONT1 = r"""
-        LIB "polylib.lib";
-        // K(U)[X \ U]
-        ring r2 = {r2};
-        ideal G = {extended_ideal};
-        // List of leadcoefficients
-        list l;
-        for (int i=1; i<=size(G); i=i+1)
-        {{
-            l = insert(l, leadcoef(G[i]));
-        }}
-        ring r = {r};
-        list l = imap(r2, l);
-        // f-polynomial
-        list factors;
-        for (i=1; i<=size(l); i=i+1)
-        {{
-            factors = insert(factors, factorize(l[i], 1));
-        }}
-        print("factors:"); print(factors);
-        $
-    """
 
     def extension_contraction_fpoly(self, U, ordering="lp"):
         """Returns a minimal list of factors for the f-polynomial in CONT and EXTCONT"""
@@ -83,30 +103,10 @@ class Ideal_Algorithms:
             r2 = Ring((sympy.symbols('0'), ) + U, XqU, 'dp')
         else:
             raise ValueError
-        string = execute_singular_command(self.singular_commands_EXTCONT1.format(**{"extended_ideal": self.extension(U, ordering), "r": r, "r1": r1, "r2": r2}))
+        string = execute_singular_command(singular_commands_EXTCONT1.format(**{"extended_ideal": self.extension(U, ordering), "r": r, "r1": r1, "r2": r2}))
         f_polys_factors = list(set([row.split("=")[1].replace(" ", "") for row in string.split("\n") if "factors" not in row and "=" in row]))
         f_polys_factors = [entry for entry in f_polys_factors if entry != '1']
         return ['1'] + f_polys_factors
-
-    singular_commands_EXTCONT2 = """
-        LIB "polylib.lib";
-        // option(redSB);
-        ring r2 = {r2};
-        ideal G = {extended_ideal};
-        ring r = {r};
-        ideal Iec = imap(r2, G);
-        list factors = {f_polys_factors};
-        list Iec_and_s;
-        int s = 0;
-        for (int i_=1; i_<=size(factors); i_=i_+1)
-        {{
-            Iec_and_s = {sat}(Iec, ideal(factors[i_]));
-            Iec = Iec_and_s[1];
-            s = max(s, Iec_and_s[2]);
-        }}
-        print("saturation index:"); print(s);
-        print("extended-contracted ideal:"); print(minbase(Iec));
-    """
 
     def extension_contraction(self, U, ordering="lp"):
         """Computes extension-contraction of self to localization define by indepSet U. Returns a tuple: (saturation index, extended-contracted ideal)."""
@@ -122,7 +122,7 @@ class Ideal_Algorithms:
         else:
             raise ValueError
         singular_version = get_singular_version()
-        string = execute_singular_command(self.singular_commands_EXTCONT2.format(**{
+        string = execute_singular_command(singular_commands_EXTCONT2.format(**{
             "extended_ideal": self.extension(U, ordering), "f_polys_factors": ','.join(self.extension_contraction_fpoly(U, ordering)),
             "r": r, "r2": r2, "sat": "sat" if singular_version <= Version('4.3.1') else 'sat_with_exp'}))
         Ideal = self.__class__

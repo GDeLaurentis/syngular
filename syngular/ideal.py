@@ -147,7 +147,6 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",
                              f"ideal gb = {algorithm}(i);",
-                             "short=0;",
                              "print(gb);",
                              "$"]
         if reduced:
@@ -171,7 +170,6 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal gb = {','.join(self.groebner_basis)};",
                              "def lts = lead(gb);",
-                             "short=0;",
                              "print(lts);"]
         output = execute_singular_command(singular_commands)
         # print(output)
@@ -182,7 +180,6 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
     def minbase(self):
         singular_commands = [f"ring r = {self.ring};",
                              f"ideal i = {self};",
-                             "short=0;",
                              "print(minbase(i));",
                              "$"]
         output = execute_singular_command(singular_commands)
@@ -196,7 +193,6 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
                              f"ring r = {self.ring};",
                              f"ideal i = {self};",
                              "def pr = radical(i);",   # options: GTZ / SY
-                             "short=0;",
                              "print(pr);",
                              "$"]
         output = execute_singular_command(singular_commands)
@@ -211,7 +207,6 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
                              f"ideal i = {self};",
                              # f"ideal gb = {','.join(self.groebner_basis)};",
                              "def pr = primdecGTZ(i);",   # options: GTZ / SY
-                             "short=0;",
                              "print(pr);",
                              "$"]
         output = execute_singular_command(singular_commands)

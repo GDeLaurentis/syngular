@@ -31,6 +31,8 @@ class RingPoint(dict):
         return string
 
     def __call__(self, string):
+        if isinstance(string, sympy.Basic):
+            string = str(string)
         return eval(self._parse(string), {}, self)
 
     def univariate_slice(self, extra_approximate_constraints=(), indepSet=None, seed=None, verbose=False):

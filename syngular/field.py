@@ -226,3 +226,19 @@ class Field(object):
 
 Q = Field("rational", 0, 0)
 Qi = Field("gaussian rational", 0, 0)
+
+
+def Fp(p):
+    return Field("finite field", p, 1)
+
+
+def Qp(p, k):
+    return Field("padic", p, k)
+
+
+def R(k=300):
+    return Field("mpf", 0, k)
+
+
+def C(k=300):
+    return Field("mpc", 0, k)

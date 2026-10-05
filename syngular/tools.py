@@ -14,9 +14,11 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
     _check_singular_available()
     if timeout == 'default':
         timeout = syngular.TIMEOUT
+
     if isinstance(singular_command, list):
         singular_command = "\n".join(singular_command)
     # print(singular_command)
+
     if len(singular_command) >= 131072:  # 2 ** 17
         Path("/tmp/.singular_commands/").mkdir(parents=True, exist_ok=True)
         random_integer = random.randint(0, 2**64 - 1)
@@ -40,27 +42,29 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
     output = output.decode("utf-8")
     if stderr is not None:
         stderr = stderr.decode("utf-8")
+    if syngular.DEBUG:
+        if len(singular_command) >= 131072:
+            print(f"DEBUG - Command of length {len(singular_command)} was written to file: {file_path}")
+        else:
+            print(f"DEBUG - Command of length {len(singular_command)} was executed directly.")
+        print("DEBUG - Command received:\n", singular_command)
+        print("DEBUG - Output obtained:\n", output)
+        print("DEBUG - Stderr obtained:\n", stderr)
     if len(output) == 0 and stderr is None:
         raise SingularException(f"Empty output while executing: {singular_command}")
     if len(output) > 0 and output[-1] == "\n":
         output = output[:-1]
     if 'halt' in output or (stderr is not None and 'timeout' in stderr):
         raise TimeoutError(f"{timeout} s")
-    if '   ? `Q` is undefined' in output:
-        output = output.replace("   ? `Q` is undefined", "")
-        print("Singular Error: Q is undefined")
     if (('error' in output and 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' not in output) or
-       'is not defined' in output or 'INVALID' in output or 'can not convert' in output):
+       'is not defined' in output or 'is undefined' in output or 'INVALID' in output or 'can not convert' in output):
         raise SingularException(f"{output}\n\n\nError occured while executing:\n{singular_command}")
-    if '//options: redSB degBound redefine usage prompt\n' in output:
-        output = output.replace("//options: redSB degBound redefine usage prompt\n", "")
-        print("Singular Warning: redSB degBound redefine usage prompt")
-    if '//options: degBound redTail redThrough redefine usage prompt\n' in output:
-        output = output.replace("//options: degBound redTail redThrough redefine usage prompt\n", "")
-        print("Singular Warning: degBound redTail redThrough redefine usage prompt")
+    option_lines = re.findall(r"^//options:[^\n]*(?:\n|$)", output, flags=re.MULTILINE)
+    if syngular.DEBUG:
+        for line in option_lines:
+            print(f"Singular options: {line.removeprefix('//options:').strip()}")
+    output = re.sub(r"^//options:[^\n]*(?:\n|$)", "", output, flags=re.MULTILINE)
     output = output.replace('// ** minbase applies only to the local or homogeneous case over coefficient fields\n', '')
-    output = output.replace('//options: redSB degBound redTail redThrough intStrategy redefine usage prompt\n', '')
-    output = output.replace('//options: degBound redTail redThrough intStrategy redefine usage prompt\n', '')
     output = re.sub(r'// \*\* .* is no standard basis\n', '', output)
     if 'groebner base computations with inexact coefficients can not be trusted due to rounding errors' in output:
         if verbose:
@@ -68,9 +72,6 @@ def execute_singular_command(singular_command, timeout='default', verbose=False)
         output = output.replace('// ** groebner base computations with inexact coefficients can not be trusted due to rounding errors\n', '')
     if len(singular_command) >= 131072:
         Path(file_path).unlink()
-    if syngular.DEBUG:
-        print("DEBUG - Command received:\n", singular_command)
-        print("DEBUG - Output obtained:\n", output)
     return output
 
 

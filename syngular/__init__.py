@@ -3,7 +3,7 @@ from .ideal import Ideal
 from .ring import Ring
 from .qring import QuotientRing, QRing
 from .tools import SingularException, get_singular_version
-from .field import Field, Q, Qi
+from .field import Field, Q, Qi, Fp, Qp, R, C
 from .polynomial import Polynomial, Monomial
 from .point import RingPoint
 from .points import RingPoints
@@ -32,6 +32,10 @@ __all__ = [
     "Field",
     "Q",
     "Qi",
+    "Fp",
+    "Qp",
+    "R",
+    "C",
     "Polynomial",
     "Monomial",
     "TemporarySetting",

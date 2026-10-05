@@ -1,5 +1,6 @@
 import sympy
 import syngular
+import warnings
 
 from pycoretools import flatten
 
@@ -64,8 +65,9 @@ class Ring(object):
 
     def __str__(self):
         string = f"""{self.field}, {str(self.variables).replace(",)", ")")}, {str(self.ordering).replace("'", "")}"""
+        string += ";\nshort=0"
         if syngular.DEGBOUND != 0:
-            string += f";\ndegBound = {syngular.DEGBOUND};\noption()"
+            string += f";\ndegBound = {syngular.DEGBOUND}"
         return string
 
     def __repr__(self):
@@ -74,6 +76,71 @@ class Ring(object):
     def __eq__(self, other):
         assert isinstance(self, Ring) and isinstance(other, Ring)
         return self.field == other.field and self.variables == other.variables and self.ordering == other.ordering
+
+    def exact_divide(self, dividend, divisor, timeout="default"):
+        """Exactly divide dividend by divisor in the ring, raising ArithmeticError if not divisible."""
+        singular_commands = [
+            f"ring r = {self};",
+            f"poly f = {str(dividend).replace('**', '^')};",
+            f"poly g = {str(divisor).replace('**', '^')};",
+            "ideal I = g;",
+            "ideal F = f;",
+            "matrix T = lift(I,F);",
+            "ideal Q = std(0);",
+            "poly s = reduce(T[1,1],Q);",
+            "poly t = reduce(f-g*s,Q);",
+            'print("__QUOTIENT__");',
+            "print(s);",
+            'print("__REMAINDER__");',
+            "print(t);",
+            'print("__END__");',
+            "$",
+        ]
+
+        output = execute_singular_command(singular_commands, timeout=timeout)
+        quotient = "".join(output.split("__QUOTIENT__", 1)[1].split("__REMAINDER__", 1)[0].splitlines()).strip()
+        remainder = "".join(output.split("__REMAINDER__", 1)[1].split("__END__", 1)[0].splitlines()).strip()
+
+        if remainder != "0":
+            raise ArithmeticError(f"{dividend} is not exactly divisible by {divisor} in {self}.")
+
+        return quotient
+
+    def factorize(self, polynomial, timeout="default"):
+        """Factorize a polynomial in the ambient polynomial ring, returning (factor, multiplicity) pairs."""
+        from .qring import QRing
+
+        if isinstance(self, QRing):
+            warnings.warn("Factorization in a quotient ring is performed in the ambient polynomial ring,"
+                          " ignoring equivalence relations.", stacklevel=2)
+
+        singular_commands = [
+            f"ring r = {self};",
+            f"poly f = {str(polynomial).replace('**', '^')};",
+            "list L = factorize(f);",
+            "ideal F = L[1];",
+            "intvec E = L[2];",
+            "int i;",
+            "for (i=1; i<=size(F); i=i+1)",
+            "{",
+            '    print("__FACTOR_BEGIN__");',
+            "    print(E[i]);",
+            '    print("__POLY__");',
+            "    print(F[i]);",
+            '    print("__FACTOR_END__");',
+            "}",
+            "$",
+        ]
+
+        output = execute_singular_command(singular_commands, timeout=timeout)
+        factors = []
+
+        for block in output.split("__FACTOR_BEGIN__")[1:]:
+            block = block.split("__FACTOR_END__", 1)[0]
+            multiplicity, polynomial = block.split("__POLY__", 1)
+            factors.append(("".join(polynomial.splitlines()).strip(), int(multiplicity.strip())))
+
+        return factors
 
     def zero_ideal(self):
         """Returns the zero ideal ⟨0⟩ in the ring."""
