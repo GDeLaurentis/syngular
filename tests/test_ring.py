@@ -56,6 +56,7 @@ def test_factorize():
 def test_singular_factorize_in_qring_warns_and_fails():
     ring = Ring(0, ("x", "y", "z"), "dp")
     qring = QRing(ring, Ideal(ring, ("x*y-z",)))
+    qring._localization = None
     with pytest.warns(UserWarning, match="ambient polynomial ring"):
         assert qring.factorize("z") != qring.factorize("x*y")
 
@@ -77,3 +78,36 @@ def test_qring_factorize():
     assert sympy.expand(qring.factorize("z") - x * y) == 0
     assert sympy.expand(qring.factorize("z", padic_valuation=True) - x * y) == 0
     assert sympy.expand(qring.factorize("z*(z+x)") - x**2 * y * (y + 1)) == 0
+
+
+def test_find_principal_localization():
+    ring = Ring(0, ("x", "z"), "dp")
+    qring = QRing(ring, Ideal(ring, ("x*z-1",)))
+
+    x = sympy.Symbol("x")
+    localization = qring.find_localization(dependent_variables=("z",))
+
+    assert sympy.expand(localization.element - x) == 0
+
+
+def test_find_principal_localization_vdim_greater_than_one():
+    ring = Ring(0, ("x", "z"), "dp")
+    qring = QRing(ring, Ideal(ring, ("z^2-x",)))
+
+    assert qring.find_localization(dependent_variables=("z",)) is None
+
+
+def test_find_principal_localization_automatic_independent_set():
+    ring = Ring(0, ("x", "z"), "dp")
+    qring = QRing(ring, Ideal(ring, ("x*z-1",)))
+
+    assert qring.find_localization() is not None
+
+
+def test_qring_factorize_with_automatic_localization():
+    ring = Ring(0, ("x", "y", "z"), "dp")
+    qring = QRing(ring, Ideal(ring, ("z-x*y",)))
+
+    x, y = sympy.symbols("x y")
+
+    assert sympy.expand(qring.factorize("z") - x * y) == 0

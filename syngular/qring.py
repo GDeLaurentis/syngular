@@ -41,13 +41,24 @@ class QuotientRing(QuotientRingFactorization, Ring):
         return PrincipalLocalization(self, element, dependent_variables, check_polynomial)
 
     def set_localization(self, element, dependent_variables=(), check_polynomial=False):
-        """Set the principal localization used for quotient-ring factorization."""
+        """Set an explicitly specified principal localization."""
         self._localization = self.principal_localization(element, dependent_variables, check_polynomial)
+        return self._localization
+
+    def find_localization(self, independent_variables=None, dependent_variables=None, check_polynomial=True):
+        """Attempt to find and set a principal localization yielding a polynomial localization for a suitable coordinate projection."""
+        from .localization import find_principal_localization
+        self._localization = find_principal_localization(self, independent_variables, dependent_variables, check_polynomial)
         return self._localization
 
     @property
     def localization(self):
-        return getattr(self, "_localization", None)
+        if not hasattr(self, "_localization"):
+            self._set_default_localization()
+        return self._localization
+
+    def _set_default_localization(self):
+        self.find_localization()
 
 
 QRing = QuotientRing

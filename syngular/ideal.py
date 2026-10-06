@@ -98,6 +98,14 @@ class Ideal(Ideal_Algorithms, Variety_of_Ideal, object):
         zeroIdeal_dim = Ideal(self.ring, ['0']).dim
         return {zeroIdeal_dim - dim for dim in self.dims}
 
+    @property
+    def vdim(self):
+        """Vector-space dimension of a zero-dimensional quotient ring."""
+        if self.dim != 0:
+            raise ValueError("Vector-space dimension is only finite for a zero-dimensional ideal.")
+        singular_commands = [f"ring r = {self.ring};", f"ideal gb = {','.join(self.groebner_basis)};", "print(vdim(gb));", "$"]
+        return int(execute_singular_command(singular_commands))
+
     def guess_indep_set(self):
         """Guesses an independent set, you can provide codim_upper_bound attribute to help."""
         equations = self.generators

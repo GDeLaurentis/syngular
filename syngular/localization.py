@@ -1,5 +1,6 @@
 import re
 import sympy
+import functools
 
 from .ring import Ring
 from .ideal import Ideal
@@ -90,3 +91,88 @@ class PrincipalLocalization:
             raise RuntimeError(f"Principal localization did not eliminate the requested variables: {symbols & dependent_symbols}")
 
         return numerator, denominator_power
+
+
+def find_principal_localization(qring, independent_variables=None, dependent_variables=None, check_polynomial=True):
+    """
+    Attempt to find a principal localization yielding a polynomial localization for a suitable coordinate projection.
+
+    For A = F[X]/I, split X = Y ⊔ Z, extend I to I^e ⊂ F(Y)[Z], and compute dim_F(Y)(F(Y)[Z]/I^e). If this dimension is one,
+    every z ∈ Z is rational in Y; their denominators determine D such that A[D^-1] ≅ F[Y][D^-1].
+    """
+
+    variables = tuple(map(str, qring.ideal.ring.variables))
+
+    # Ensure string format for variables
+    def variables_as_strings(values):
+        if values is None:
+            return None
+        if isinstance(values, (str, sympy.Symbol)):
+            return (str(values),)
+        return tuple(map(str, values))
+
+    independent_variables = variables_as_strings(independent_variables)
+    dependent_variables = variables_as_strings(dependent_variables)
+
+    # Complete disjoint split if one or both parts were omitted.
+    if independent_variables is None and dependent_variables is None:
+        indep_set = qring.ideal.indepSet
+        if len(indep_set) != len(variables):
+            raise RuntimeError("The independent-set mask does not match the quotient-ring variables.")
+        independent_variables = tuple(variable for variable, independent in zip(variables, indep_set) if independent)
+        dependent_variables = tuple(variable for variable, independent in zip(variables, indep_set) if not independent)
+    elif independent_variables is None:
+        dependent_set = set(dependent_variables)
+        independent_variables = tuple(variable for variable in variables if variable not in dependent_set)
+    elif dependent_variables is None:
+        independent_set = set(independent_variables)
+        dependent_variables = tuple(variable for variable in variables if variable not in independent_set)
+
+    # Sanity checks on provided independent set Y and dependent set Z
+    if len(set(independent_variables)) != len(independent_variables) or len(set(dependent_variables)) != len(dependent_variables):
+        raise ValueError("Independent and dependent variables must not contain duplicates.")
+
+    unknown_variables = (set(independent_variables) | set(dependent_variables)) - set(variables)
+    if unknown_variables:
+        raise ValueError(f"Independent/dependent variables contain variables not found in the quotient ring: {sorted(unknown_variables)}")
+
+    if set(independent_variables) & set(dependent_variables):
+        raise ValueError("Independent and dependent variables must be disjoint.")
+
+    if set(independent_variables) | set(dependent_variables) != set(variables):
+        raise ValueError("Independent and dependent variables must partition the quotient-ring variables.")
+
+    # Trivial case: no dependent variables, so the quotient must already be a polynomial ring.
+    if dependent_variables == ():
+        if qring.ideal != qring.poly_ring.zero_ideal():
+            raise ValueError("No dependent variables were specified, but the quotient ideal is nonzero; check that the independent variables are algebraically independent.")
+        return PrincipalLocalization(qring, sympy.Integer(1), (), check_polynomial)
+
+    field = str(qring.poly_ring.field)
+    if independent_variables != ():
+        independent_string = ",".join(independent_variables)
+        field = field[:-1] + f",{independent_string})" if field.startswith("(") and field.endswith(")") else f"({field},{independent_string})"
+
+    extension_ring = Ring(field, dependent_variables, "dp")
+    extension_ideal = Ideal(extension_ring, qring.ideal.generators)
+
+    if extension_ideal.dim != 0 or extension_ideal.vdim != 1:
+        return None
+
+    normal_forms = extension_ideal.reduce(Ideal(extension_ring, dependent_variables)).generators
+
+    symbols = {variable: sympy.Symbol(variable) for variable in variables}
+    dependent_symbols = {symbols[variable] for variable in dependent_variables}
+
+    denominators = []
+    for normal_form in normal_forms:
+        normal_form = sympy.cancel(sympy.sympify(str(normal_form).replace("^", "**"), locals=symbols))
+
+        if normal_form.free_symbols & dependent_symbols:
+            raise RuntimeError(f"Dependent variables remain after reduction: {normal_form}")
+
+        denominators.append(normal_form.as_numer_denom()[1])
+
+    element = sympy.expand(functools.reduce(sympy.lcm, denominators, sympy.Integer(1)))
+
+    return PrincipalLocalization(qring, element, dependent_variables, check_polynomial)
