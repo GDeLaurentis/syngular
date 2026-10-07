@@ -3,6 +3,7 @@ import pickle
 import hashlib
 import re
 import numpy
+import syngular
 
 from fractions import Fraction
 from pycoretools import TemporarySetting
@@ -139,6 +140,19 @@ def test_monomial_power_normalisation_unbroken_invariant():
         assert monom.variables == {'⟨3|2⟩', '⟨2|4⟩', '(s_123-mt^2)'}
         monom = Monomial('⟨3|2⟩⟨2|4⟩(s_123²-mt2²)²')
         assert monom.variables == {'⟨3|2⟩', '⟨2|4⟩', '(s_123^2-mt^4)'}
+
+
+def test_monomial_equality_is_independent_of_unicode_powers():
+    with TemporarySetting(syngular, "UNICODEPOWERS", True):
+        a = Monomial("(s_12𝟑-m_t²)")
+    with TemporarySetting(syngular, "UNICODEPOWERS", False):
+        b = Monomial(["(s_12𝟑-m_t²)"], [1])
+    assert a == b
+
+
+def test_monomial_equality_among_unicode_powers_and_caret():
+    assert Monomial("(s_12𝟑-m_t²)") == Monomial(["(s_12𝟑-m_t²)"], [1])
+    assert Monomial("(s_12𝟑-m_t²)") == Monomial(["(s_12𝟑-m_t^2)"], [1])
 
 
 @pytest.mark.parametrize(

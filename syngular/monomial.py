@@ -58,16 +58,20 @@ class Monomial(FrozenMultiset):
             data = self.__rstr__(args[0])
         else:
             raise NotImplementedError(f"Monomial initialization not understood, received:\nargs: {args}\nargs types: {list(map(type, args))}")
+        data = [non_unicode_powers(inv).replace("**", "^") for inv, exp in FrozenMultiset(data).items() for _ in range(exp)]
         for pattern in syngular.NORMALIZE_POWERS_PATTERNS:
             pattern_complete = re.compile(rf"{pattern.pattern}(\^\d+)?")
             pattern_full_match = re.compile(rf"^{pattern.pattern}$")
-            data = [(pattern_complete.sub(
-                lambda match: f"{match.group(1)}^{match.group(2)}" if match.group(3) is None else
-                              f"{match.group(1)}^{int(match.group(2)) * int(match.group(3)[1:])}",
-                              inv), exp) if pattern_full_match.findall(inv) == [] else
-                    (pattern_full_match.findall(inv)[0][0], int(pattern_full_match.findall(inv)[0][1]) * exp)
-                    for inv, exp in FrozenMultiset(data).items()]
-            data = [inv for inv, exp in data for _ in range(exp)]
+            normalized_data = []
+            for inv in data:
+                match = pattern_full_match.fullmatch(inv)
+                if match:
+                    normalized_data += [match.group(1)] * int(match.group(2))
+                else:
+                    normalized_data.append(pattern_complete.sub(
+                        lambda match: f"{match.group(1)}^{match.group(2)}" if match.group(3) is None else
+                                      f"{match.group(1)}^{int(match.group(2)) * int(match.group(3)[1:])}", inv))
+            data = normalized_data
         # Check for purely numeric vars in monomial
         for inv in data:
             if isinstance(inv, str):

@@ -60,6 +60,9 @@ class Polynomial(object):
     def __setstate__(self, state):
         self.__init__(*state)
 
+    def __hash__(self):
+        return hash(frozenset(self.coeffs_and_monomials))
+
     def __str__(self, for_repr=None):
         if for_repr is None:
             for_repr = not syngular.USE_ELLIPSIS_FOR_PRINT
