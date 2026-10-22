@@ -35,14 +35,14 @@ class QuotientRing(QuotientRingFactorization, Ring):
     def __repr__(self):
         return str(self)
 
-    def principal_localization(self, element, dependent_variables=(), check_polynomial=False):
+    def principal_localization(self, element, dependent_variables=(), check_polynomial=False, factors_are_prime=None):
         """Construct a principal localization of this quotient ring."""
         from .localization import PrincipalLocalization
-        return PrincipalLocalization(self, element, dependent_variables, check_polynomial)
+        return PrincipalLocalization(self, element, dependent_variables, check_polynomial, factors_are_prime=factors_are_prime)
 
-    def set_localization(self, element, dependent_variables=(), check_polynomial=False):
+    def set_localization(self, element, dependent_variables=(), check_polynomial=False, factors_are_prime=None):
         """Set an explicitly specified principal localization."""
-        self._localization = self.principal_localization(element, dependent_variables, check_polynomial)
+        self._localization = self.principal_localization(element, dependent_variables, check_polynomial, factors_are_prime=factors_are_prime)
         return self._localization
 
     def find_localization(self, independent_variables=None, dependent_variables=None, check_polynomial=True):

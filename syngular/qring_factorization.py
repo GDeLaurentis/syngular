@@ -71,10 +71,21 @@ class QuotientRingFactorization:
                 else:
                     ideal = Ideal(self, (factor,))
                     valuation = ideal.saturation_index(element_factor)
-                element_powers[element_factor] += multiplicity * valuation
 
                 if valuation != 0:
-                    factor = str(self.exact_divide(factor, element_factor ** valuation))
+                    try:
+                        factor = str(self.exact_divide(factor, element_factor ** valuation))
+                    except ArithmeticError:
+                        if localization.factors_are_prime is True:
+                            raise
+                        if localization.factors_are_prime is None:
+                            warnings.warn(
+                                f"Saturation by {element_factor} gave index {valuation}, but exact division failed; "
+                                "the localization factors are not known to be prime.",
+                                stacklevel=2,
+                            )
+                        valuation = 0
+                element_powers[element_factor] += multiplicity * valuation
 
             symbols = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", factor))
             if symbols & ring_symbols:

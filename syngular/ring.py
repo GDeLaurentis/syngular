@@ -4,7 +4,7 @@ import warnings
 
 from pycoretools import flatten
 
-from .tools import execute_singular_command
+from .tools import execute_singular_command, SingularException
 
 
 class Ring(object):
@@ -97,7 +97,13 @@ class Ring(object):
             "$",
         ]
 
-        output = execute_singular_command(singular_commands, timeout=timeout)
+        try:
+            output = execute_singular_command(singular_commands, timeout=timeout)
+        except SingularException as exc:
+            if "2nd module does not lie in the first" in str(exc):
+                raise ArithmeticError(f"{dividend} is not exactly divisible by {divisor} in {self}.") from exc
+            raise
+
         quotient = "".join(output.split("__QUOTIENT__", 1)[1].split("__REMAINDER__", 1)[0].splitlines()).strip()
         remainder = "".join(output.split("__REMAINDER__", 1)[1].split("__END__", 1)[0].splitlines()).strip()
 

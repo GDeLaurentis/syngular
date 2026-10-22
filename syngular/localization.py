@@ -10,9 +10,15 @@ from .tools import execute_singular_command
 class PrincipalLocalization:
     """Principal localization of a quotient ring at a single element and with a chosen elimination ordering."""
 
-    def __init__(self, qring, element, dependent_variables=(), check_polynomial=False):
+    def __init__(self, qring, element, dependent_variables=(), check_polynomial=False, factors_are_prime=None):
         """Construct and cache the reduced Gröbner basis defining the localization."""
         self.qring = qring
+
+        if factors_are_prime not in (True, False, None):
+            ValueError("factors_are_prime must be True, False or None.")
+
+        self.factors_are_prime = factors_are_prime
+
         if isinstance(element, (list, tuple)) and all(isinstance(entry, (list, tuple)) and len(entry) == 2 for entry in element):
             self.element_factors = tuple((sympy.sympify(factor), power) for factor, power in element)
         else:
@@ -54,7 +60,10 @@ class PrincipalLocalization:
         return f"{self.qring}[1/({self.element})]"
 
     def __repr__(self):
-        return f"PrincipalLocalization({self.qring!r}, {str(self.element)!r}, dependent_variables={self.dependent_variables!r})"
+        return (
+            f"PrincipalLocalization({self.qring!r}, {str(self.element)!r}, "
+            f"dependent_variables={self.dependent_variables!r}, factors_are_prime={self.factors_are_prime!r})"
+        )
 
     def __call__(self, polynomial, timeout="default"):
         """Map a polynomial to the localization and return numerator and denominator power."""
@@ -174,5 +183,6 @@ def find_principal_localization(qring, independent_variables=None, dependent_var
         denominators.append(normal_form.as_numer_denom()[1])
 
     element = sympy.expand(functools.reduce(sympy.lcm, denominators, sympy.Integer(1)))
+    _, factors = sympy.factor_list(element)
 
-    return PrincipalLocalization(qring, element, dependent_variables, check_polynomial)
+    return PrincipalLocalization(qring, factors, dependent_variables, check_polynomial, factors_are_prime=None)
