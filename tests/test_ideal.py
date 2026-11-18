@@ -52,7 +52,7 @@ def test_primary_decomposition():
     J = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x2'])
     K = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1^2'])
     L = Ideal(Ring('0', ('x1', 'x2'), 'dp'), ['x1'])
-    assert I.primary_decomposition == [(J, J), (K, L)]
+    assert set(I.primary_decomposition) == {(J, J), (K, L)}
 
 
 def test_radical():
