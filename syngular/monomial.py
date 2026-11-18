@@ -195,6 +195,16 @@ class Monomial(FrozenMultiset):
             exps[variables.index(inv)] = exp
         return exps
 
+    def divides(self, other):
+        """Return whether self divides other as monomials."""
+        return self.issubset(other)
+
+    def lcm(self, other):
+        """Return the least common multiple of two monomials."""
+        if not isinstance(other, Monomial):
+            raise TypeError(f"lcm expects a Monomial, got {type(other).__name__}")
+        return self.union(other)
+
     def __lt__(self, other):
         # Graded reverse lexicographic ordering
         self_deg = sum(self.values())
