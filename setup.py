@@ -27,6 +27,7 @@ setup(
               'polynomials', 'polynomial equations'],
     packages=find_packages(),
     install_requires=[
+        'packaging',
         'numpy',
         'sympy',
         'pycoretools',
