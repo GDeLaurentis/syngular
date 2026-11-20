@@ -6,16 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>syngular &mdash; syngular 0.6.1 documentation</title>
+  <title>syngular &mdash; syngular 0.6.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=2bd037f0"></script>
-      <script src="_static/doctools.js?v=9a2dae69"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/documentation_options.js?v=1c28bd9a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -84,6 +84,7 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="syngular.html">syngular.field</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.field.C"><code class="docutils literal notranslate"><span class="pre">C()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.field.Field"><code class="docutils literal notranslate"><span class="pre">Field</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.field.Field.I"><code class="docutils literal notranslate"><span class="pre">Field.I</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.field.Field.characteristic"><code class="docutils literal notranslate"><span class="pre">Field.characteristic</span></code></a></li>
@@ -105,10 +106,15 @@
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.field.Field."><code class="docutils literal notranslate"><span class="pre">Field.ε</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.field.Fp"><code class="docutils literal notranslate"><span class="pre">Fp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.field.Qp"><code class="docutils literal notranslate"><span class="pre">Qp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.field.R"><code class="docutils literal notranslate"><span class="pre">R()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="syngular.html#module-syngular.ring">syngular.ring</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.ring.Ring"><code class="docutils literal notranslate"><span class="pre">Ring</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ring.Ring.exact_divide"><code class="docutils literal notranslate"><span class="pre">Ring.exact_divide()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ring.Ring.factorize"><code class="docutils literal notranslate"><span class="pre">Ring.factorize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ring.Ring.field"><code class="docutils literal notranslate"><span class="pre">Ring.field</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ring.Ring.ordering"><code class="docutils literal notranslate"><span class="pre">Ring.ordering</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ring.Ring.random_point"><code class="docutils literal notranslate"><span class="pre">Ring.random_point()</span></code></a></li>
@@ -124,6 +130,11 @@
 <li class="toctree-l1"><a class="reference internal" href="syngular.html#module-syngular.qring">syngular.qring</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.qring.QRing"><code class="docutils literal notranslate"><span class="pre">QRing</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing"><code class="docutils literal notranslate"><span class="pre">QuotientRing</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing.find_localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.find_localization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing.localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.localization</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing.poly_ring"><code class="docutils literal notranslate"><span class="pre">QuotientRing.poly_ring</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing.principal_localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.principal_localization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing.set_localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.set_localization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.qring.QuotientRing.test_valid_qring"><code class="docutils literal notranslate"><span class="pre">QuotientRing.test_valid_qring()</span></code></a></li>
 </ul>
 </li>
@@ -159,6 +170,7 @@
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.test_valid_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.test_valid_ideal()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.to_full_ring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_full_ring()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.to_qring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_qring()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.ideal.Ideal.vdim"><code class="docutils literal notranslate"><span class="pre">Ideal.vdim</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.ideal.monomial_to_exponents"><code class="docutils literal notranslate"><span class="pre">monomial_to_exponents()</span></code></a></li>
@@ -180,6 +192,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="syngular.html#module-syngular">Module contents</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.C"><code class="docutils literal notranslate"><span class="pre">C()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Field"><code class="docutils literal notranslate"><span class="pre">Field</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.I"><code class="docutils literal notranslate"><span class="pre">Field.I</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field.characteristic"><code class="docutils literal notranslate"><span class="pre">Field.characteristic</span></code></a></li>
@@ -201,6 +214,7 @@
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Field."><code class="docutils literal notranslate"><span class="pre">Field.ε</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Fp"><code class="docutils literal notranslate"><span class="pre">Fp()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Ideal"><code class="docutils literal notranslate"><span class="pre">Ideal</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.codim"><code class="docutils literal notranslate"><span class="pre">Ideal.codim</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.codims"><code class="docutils literal notranslate"><span class="pre">Ideal.codims</span></code></a></li>
@@ -230,12 +244,15 @@
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.test_valid_ideal"><code class="docutils literal notranslate"><span class="pre">Ideal.test_valid_ideal()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.to_full_ring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_full_ring()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.to_qring"><code class="docutils literal notranslate"><span class="pre">Ideal.to_qring()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ideal.vdim"><code class="docutils literal notranslate"><span class="pre">Ideal.vdim</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Monomial"><code class="docutils literal notranslate"><span class="pre">Monomial</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.as_exps_list"><code class="docutils literal notranslate"><span class="pre">Monomial.as_exps_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.divides"><code class="docutils literal notranslate"><span class="pre">Monomial.divides()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.exps"><code class="docutils literal notranslate"><span class="pre">Monomial.exps</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.invs"><code class="docutils literal notranslate"><span class="pre">Monomial.invs</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.lcm"><code class="docutils literal notranslate"><span class="pre">Monomial.lcm()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.subs"><code class="docutils literal notranslate"><span class="pre">Monomial.subs()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.tolist"><code class="docutils literal notranslate"><span class="pre">Monomial.tolist()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Monomial.variables"><code class="docutils literal notranslate"><span class="pre">Monomial.variables</span></code></a></li>
@@ -257,11 +274,20 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.QRing"><code class="docutils literal notranslate"><span class="pre">QRing</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Qp"><code class="docutils literal notranslate"><span class="pre">Qp()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.QuotientRing"><code class="docutils literal notranslate"><span class="pre">QuotientRing</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.find_localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.find_localization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.localization</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.poly_ring"><code class="docutils literal notranslate"><span class="pre">QuotientRing.poly_ring</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.principal_localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.principal_localization()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.set_localization"><code class="docutils literal notranslate"><span class="pre">QuotientRing.set_localization()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.QuotientRing.test_valid_qring"><code class="docutils literal notranslate"><span class="pre">QuotientRing.test_valid_qring()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.R"><code class="docutils literal notranslate"><span class="pre">R()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="syngular.html#syngular.Ring"><code class="docutils literal notranslate"><span class="pre">Ring</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.exact_divide"><code class="docutils literal notranslate"><span class="pre">Ring.exact_divide()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.factorize"><code class="docutils literal notranslate"><span class="pre">Ring.factorize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.field"><code class="docutils literal notranslate"><span class="pre">Ring.field</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.ordering"><code class="docutils literal notranslate"><span class="pre">Ring.ordering</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="syngular.html#syngular.Ring.random_point"><code class="docutils literal notranslate"><span class="pre">Ring.random_point()</span></code></a></li>
