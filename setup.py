@@ -30,6 +30,7 @@ setup(
         'packaging',
         'numpy',
         'sympy',
+        'mpmath',
         'pycoretools',
         'pyadic',
         'multiset'
