@@ -12,6 +12,7 @@ jobs:
   CI-Test:
 
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]  # macos-latest, windows-latest
         python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
@@ -31,26 +32,24 @@ jobs:
         brew install singular
         brew install coreutils
 
-    - uses: actions/checkout@v4
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
     - name: Checkout this Repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: syngular
 
     - name: Checkout another Repo (pycoretools)
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: GDeLaurentis/pycoretools
         path: pycoretools
 
     - name: Checkout another Repo (pyadic)
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         repository: GDeLaurentis/pyadic
         path: pyadic

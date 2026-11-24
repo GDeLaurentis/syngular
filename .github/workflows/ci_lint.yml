@@ -18,15 +18,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install singular
 
-    - uses: actions/checkout@v4
-
     - name: Set up Python
       uses: actions/setup-python@v6
       with:
         python-version: '3.x'
   
     - name: Checkout this Repo
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         path: syngular
 
